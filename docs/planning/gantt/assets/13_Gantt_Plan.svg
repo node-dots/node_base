@@ -1,0 +1,358 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2200" height="1855" viewBox="0 0 2200 1855">
+<rect width="100%" height="100%" fill="white"/>
+<text x="26" y="43.2" font-family="Arial,sans-serif" font-size="30" font-weight="bold" fill="#23374b">План команди · діаграма Ганта</text>
+<text x="26" y="75.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#5d6d80">ПОПЕРЕДНІЙ КАЛЕНДАР · старт 14.10.2026 · 10 год/тиждень на учасника · 10 — найвищий пріоритет</text>
+<text x="26" y="112.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#23374b">Задача / відповідальний</text>
+<text x="435" y="111.28" font-family="Arial,sans-serif" font-size="17" font-weight="bold" fill="#23374b">Пріоритет</text>
+<text x="530" y="111.28" font-family="Arial,sans-serif" font-size="17" font-weight="bold" fill="#23374b">Приймання</text>
+<rect x="655.7319587628866" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="660.9759450171821" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="692.4398625429553" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="697.6838487972509" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="729.147766323024" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="734.3917525773196" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<line x1="734.3917525773196" y1="130" x2="734.3917525773196" y2="1759" stroke="#d0d9e4" stroke-width="1"/>
+<text x="737.3917525773196" y="131.44" font-family="Arial,sans-serif" font-size="16" font-weight="normal" fill="#566a80">лис 2026</text>
+<rect x="765.8556701030927" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="771.0996563573883" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="802.5635738831616" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="807.807560137457" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="839.2714776632303" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="844.5154639175257" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="875.979381443299" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="881.2233676975945" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<line x1="891.7113402061856" y1="130" x2="891.7113402061856" y2="1759" stroke="#d0d9e4" stroke-width="1"/>
+<text x="894.7113402061856" y="131.44" font-family="Arial,sans-serif" font-size="16" font-weight="normal" fill="#566a80">гру 2026</text>
+<rect x="912.6872852233678" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="917.9312714776632" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="949.3951890034364" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="954.639175257732" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="986.1030927835052" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="991.3470790378007" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1022.8109965635739" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1028.0549828178694" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<line x1="1054.274914089347" y1="130" x2="1054.274914089347" y2="1759" stroke="#d0d9e4" stroke-width="1"/>
+<text x="1057.274914089347" y="131.44" font-family="Arial,sans-serif" font-size="16" font-weight="normal" fill="#566a80">січ 2027</text>
+<rect x="1059.5189003436426" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1064.7628865979382" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1096.2268041237112" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1101.4707903780068" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1132.9347079037802" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1138.1786941580756" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1169.6426116838488" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1174.8865979381444" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1206.3505154639174" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1211.594501718213" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<line x1="1216.8384879725086" y1="130" x2="1216.8384879725086" y2="1759" stroke="#d0d9e4" stroke-width="1"/>
+<text x="1219.8384879725086" y="131.44" font-family="Arial,sans-serif" font-size="16" font-weight="normal" fill="#566a80">лют 2027</text>
+<rect x="1243.0584192439862" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1248.3024054982818" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1279.766323024055" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1285.0103092783506" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1316.4742268041236" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1321.7182130584192" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1353.1821305841925" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1358.4261168384878" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<line x1="1363.6701030927834" y1="130" x2="1363.6701030927834" y2="1759" stroke="#d0d9e4" stroke-width="1"/>
+<text x="1366.6701030927834" y="131.44" font-family="Arial,sans-serif" font-size="16" font-weight="normal" fill="#566a80">бер 2027</text>
+<rect x="1389.8900343642613" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1395.1340206185569" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1426.5979381443299" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1431.8419243986255" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1463.3058419243985" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1468.549828178694" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1500.0137457044675" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1505.2577319587629" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<line x1="1526.233676975945" y1="130" x2="1526.233676975945" y2="1759" stroke="#d0d9e4" stroke-width="1"/>
+<text x="1529.233676975945" y="131.44" font-family="Arial,sans-serif" font-size="16" font-weight="normal" fill="#566a80">кві 2027</text>
+<rect x="1536.721649484536" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1541.9656357388317" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1573.429553264605" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1578.6735395189003" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1610.1374570446735" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1615.3814432989689" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1646.8453608247423" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1652.089347079038" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1683.553264604811" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<line x1="1683.553264604811" y1="130" x2="1683.553264604811" y2="1759" stroke="#d0d9e4" stroke-width="1"/>
+<text x="1686.553264604811" y="131.44" font-family="Arial,sans-serif" font-size="16" font-weight="normal" fill="#566a80">тра 2027</text>
+<rect x="1688.7972508591065" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1720.2611683848797" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1725.5051546391753" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1756.9690721649483" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1762.2130584192441" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1793.6769759450171" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1798.9209621993127" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1830.384879725086" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1835.6288659793815" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<line x1="1846.1168384879725" y1="130" x2="1846.1168384879725" y2="1759" stroke="#d0d9e4" stroke-width="1"/>
+<text x="1849.1168384879725" y="131.44" font-family="Arial,sans-serif" font-size="16" font-weight="normal" fill="#566a80">чер 2027</text>
+<rect x="1867.0927835051548" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1872.3367697594501" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1903.8006872852234" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1909.044673539519" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1940.508591065292" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1945.7525773195875" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1977.2164948453608" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="1982.4604810996564" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<line x1="2003.4364261168384" y1="130" x2="2003.4364261168384" y2="1759" stroke="#d0d9e4" stroke-width="1"/>
+<text x="2006.4364261168384" y="131.44" font-family="Arial,sans-serif" font-size="16" font-weight="normal" fill="#566a80">лип 2027</text>
+<rect x="2013.9243986254296" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="2019.1683848797252" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="2050.632302405498" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="2055.8762886597938" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="2087.340206185567" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="2092.5841924398624" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="2124.048109965636" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="2129.2920962199314" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="2160.7560137457044" y="142" width="5.243986254295533" height="1617" rx="0" fill="#f5f7fa"/>
+<rect x="0" y="142" width="2200" height="33" rx="0" fill="#eaf0f6"/>
+<text x="26" y="164.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#23374b">Спільний старт</text>
+<text x="36" y="197.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">001 · Контракти</text>
+<text x="470" y="197.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#be3654">10</text>
+<text x="530" y="197.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">14.10.26</text>
+<rect x="640.0" y="183" width="5.243986254295578" height="18" rx="5" fill="#be3654"/>
+<line x1="0" y1="208" x2="2200" y2="208" stroke="#edf0f4" stroke-width="1"/>
+<rect x="0" y="208" width="2200" height="33" rx="0" fill="#eaf0f6"/>
+<text x="26" y="230.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#23374b">S1</text>
+<text x="36" y="263.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">002 · Git і CI</text>
+<text x="470" y="263.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#be3654">10</text>
+<text x="530" y="263.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">23.10.26</text>
+<rect x="645.2439862542956" y="249" width="47.19587628865975" height="18" rx="5" fill="#be3654"/>
+<line x1="0" y1="274" x2="2200" y2="274" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="296.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">011 · Транзакції й аудит</text>
+<text x="470" y="296.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#be3654">10</text>
+<text x="530" y="296.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">09.11.26</text>
+<rect x="702.9278350515464" y="282" width="78.65979381443299" height="18" rx="5" fill="#be3654"/>
+<text x="709.9278350515464" y="295.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">011</text>
+<line x1="0" y1="307" x2="2200" y2="307" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="329.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">003 · Readiness у CI</text>
+<text x="470" y="329.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#18827e">8</text>
+<text x="530" y="329.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">11.11.26</text>
+<rect x="781.5876288659794" y="315" width="10.487972508591042" height="18" rx="5" fill="#18827e"/>
+<line x1="0" y1="340" x2="2200" y2="340" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="362.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">040 · Фінальна демонстрація</text>
+<text x="470" y="362.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#2465a7">9</text>
+<text x="530" y="362.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">23.07.27</text>
+<rect x="2076.8522336769756" y="348" width="47.1958762886602" height="18" rx="5" fill="#2465a7"/>
+<line x1="0" y1="373" x2="2200" y2="373" stroke="#edf0f4" stroke-width="1"/>
+<rect x="0" y="373" width="2200" height="33" rx="0" fill="#eaf0f6"/>
+<text x="26" y="395.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#23374b">S2</text>
+<text x="36" y="428.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">006 · People</text>
+<text x="470" y="428.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#be3654">10</text>
+<text x="530" y="428.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">23.10.26</text>
+<rect x="645.2439862542956" y="414" width="47.19587628865975" height="18" rx="5" fill="#be3654"/>
+<line x1="0" y1="439" x2="2200" y2="439" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="461.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">012 · Вхід</text>
+<text x="470" y="461.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#be3654">10</text>
+<text x="530" y="461.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">20.11.26</text>
+<rect x="781.5876288659794" y="447" width="57.6838487972509" height="18" rx="5" fill="#be3654"/>
+<text x="788.5876288659794" y="460.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">012</text>
+<line x1="0" y1="472" x2="2200" y2="472" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="494.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">013 · Політики доступу</text>
+<text x="470" y="494.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#be3654">10</text>
+<text x="530" y="494.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">11.12.26</text>
+<rect x="849.7594501718213" y="480" width="99.63573883161507" height="18" rx="5" fill="#be3654"/>
+<text x="856.7594501718213" y="493.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">013</text>
+<line x1="0" y1="505" x2="2200" y2="505" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="527.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">014 · Працівники</text>
+<text x="470" y="527.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#2465a7">9</text>
+<text x="530" y="527.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">24.12.26</text>
+<rect x="959.8831615120275" y="513" width="57.6838487972509" height="18" rx="5" fill="#2465a7"/>
+<text x="966.8831615120275" y="526.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">014</text>
+<line x1="0" y1="538" x2="2200" y2="538" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="560.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">038 · Перевірка доступу</text>
+<text x="470" y="560.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#2465a7">9</text>
+<text x="530" y="560.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">14.07.27</text>
+<rect x="2008.680412371134" y="546" width="68.1718213058416" height="18" rx="5" fill="#2465a7"/>
+<text x="2015.680412371134" y="559.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">038</text>
+<line x1="0" y1="571" x2="2200" y2="571" stroke="#edf0f4" stroke-width="1"/>
+<rect x="0" y="571" width="2200" height="33" rx="0" fill="#eaf0f6"/>
+<text x="26" y="593.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#23374b">S3</text>
+<text x="36" y="626.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">008 · Children</text>
+<text x="470" y="626.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#2465a7">9</text>
+<text x="530" y="626.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">23.10.26</text>
+<rect x="645.2439862542956" y="612" width="47.19587628865975" height="18" rx="5" fill="#2465a7"/>
+<line x1="0" y1="637" x2="2200" y2="637" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="659.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">016 · Профіль дитини</text>
+<text x="470" y="659.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#be3654">10</text>
+<text x="530" y="659.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">24.12.26</text>
+<rect x="959.8831615120275" y="645" width="57.6838487972509" height="18" rx="5" fill="#be3654"/>
+<text x="966.8831615120275" y="658.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">016</text>
+<line x1="0" y1="670" x2="2200" y2="670" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="692.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">017 · Зарахування</text>
+<text x="470" y="692.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#be3654">10</text>
+<text x="530" y="692.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">04.02.27</text>
+<rect x="1127.6907216494844" y="678" width="110.12371134020646" height="18" rx="5" fill="#be3654"/>
+<text x="1134.6907216494844" y="691.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">017</text>
+<line x1="0" y1="703" x2="2200" y2="703" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="725.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">026 · Вибуття</text>
+<text x="470" y="725.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#2465a7">9</text>
+<text x="530" y="725.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">28.04.27</text>
+<rect x="1594.405498281787" y="711" width="78.65979381443299" height="18" rx="5" fill="#2465a7"/>
+<text x="1601.405498281787" y="724.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">026</text>
+<line x1="0" y1="736" x2="2200" y2="736" stroke="#edf0f4" stroke-width="1"/>
+<rect x="0" y="736" width="2200" height="33" rx="0" fill="#eaf0f6"/>
+<text x="26" y="758.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#23374b">S4</text>
+<text x="36" y="791.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">009 · Пагінація</text>
+<text x="470" y="791.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#2465a7">9</text>
+<text x="530" y="791.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">23.10.26</text>
+<rect x="645.2439862542956" y="777" width="47.19587628865975" height="18" rx="5" fill="#2465a7"/>
+<line x1="0" y1="802" x2="2200" y2="802" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="824.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">015 · Активні групи</text>
+<text x="470" y="824.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#be3654">10</text>
+<text x="530" y="824.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">14.01.27</text>
+<rect x="1017.5670103092784" y="810" width="110.123711340206" height="18" rx="5" fill="#be3654"/>
+<text x="1024.5670103092784" y="823.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">015</text>
+<line x1="0" y1="835" x2="2200" y2="835" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="857.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">030 · Наповненість</text>
+<text x="470" y="857.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#18827e">8</text>
+<text x="530" y="857.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">15.02.27</text>
+<rect x="1237.8144329896909" y="843" width="57.683848797250675" height="18" rx="5" fill="#18827e"/>
+<text x="1244.8144329896909" y="856.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">030</text>
+<line x1="0" y1="868" x2="2200" y2="868" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="890.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">033 · Операційні звіти</text>
+<text x="470" y="890.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#6570a2">7</text>
+<text x="530" y="890.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">19.03.27</text>
+<rect x="1405.6219931271478" y="876" width="57.683848797250675" height="18" rx="5" fill="#6570a2"/>
+<text x="1412.6219931271478" y="889.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">033</text>
+<line x1="0" y1="901" x2="2200" y2="901" stroke="#edf0f4" stroke-width="1"/>
+<rect x="0" y="901" width="2200" height="33" rx="0" fill="#eaf0f6"/>
+<text x="26" y="923.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#23374b">S5</text>
+<text x="36" y="956.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">007 · Catalog</text>
+<text x="470" y="956.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#be3654">10</text>
+<text x="530" y="956.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">28.10.26</text>
+<rect x="645.2439862542956" y="942" width="73.41580756013741" height="18" rx="5" fill="#be3654"/>
+<text x="652.2439862542956" y="955.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">007</text>
+<line x1="0" y1="967" x2="2200" y2="967" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="989.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">018 · Тарифи й програма</text>
+<text x="470" y="989.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#2465a7">9</text>
+<text x="530" y="989.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">12.01.27</text>
+<rect x="1017.5670103092784" y="975" width="99.63573883161507" height="18" rx="5" fill="#2465a7"/>
+<text x="1024.5670103092784" y="988.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">018</text>
+<line x1="0" y1="1000" x2="2200" y2="1000" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="1022.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">039 · Demo seed</text>
+<text x="470" y="1022.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#6570a2">7</text>
+<text x="530" y="1022.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">26.05.27</text>
+<rect x="1751.725085910653" y="1008" width="68.17182130584183" height="18" rx="5" fill="#6570a2"/>
+<text x="1758.725085910653" y="1021.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">039</text>
+<line x1="0" y1="1033" x2="2200" y2="1033" stroke="#edf0f4" stroke-width="1"/>
+<rect x="0" y="1033" width="2200" height="33" rx="0" fill="#eaf0f6"/>
+<text x="26" y="1055.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#23374b">S6</text>
+<text x="36" y="1088.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">005 · Календар</text>
+<text x="470" y="1088.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#be3654">10</text>
+<text x="530" y="1088.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">23.10.26</text>
+<rect x="645.2439862542956" y="1074" width="47.19587628865975" height="18" rx="5" fill="#be3654"/>
+<line x1="0" y1="1099" x2="2200" y2="1099" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="1121.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">022 · Валідатор розкладу</text>
+<text x="470" y="1121.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#18827e">8</text>
+<text x="530" y="1121.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">29.01.27</text>
+<rect x="1127.6907216494844" y="1107" width="78.65979381443299" height="18" rx="5" fill="#18827e"/>
+<text x="1134.6907216494844" y="1120.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">022</text>
+<line x1="0" y1="1132" x2="2200" y2="1132" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="1154.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">023 · Чернетка</text>
+<text x="470" y="1154.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#18827e">8</text>
+<text x="530" y="1154.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">15.02.27</text>
+<rect x="1216.8384879725086" y="1140" width="78.65979381443299" height="18" rx="5" fill="#18827e"/>
+<text x="1223.8384879725086" y="1153.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">023</text>
+<line x1="0" y1="1165" x2="2200" y2="1165" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="1187.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">024 · Публікація</text>
+<text x="470" y="1187.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#be3654">10</text>
+<text x="530" y="1187.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">08.03.27</text>
+<rect x="1295.4982817869416" y="1173" width="110.12371134020623" height="18" rx="5" fill="#be3654"/>
+<text x="1302.4982817869416" y="1186.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">024</text>
+<line x1="0" y1="1198" x2="2200" y2="1198" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="1220.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">034 · Генератор</text>
+<text x="470" y="1220.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#85714e">6</text>
+<text x="530" y="1220.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">31.03.27</text>
+<rect x="1405.6219931271478" y="1206" width="120.61168384879716" height="18" rx="5" fill="#85714e"/>
+<text x="1412.6219931271478" y="1219.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">034</text>
+<line x1="0" y1="1231" x2="2200" y2="1231" stroke="#edf0f4" stroke-width="1"/>
+<rect x="0" y="1231" width="2200" height="33" rx="0" fill="#eaf0f6"/>
+<text x="26" y="1253.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#23374b">S7</text>
+<text x="36" y="1286.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">004 · Гроші</text>
+<text x="470" y="1286.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#be3654">10</text>
+<text x="530" y="1286.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">21.10.26</text>
+<rect x="645.2439862542956" y="1272" width="36.707903780068705" height="18" rx="5" fill="#be3654"/>
+<line x1="0" y1="1297" x2="2200" y2="1297" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="1319.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">019 · Місячні рахунки</text>
+<text x="470" y="1319.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#2465a7">9</text>
+<text x="530" y="1319.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">23.02.27</text>
+<rect x="1237.8144329896909" y="1305" width="99.63573883161507" height="18" rx="5" fill="#2465a7"/>
+<text x="1244.8144329896909" y="1318.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">019</text>
+<line x1="0" y1="1330" x2="2200" y2="1330" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="1352.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">020 · Повідомлення оплати</text>
+<text x="470" y="1352.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#18827e">8</text>
+<text x="530" y="1352.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">05.03.27</text>
+<rect x="1337.450171821306" y="1338" width="52.439862542955325" height="18" rx="5" fill="#18827e"/>
+<line x1="0" y1="1363" x2="2200" y2="1363" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="1385.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">021 · Підтвердження оплати</text>
+<text x="470" y="1385.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#be3654">10</text>
+<text x="530" y="1385.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">19.03.27</text>
+<rect x="1400.3780068728522" y="1371" width="62.92783505154625" height="18" rx="5" fill="#be3654"/>
+<text x="1407.3780068728522" y="1384.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">021</text>
+<line x1="0" y1="1396" x2="2200" y2="1396" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="1418.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">025 · Річні рахунки</text>
+<text x="470" y="1418.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#18827e">8</text>
+<text x="530" y="1418.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">13.04.27</text>
+<rect x="1473.7938144329896" y="1404" width="120.61168384879738" height="18" rx="5" fill="#18827e"/>
+<text x="1480.7938144329896" y="1417.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">025</text>
+<line x1="0" y1="1429" x2="2200" y2="1429" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="1451.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">027 · Повернення</text>
+<text x="470" y="1451.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#2465a7">9</text>
+<text x="530" y="1451.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">13.05.27</text>
+<rect x="1673.06529209622" y="1437" width="78.65979381443299" height="18" rx="5" fill="#2465a7"/>
+<text x="1680.06529209622" y="1450.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">027</text>
+<line x1="0" y1="1462" x2="2200" y2="1462" stroke="#edf0f4" stroke-width="1"/>
+<rect x="0" y="1462" width="2200" height="33" rx="0" fill="#eaf0f6"/>
+<text x="26" y="1484.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#23374b">S8</text>
+<text x="36" y="1517.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">010 · Показники</text>
+<text x="470" y="1517.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#18827e">8</text>
+<text x="530" y="1517.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">21.10.26</text>
+<rect x="645.2439862542956" y="1503" width="36.707903780068705" height="18" rx="5" fill="#18827e"/>
+<line x1="0" y1="1528" x2="2200" y2="1528" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="1550.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">028 · Витрати</text>
+<text x="470" y="1550.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#18827e">8</text>
+<text x="530" y="1550.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">28.12.26</text>
+<rect x="959.8831615120275" y="1536" width="78.65979381443299" height="18" rx="5" fill="#18827e"/>
+<text x="966.8831615120275" y="1549.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">028</text>
+<line x1="0" y1="1561" x2="2200" y2="1561" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="1583.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">029 · Зарплатний місяць</text>
+<text x="470" y="1583.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#2465a7">9</text>
+<text x="530" y="1583.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">25.02.27</text>
+<rect x="1237.8144329896909" y="1569" width="110.123711340206" height="18" rx="5" fill="#2465a7"/>
+<text x="1244.8144329896909" y="1582.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">029</text>
+<line x1="0" y1="1594" x2="2200" y2="1594" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="1616.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">035 · Прогноз</text>
+<text x="470" y="1616.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#88788d">5</text>
+<text x="530" y="1616.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">16.03.27</text>
+<rect x="1347.9381443298969" y="1602" width="99.6357388316153" height="18" rx="5" fill="#88788d"/>
+<text x="1354.9381443298969" y="1615.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">035</text>
+<line x1="0" y1="1627" x2="2200" y2="1627" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="1649.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">036 · Пошук сценаріїв</text>
+<text x="470" y="1649.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#77808d">4</text>
+<text x="530" y="1649.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">26.04.27</text>
+<rect x="1526.233676975945" y="1635" width="136.3436426116839" height="18" rx="5" fill="#77808d"/>
+<text x="1533.233676975945" y="1648.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">036</text>
+<line x1="0" y1="1660" x2="2200" y2="1660" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="1682.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">031 · Залишки рахунків</text>
+<text x="470" y="1682.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#18827e">8</text>
+<text x="530" y="1682.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">28.05.27</text>
+<rect x="1751.725085910653" y="1668" width="78.65979381443299" height="18" rx="5" fill="#18827e"/>
+<text x="1758.725085910653" y="1681.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">031</text>
+<line x1="0" y1="1693" x2="2200" y2="1693" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="1715.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">032 · Фінансовий звіт</text>
+<text x="470" y="1715.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#18827e">8</text>
+<text x="530" y="1715.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">16.06.27</text>
+<rect x="1840.872852233677" y="1701" width="89.14776632302414" height="18" rx="5" fill="#18827e"/>
+<text x="1847.872852233677" y="1714.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">032</text>
+<line x1="0" y1="1726" x2="2200" y2="1726" stroke="#edf0f4" stroke-width="1"/>
+<text x="36" y="1748.12" font-family="Arial,sans-serif" font-size="18" font-weight="normal" fill="#23374b">037 · Панель</text>
+<text x="470" y="1748.12" font-family="Arial,sans-serif" font-size="18" font-weight="bold" fill="#77808d">3</text>
+<text x="530" y="1748.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#23374b">01.07.27</text>
+<rect x="1930.020618556701" y="1734" width="78.65979381443299" height="18" rx="5" fill="#77808d"/>
+<text x="1937.020618556701" y="1747.6" font-family="Arial,sans-serif" font-size="15" font-weight="bold" fill="white">037</text>
+<line x1="0" y1="1759" x2="2200" y2="1759" stroke="#edf0f4" stroke-width="1"/>
+<text x="26" y="1796.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#596d82">Смуга охоплює виконання та review. Бізнес-залежності та години — у таблиці «План Ганта».</text>
+<text x="26" y="1829.28" font-family="Arial,sans-serif" font-size="17" font-weight="normal" fill="#596d82">Вихідні не мають планових годин. Канікули, іспити, свята та незаплановані дефекти ще потребують погодження.</text>
+</svg>

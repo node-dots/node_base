@@ -1,0 +1,851 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Навчальний API дитячого садка",
+    "version": "0.3.0",
+    "description": "Навчальний API модульного моноліту. Звичайний запуск використовує MongoDB; групи зберігаються після перезапуску. Авторизацію ще не реалізовано. HTTP-захист, явні DTO, локальний tracing та aggregation-звіт активні. При ввімкненій телеметрії бізнес-відповіді містять X-Trace-Id. Health і документація виключені з tracing."
+  },
+  "servers": [
+    {
+      "url": "/",
+      "description": "Поточний сервер"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Стан"
+    },
+    {
+      "name": "Групи"
+    },
+    {
+      "name": "Документація"
+    }
+  ],
+  "components": {
+    "responses": {
+      "BadRequest": {
+        "description": "Некоректний JSON або дані не відповідають вхідній схемі.",
+        "headers": {
+          "X-Request-Id": {
+            "description": "Ідентифікатор запиту для пошуку в логах.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "NotFound": {
+        "description": "Групу або маршрут не знайдено.",
+        "headers": {
+          "X-Request-Id": {
+            "description": "Ідентифікатор запиту для пошуку в логах.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "PayloadTooLarge": {
+        "description": "Тіло JSON перевищує налаштований ліміт; початково 32 КБ.",
+        "headers": {
+          "X-Request-Id": {
+            "description": "Ідентифікатор запиту для пошуку в логах.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "DomainRuleViolation": {
+        "description": "Порушено бізнес-правило; BusinessError перетворюється на HTTP-помилку.",
+        "headers": {
+          "X-Request-Id": {
+            "description": "Ідентифікатор запиту для пошуку в логах.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "TooManyRequests": {
+        "description": "RATE_LIMIT_EXCEEDED або WRITE_RATE_LIMIT_EXCEEDED. Заблокований запит не виконує сценарій.",
+        "headers": {
+          "X-Request-Id": {
+            "description": "Ідентифікатор запиту для пошуку в логах.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "Retry-After": {
+            "description": "Час очікування в секундах.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            }
+          },
+          "RateLimit": {
+            "description": "Поточний стан обмеження частоти запитів.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "RateLimit-Policy": {
+            "description": "Налаштовані політики обмеження.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      },
+      "InternalError": {
+        "description": "Непередбачена помилка без технічних секретів у відповіді.",
+        "headers": {
+          "X-Request-Id": {
+            "description": "Ідентифікатор запиту для пошуку в логах.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {},
+              "requestId": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "code",
+              "message",
+              "requestId"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "additionalProperties": false
+      },
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "OK"
+                ]
+              },
+              "service": {
+                "type": "string",
+                "enum": [
+                  "kindergarten-backend"
+                ]
+              },
+              "storage": {
+                "type": "string",
+                "enum": [
+                  "MONGODB"
+                ]
+              }
+            },
+            "required": [
+              "status",
+              "service",
+              "storage"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "ReadinessResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": [
+                  "READY",
+                  "NOT_READY"
+                ]
+              },
+              "storage": {
+                "type": "string",
+                "enum": [
+                  "MONGODB"
+                ]
+              }
+            },
+            "required": [
+              "status",
+              "storage"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "ApiInfoResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string",
+                "enum": [
+                  "0.3.0"
+                ]
+              },
+              "documentation": {
+                "type": "string",
+                "enum": [
+                  "/api-docs/"
+                ]
+              },
+              "openapi": {
+                "type": "string",
+                "enum": [
+                  "/api/v1/openapi.json"
+                ]
+              }
+            },
+            "required": [
+              "name",
+              "version",
+              "documentation",
+              "openapi"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "CreateGroupInput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Назва після видалення пробілів на початку й у кінці.",
+            "example": "Мандрівники"
+          },
+          "ageCategory": {
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 5,
+            "description": "Тимчасова числова категорія; посилання на catalog ще не реалізовано.",
+            "example": 4
+          },
+          "capacity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20,
+            "description": "Кількість місць у чернетці.",
+            "example": 20
+          }
+        },
+        "required": [
+          "name",
+          "ageCategory",
+          "capacity"
+        ],
+        "additionalProperties": false
+      },
+      "Group": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "description": "Назва після видалення пробілів на початку й у кінці.",
+            "example": "Мандрівники"
+          },
+          "ageCategory": {
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 5,
+            "description": "Тимчасова числова категорія; посилання на catalog ще не реалізовано.",
+            "example": 4
+          },
+          "capacity": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20,
+            "description": "Кількість місць у чернетці.",
+            "example": 20
+          },
+          "id": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{24}$",
+            "description": "Строкове представлення MongoDB ObjectId.",
+            "example": "000000000000000000000001"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT"
+            ],
+            "description": "Чернетка; активацію ще не реалізовано."
+          }
+        },
+        "required": [
+          "name",
+          "ageCategory",
+          "capacity",
+          "id",
+          "status"
+        ],
+        "additionalProperties": false
+      },
+      "GroupResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Group"
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "GroupListResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Group"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "total": {
+                "type": "integer",
+                "minimum": 0
+              }
+            },
+            "required": [
+              "total"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "additionalProperties": false,
+        "description": "Без пагінації на цьому етапі. Дані зберігаються в MongoDB."
+      },
+      "AgeSummary": {
+        "type": "object",
+        "properties": {
+          "ageCategory": {
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 5,
+            "description": "Тимчасова числова категорія; посилання на catalog ще не реалізовано.",
+            "example": 4
+          },
+          "groupsCount": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "totalCapacity": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "ageCategory",
+          "groupsCount",
+          "totalCapacity"
+        ],
+        "additionalProperties": false
+      },
+      "AgeSummaryResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgeSummary"
+            }
+          }
+        },
+        "required": [
+          "data"
+        ],
+        "additionalProperties": false
+      }
+    },
+    "parameters": {}
+  },
+  "paths": {
+    "/health/live": {
+      "get": {
+        "operationId": "getLiveness",
+        "tags": [
+          "Стан"
+        ],
+        "summary": "Перевірити роботу процесу",
+        "description": "Перевіряє процес сервера; не виконує запит готовності MongoDB.",
+        "responses": {
+          "200": {
+            "description": "Процес працює.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Ідентифікатор запиту для пошуку в логах.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/health/ready": {
+      "get": {
+        "operationId": "getReadiness",
+        "tags": [
+          "Стан"
+        ],
+        "summary": "Перевірити готовність API та MongoDB",
+        "description": "Перевіряє відкрите з’єднання та ping MongoDB з лімітом 2 секунди. Не розкриває URI або технічні помилки.",
+        "responses": {
+          "200": {
+            "description": "MongoDB відповідає; status READY.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Ідентифікатор запиту для пошуку в логах.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          },
+          "503": {
+            "description": "MongoDB недоступна; status NOT_READY.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Ідентифікатор запиту для пошуку в логах.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReadinessResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1": {
+      "get": {
+        "operationId": "getApiInfo",
+        "tags": [
+          "Стан"
+        ],
+        "summary": "Версія API та посилання на документацію",
+        "responses": {
+          "200": {
+            "description": "Опис початкового API.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Ідентифікатор запиту для пошуку в логах.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiInfoResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/api/v1/openapi.json": {
+      "get": {
+        "operationId": "getOpenApiDocument",
+        "tags": [
+          "Документація"
+        ],
+        "summary": "Отримати цей OpenAPI-контракт",
+        "responses": {
+          "200": {
+            "description": "OpenAPI-документ.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Ідентифікатор запиту для пошуку в логах.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/api-docs/": {
+      "get": {
+        "operationId": "getSwaggerUi",
+        "tags": [
+          "Документація"
+        ],
+        "summary": "Відкрити локальний Swagger UI",
+        "responses": {
+          "200": {
+            "description": "Сторінка перегляду та виконання запитів API.",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/api/v1/groups": {
+      "get": {
+        "operationId": "listGroups",
+        "tags": [
+          "Групи"
+        ],
+        "summary": "Переглянути всі демонстраційні групи",
+        "description": "Пагінація й фільтри ще не реалізовані.",
+        "responses": {
+          "200": {
+            "description": "Список груп і meta.total.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Ідентифікатор запиту для пошуку в логах.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupListResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      },
+      "post": {
+        "operationId": "createGroup",
+        "tags": [
+          "Групи"
+        ],
+        "summary": "Створити чернетку групи",
+        "description": "Невідомі поля відхиляються. Нова група має статус DRAFT; кімнати та персонал ще не призначаються.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGroupInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Групу збережено в MongoDB.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Ідентифікатор запиту для пошуку в логах.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              },
+              "Location": {
+                "description": "Відносна адреса створеної групи.",
+                "schema": {
+                  "type": "string"
+                },
+                "example": "/api/v1/groups/000000000000000000000001"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "413": {
+            "$ref": "#/components/responses/PayloadTooLarge"
+          },
+          "422": {
+            "$ref": "#/components/responses/DomainRuleViolation"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/api/v1/groups/{id}": {
+      "get": {
+        "operationId": "getGroup",
+        "tags": [
+          "Групи"
+        ],
+        "summary": "Переглянути групу за ID",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "MongoDB ObjectId. Невідомий рядковий ID або некоректний формат повертає 404."
+            },
+            "required": true,
+            "description": "MongoDB ObjectId. Невідомий рядковий ID або некоректний формат повертає 404.",
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Групу знайдено.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Ідентифікатор запиту для пошуку в логах.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    },
+    "/api/v1/groups/summary": {
+      "get": {
+        "operationId": "getGroupsAgeSummary",
+        "tags": [
+          "Групи"
+        ],
+        "summary": "Підсумки груп за віковими категоріями",
+        "description": "MongoDB Aggregation Framework: кількість груп і сумарна місткість. Місткість не є кількістю зарахованих дітей.",
+        "responses": {
+          "200": {
+            "description": "Підсумки відсортовані за віком.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Ідентифікатор запиту для пошуку в логах.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgeSummaryResponse"
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalError"
+          }
+        }
+      }
+    }
+  },
+  "webhooks": {}
+}
