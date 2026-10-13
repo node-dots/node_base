@@ -1,0 +1,44 @@
+{
+  "name": "kindergarten-backend",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Навчальний backend дитячого садка: модуль груп і базовий HTTP-захист",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "node --env-file-if-exists=.env --watch src/server.js",
+    "debug": "node --inspect=127.0.0.1:9229 --env-file-if-exists=.env src/server.js",
+    "start": "node --env-file-if-exists=.env src/server.js",
+    "test": "node --test",
+    "test:mongodb": "node scripts/check-mongodb.js",
+    "check:syntax": "node scripts/check-syntax.js",
+    "check": "npm run format:check && npm run check:syntax && npm test",
+    "format": "prettier --write \"src/**/*.js\" \"scripts/**/*.js\" \"tests/**/*.js\"",
+    "format:check": "prettier --check \"src/**/*.js\" \"scripts/**/*.js\" \"tests/**/*.js\"",
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down",
+    "seed": "node scripts/seed.js",
+    "telemetry:up": "docker compose up -d jaeger",
+    "telemetry:down": "docker compose stop jaeger",
+    "telemetry:demo": "node --env-file-if-exists=.env scripts/trace-demo.js",
+    "docs:export": "node scripts/export-openapi.js"
+  },
+  "dependencies": {
+    "@asteasolutions/zod-to-openapi": "8.5.0",
+    "@opentelemetry/api": "1.9.1",
+    "@opentelemetry/exporter-trace-otlp-http": "0.223.0",
+    "@opentelemetry/resources": "2.12.0",
+    "@opentelemetry/sdk-trace-node": "2.12.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "8.7.1",
+    "helmet": "8.3.0",
+    "mongoose": "9.11.1",
+    "swagger-ui-express": "5.0.1",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "prettier": "3.9.10"
+  }
+}

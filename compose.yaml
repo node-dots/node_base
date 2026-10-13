@@ -1,0 +1,27 @@
+# Зберігаємо назву наявного Docker-проєкту, щоб повторно використати Jaeger.
+name: kindergarten-telemetry
+
+services:
+  mongodb:
+    image: mongo:8.0
+    command: ["mongod", "--replSet", "rs0", "--bind_ip_all"]
+    ports:
+      - "127.0.0.1:27017:27017" # Доступ до бази тільки з цього комп’ютера.
+    volumes:
+      - mongodb_data:/data/db # Дані зберігаються після видалення контейнера.
+      - ./scripts/mongodb-init.js:/scripts/mongodb-init.js:ro
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand({ ping: 1 })"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+      start_period: 5s
+
+  jaeger:
+    image: cr.jaegertracing.io/jaegertracing/jaeger:2.21.0
+    ports:
+      - "127.0.0.1:16686:16686" # Інтерфейс перегляду трейсів.
+      - "127.0.0.1:4318:4318"   # OTLP/HTTP для локального Node.js.
+
+volumes:
+  mongodb_data:
