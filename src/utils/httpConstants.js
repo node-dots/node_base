@@ -15,23 +15,23 @@ export const HTTP_STATUS = Object.freeze({
 });
 
 export const READINESS_STATUS = Object.freeze({
-  READY: 'READY', // Сховище відповідає, API готове до роботи.
-  NOT_READY: 'NOT_READY', // З’єднання відсутнє або перевірка сховища неуспішна.
+  READY: "READY", // Сховище відповідає, API готове до роботи.
+  NOT_READY: "NOT_READY", // З’єднання відсутнє або перевірка сховища неуспішна.
 });
 
 // Значення type, які повертає парсер тіла запиту Express.
 export const BODY_PARSER_ERROR_TYPES = Object.freeze({
-  INVALID_JSON: 'entity.parse.failed', // Не вдалося розібрати JSON.
-  BODY_TOO_LARGE: 'entity.too.large', // Перевищено допустимий розмір.
+  INVALID_JSON: "entity.parse.failed", // Не вдалося розібрати JSON.
+  BODY_TOO_LARGE: "entity.too.large", // Перевищено допустимий розмір.
 });
 
 // Публічні коди загальних HTTP-помилок для клієнта.
 export const HTTP_ERROR_CODES = Object.freeze({
-  VALIDATION_ERROR: 'VALIDATION_ERROR', // Вхідні дані не відповідають схемі.
-  INVALID_JSON: 'INVALID_JSON', // Некоректний JSON.
-  BODY_TOO_LARGE: 'BODY_TOO_LARGE', // Надто велике тіло запиту.
-  ROUTE_NOT_FOUND: 'ROUTE_NOT_FOUND', // Адреса запиту не визначена.
-  INTERNAL_ERROR: 'INTERNAL_ERROR', // Непередбачена помилка.
-  RATE_LIMIT_EXCEEDED: 'RATE_LIMIT_EXCEEDED', // Перевищено загальний ліміт.
-  WRITE_RATE_LIMIT_EXCEEDED: 'WRITE_RATE_LIMIT_EXCEEDED', // Перевищено ліміт запису.
+  VALIDATION_ERROR: "VALIDATION_ERROR", // Вхідні дані не відповідають схемі.
+  INVALID_JSON: "INVALID_JSON", // Некоректний JSON.
+  BODY_TOO_LARGE: "BODY_TOO_LARGE", // Надто велике тіло запиту.
+  ROUTE_NOT_FOUND: "ROUTE_NOT_FOUND", // Адреса запиту не визначена.
+  INTERNAL_ERROR: "INTERNAL_ERROR", // Непередбачена помилка.
+  RATE_LIMIT_EXCEEDED: "RATE_LIMIT_EXCEEDED", // Перевищено загальний ліміт.
+  WRITE_RATE_LIMIT_EXCEEDED: "WRITE_RATE_LIMIT_EXCEEDED", // Перевищено ліміт запису.
 });

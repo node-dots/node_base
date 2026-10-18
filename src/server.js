@@ -1,18 +1,18 @@
-import { startTelemetry } from './telemetry/telemetry.js';
-import { createApp } from './app.js';
-import { createApiRouter } from './modules/index.js';
-import { readServerConfig } from './config/server.js';
-import { readTelemetryConfig } from './config/telemetry.js';
-import { readSecurityConfig } from './config/security.js';
-import { createHttpServer } from './utils/createHttpServer.js';
-import { SECURITY_DEFAULTS } from './config/securityDefaults.js';
+import { startTelemetry } from "./telemetry/telemetry.js";
+import { createApp } from "./app.js";
+import { createApiRouter } from "./modules/index.js";
+import { readServerConfig } from "./config/server.js";
+import { readTelemetryConfig } from "./config/telemetry.js";
+import { readSecurityConfig } from "./config/security.js";
+import { createHttpServer } from "./utils/createHttpServer.js";
+import { SECURITY_DEFAULTS } from "./config/securityDefaults.js";
 
 import {
   connectMongo,
   disconnectMongo,
   readDatabaseConfig,
   isMongoReady,
-} from './config/database.js';
+} from "./config/database.js";
 
 const { PORT: port, HOST: host } = readServerConfig();
 const securityConfig = readSecurityConfig();
@@ -20,19 +20,23 @@ const securityConfig = readSecurityConfig();
 const databaseConfig = readDatabaseConfig();
 const telemetryConfig = readTelemetryConfig();
 await connectMongo(databaseConfig.MONGO_URI);
-console.log('Підключено до MongoDB');
+console.log("Підключено до MongoDB");
 
 const telemetry = startTelemetry({ config: telemetryConfig });
 
 const apiRouter = createApiRouter();
-const app = createApp({ apiRouter, securityConfig, isStorageReady: isMongoReady });
+const app = createApp({
+  apiRouter,
+  securityConfig,
+  isStorageReady: isMongoReady,
+});
 const server = createHttpServer({ app, securityConfig });
 
 server.listen(port, host, () => {
   console.log(`Сервер запущено: http://${host}:${port}/api/v1`);
 });
-server.on('error', (error) => {
-  console.error('Не вдалося запустити сервер:', error.code);
+server.on("error", (error) => {
+  console.error("Не вдалося запустити сервер:", error.code);
   shutdown(1);
 });
 
@@ -50,15 +54,18 @@ let stopping = false;
 function shutdown(exitCode = 0) {
   if (stopping) return;
   stopping = true;
-  console.log('Зупиняємо сервер…');
-  const deadline = setTimeout(() => process.exit(1), SECURITY_DEFAULTS.SHUTDOWN_TIMEOUT_MS);
+  console.log("Зупиняємо сервер…");
+  const deadline = setTimeout(
+    () => process.exit(1),
+    SECURITY_DEFAULTS.SHUTDOWN_TIMEOUT_MS,
+  );
   deadline.unref();
   async function finish(error) {
     if (error) console.error(error.message);
     try {
       await closeResources();
     } catch {
-      console.error('Не вдалося коректно закрити ресурси');
+      console.error("Не вдалося коректно закрити ресурси");
       exitCode = 1;
     } finally {
       clearTimeout(deadline);
@@ -70,5 +77,5 @@ function shutdown(exitCode = 0) {
   else finish();
 }
 
-process.on('SIGINT', () => shutdown()); // SIGINT — переривання, наприклад Ctrl+C.
-process.on('SIGTERM', () => shutdown()); // SIGTERM — запит завершення процесу.
+process.on("SIGINT", () => shutdown()); // SIGINT — переривання, наприклад Ctrl+C.
+process.on("SIGTERM", () => shutdown()); // SIGTERM — запит завершення процесу.

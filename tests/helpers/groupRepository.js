@@ -1,4 +1,4 @@
-import { randomBytes } from 'node:crypto';
+import { randomBytes } from "node:crypto";
 
 // Тимчасова реалізація контракту репозиторію: дані в пам’яті процесу.
 export class InMemoryGroupRepository {
@@ -8,14 +8,23 @@ export class InMemoryGroupRepository {
     for (const group of initialGroups) {
       const savedGroup = {
         ...structuredClone(group),
-        id: group.id ?? randomBytes(12).toString('hex'),
+        id: group.id ?? randomBytes(12).toString("hex"),
       };
       this.groups.set(savedGroup.id, savedGroup);
     }
   }
 
-  async findAll() {
-    return structuredClone([...this.groups.values()]);
+  async findAll({ page, pageSize }) {
+    const skip = (page - 1) * pageSize;
+
+    const groups = [...this.groups.values()].sort((a, b) =>
+      a.id.localeCompare(b.id),
+    );
+
+    return {
+      groups: structuredClone(groups.slice(skip, skip + pageSize)),
+      total: groups.length,
+    };
   }
 
   async findById(groupId) {
@@ -24,7 +33,10 @@ export class InMemoryGroupRepository {
   }
 
   async insert(group) {
-    const savedGroup = { ...structuredClone(group), id: randomBytes(12).toString('hex') };
+    const savedGroup = {
+      ...structuredClone(group),
+      id: randomBytes(12).toString("hex"),
+    };
     this.groups.set(savedGroup.id, savedGroup);
     return structuredClone(savedGroup);
   }
@@ -41,6 +53,8 @@ export class InMemoryGroupRepository {
       entry.totalCapacity += group.capacity;
       summaries.set(group.ageCategory, entry);
     }
-    return [...summaries.values()].sort((a, b) => a.ageCategory - b.ageCategory);
+    return [...summaries.values()].sort(
+      (a, b) => a.ageCategory - b.ageCategory,
+    );
   }
 }

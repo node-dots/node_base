@@ -3,29 +3,33 @@ let enabled = false;
 
 export function configureTraceDebugData(config) {
   enabled =
-    config.TELEMETRY_ENABLED && config.TELEMETRY_DEBUG_DATA && config.NODE_ENV === 'development';
+    config.TELEMETRY_ENABLED &&
+    config.TELEMETRY_DEBUG_DATA &&
+    config.NODE_ENV === "development";
 }
 
 const secretField =
   /password|passwd|token|secret|authorization|cookie|api[_-]?key|credential|session/i;
 
 function sanitize(value, depth = 0) {
-  if (depth > 6) return '[DEPTH_LIMIT]';
-  if (typeof value === 'string')
+  if (depth > 6) return "[DEPTH_LIMIT]";
+  if (typeof value === "string")
     return value.length > 2000 ? `${value.slice(0, 2000)}[TRUNCATED]` : value;
-  if (value === null || typeof value === 'number' || typeof value === 'boolean') return value;
-  if (Array.isArray(value)) return value.slice(0, 50).map((item) => sanitize(item, depth + 1));
-  if (typeof value === 'object') {
+  if (value === null || typeof value === "number" || typeof value === "boolean")
+    return value;
+  if (Array.isArray(value))
+    return value.slice(0, 50).map((item) => sanitize(item, depth + 1));
+  if (typeof value === "object") {
     return Object.fromEntries(
       Object.entries(value)
         .slice(0, 50)
         .map(([key, item]) => [
           key,
-          secretField.test(key) ? '[REDACTED]' : sanitize(item, depth + 1),
+          secretField.test(key) ? "[REDACTED]" : sanitize(item, depth + 1),
         ]),
     );
   }
-  return '[UNSUPPORTED]';
+  return "[UNSUPPORTED]";
 }
 
 export function recordTraceDebugData(span, attribute, value) {
@@ -40,6 +44,6 @@ export function recordTraceDebugData(span, attribute, value) {
     );
   } catch {
     // Проблема діагностики не повинна перервати бізнес-операцію.
-    span.setAttribute(attribute, '[UNAVAILABLE]');
+    span.setAttribute(attribute, "[UNAVAILABLE]");
   }
 }

@@ -2,15 +2,18 @@ import {
   NodeTracerProvider,
   BatchSpanProcessor,
   AlwaysOnSampler,
-} from '@opentelemetry/sdk-trace-node';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-import { resourceFromAttributes } from '@opentelemetry/resources';
-import { readTelemetryConfig } from '../config/telemetry.js';
-import { configureTraceDebugData } from './traceDebugData.js';
-import packageInfo from '../../package.json' with { type: 'json' };
+} from "@opentelemetry/sdk-trace-node";
+import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-http";
+import { resourceFromAttributes } from "@opentelemetry/resources";
+import { readTelemetryConfig } from "../config/telemetry.js";
+import { configureTraceDebugData } from "./traceDebugData.js";
+import packageInfo from "../../package.json" with { type: "json" };
 
 // SDK підключаємо один раз під час запуску, а не в кожному контролері.
-export function startTelemetry({ config = readTelemetryConfig(), exporter } = {}) {
+export function startTelemetry({
+  config = readTelemetryConfig(),
+  exporter,
+} = {}) {
   configureTraceDebugData(config);
   if (!config.TELEMETRY_ENABLED) {
     return { forceFlush: async () => {}, shutdown: async () => {} };
@@ -23,9 +26,9 @@ export function startTelemetry({ config = readTelemetryConfig(), exporter } = {}
     });
   const provider = new NodeTracerProvider({
     resource: resourceFromAttributes({
-      'service.name': config.OTEL_SERVICE_NAME,
-      'service.version': packageInfo.version,
-      'deployment.environment.name': config.NODE_ENV,
+      "service.name": config.OTEL_SERVICE_NAME,
+      "service.version": packageInfo.version,
+      "deployment.environment.name": config.NODE_ENV,
     }),
     sampler: new AlwaysOnSampler(), // Локально записуємо всі запити, що не виключені middleware.
     spanProcessors: [

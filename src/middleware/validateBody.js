@@ -1,5 +1,5 @@
-import { AppError } from '../utils/errors.js';
-import { HTTP_STATUS, HTTP_ERROR_CODES } from '../utils/httpConstants.js';
+import { AppError } from "../utils/errors.js";
+import { HTTP_STATUS, HTTP_ERROR_CODES } from "../utils/httpConstants.js";
 
 // Валідація — перевірка body запиту за схемою Zod.
 export function validateBody(schema) {
@@ -10,9 +10,9 @@ export function validateBody(schema) {
         new AppError(
           HTTP_STATUS.BAD_REQUEST,
           HTTP_ERROR_CODES.VALIDATION_ERROR,
-          'Некоректні дані запиту',
+          "Некоректні дані запиту",
           result.error.issues.map((issue) => ({
-            field: issue.path.join('.'),
+            field: issue.path.join("."),
             message: issue.message,
           })),
         ),

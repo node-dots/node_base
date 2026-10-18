@@ -2,7 +2,7 @@
 export class BusinessError extends Error {
   constructor(code, message, details) {
     super(message);
-    this.name = 'BusinessError';
+    this.name = "BusinessError";
     this.code = code;
     this.details = details;
   }
@@ -11,7 +11,7 @@ export class BusinessError extends Error {
 export class ResourceNotFoundError extends Error {
   constructor(code, message) {
     super(message);
-    this.name = 'ResourceNotFoundError';
+    this.name = "ResourceNotFoundError";
     this.code = code;
   }
 }

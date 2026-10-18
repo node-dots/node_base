@@ -1,8 +1,12 @@
-import { spawnSync } from 'node:child_process';
+import { spawnSync } from "node:child_process";
 
 // Однаково працює в PowerShell і macOS: без shell-запису змінних оточення.
-const result = spawnSync(process.execPath, ['--test', 'tests/integration/groups.mongodb.test.js'], {
-  stdio: 'inherit',
-  env: { ...process.env, RUN_MONGO_TESTS: 'true' },
-});
+const result = spawnSync(
+  process.execPath,
+  ["--test", "tests/integration/groups.mongodb.test.js"],
+  {
+    stdio: "inherit",
+    env: { ...process.env, RUN_MONGO_TESTS: "true" },
+  },
+);
 process.exitCode = result.status ?? 1;

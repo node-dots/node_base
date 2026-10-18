@@ -1,16 +1,20 @@
-import { BusinessError, ResourceNotFoundError } from '../../utils/errors.js';
-import { GROUP_STATUS, GROUP_ERROR_CODES, GROUP_LIMITS } from './group.constants.js';
+import { BusinessError, ResourceNotFoundError } from "../../utils/errors.js";
+import {
+  GROUP_STATUS,
+  GROUP_ERROR_CODES,
+  GROUP_LIMITS,
+} from "./group.constants.js";
 
 // Чисті правила можна викликати з service або seed без HTTP та MongoDB.
 export function buildGroupDraft({ name, ageCategory, capacity }) {
-  const normalizedName = typeof name === 'string' ? name.trim() : '';
+  const normalizedName = typeof name === "string" ? name.trim() : "";
   if (
     normalizedName.length < GROUP_LIMITS.MIN_NAME_LENGTH ||
     normalizedName.length > GROUP_LIMITS.MAX_NAME_LENGTH
   ) {
     throw new BusinessError(
       GROUP_ERROR_CODES.INVALID_NAME,
-      'Назва групи має містити від 1 до 100 символів',
+      "Назва групи має містити від 1 до 100 символів",
     );
   }
   if (
@@ -20,7 +24,7 @@ export function buildGroupDraft({ name, ageCategory, capacity }) {
   ) {
     throw new BusinessError(
       GROUP_ERROR_CODES.INVALID_AGE_CATEGORY,
-      'Вікова категорія має бути цілим числом від 2 до 5',
+      "Вікова категорія має бути цілим числом від 2 до 5",
     );
   }
   if (
@@ -30,10 +34,15 @@ export function buildGroupDraft({ name, ageCategory, capacity }) {
   ) {
     throw new BusinessError(
       GROUP_ERROR_CODES.INVALID_CAPACITY,
-      'У групі може бути від 1 до 20 місць',
+      "У групі може бути від 1 до 20 місць",
     );
   }
-  return { name: normalizedName, ageCategory, capacity, status: GROUP_STATUS.DRAFT };
+  return {
+    name: normalizedName,
+    ageCategory,
+    capacity,
+    status: GROUP_STATUS.DRAFT,
+  };
 }
 
 // DI: service отримує репозиторій і не імпортує модель Mongoose.
@@ -46,13 +55,30 @@ export class GroupService {
     return this.groupRepository.insert(buildGroupDraft(input));
   }
 
-  async listGroups() {
-    return this.groupRepository.findAll();
+  async listGroups({ page, pageSize }) {
+    const { groups, total } = await this.groupRepository.findAll({
+      page,
+      pageSize,
+    });
+
+    return {
+      groups,
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    };
   }
 
   async getGroup(groupId) {
     const group = await this.groupRepository.findById(groupId);
-    if (!group) throw new ResourceNotFoundError(GROUP_ERROR_CODES.NOT_FOUND, 'Групу не знайдено');
+    if (!group)
+      throw new ResourceNotFoundError(
+        GROUP_ERROR_CODES.NOT_FOUND,
+        "Групу не знайдено",
+      );
     return group;
   }
 
