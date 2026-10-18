@@ -1,0 +1,36 @@
+name: CI
+
+# Перевіряємо PR та зміни в основних гілках.
+on:
+  pull_request:
+    branches: [ develop, main ]
+  push:
+    branches: [ develop, main ]
+
+# Для перевірок достатньо читання репозиторію.
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Code checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Отримати код
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Налаштувати Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Встановити залежності
+        run: npm ci
+
+      - name: Перевірити форматування, синтаксис і тести
+        run: npm run check
