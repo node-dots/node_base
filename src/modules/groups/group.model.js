@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import { GROUP_STATUS, GROUP_LIMITS } from './group.constants.js';
+import mongoose from "mongoose";
+import { GROUP_STATUS, GROUP_LIMITS } from "./group.constants.js";
 
 const groupSchema = new mongoose.Schema(
   {
@@ -15,7 +15,10 @@ const groupSchema = new mongoose.Schema(
       required: true,
       min: GROUP_LIMITS.MIN_AGE_CATEGORY,
       max: GROUP_LIMITS.MAX_AGE_CATEGORY,
-      validate: { validator: Number.isInteger, message: 'Вікова категорія має бути цілим числом' },
+      validate: {
+        validator: Number.isInteger,
+        message: "Вікова категорія має бути цілим числом",
+      },
     },
     capacity: {
       type: Number,
@@ -24,7 +27,7 @@ const groupSchema = new mongoose.Schema(
       max: GROUP_LIMITS.MAX_CAPACITY,
       validate: {
         validator: Number.isInteger,
-        message: 'Місткість має бути цілим числом',
+        message: "Місткість має бути цілим числом",
       },
     },
     status: {
@@ -34,9 +37,9 @@ const groupSchema = new mongoose.Schema(
     },
   },
   {
-    collection: 'groups',
-    strict: 'throw',
+    collection: "groups",
+    strict: "throw",
     bufferCommands: false,
   },
 );
-export const GroupModel = mongoose.model('Group', groupSchema);
+export const GroupModel = mongoose.model("Group", groupSchema);

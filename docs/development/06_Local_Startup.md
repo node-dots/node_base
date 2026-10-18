@@ -6,7 +6,7 @@
 
 Кожен учасник має власну локальну MongoDB та окремі дані. Seed додає 8 вигаданих груп у базу `kindergarten_dev`, колекцію `groups`.
 
-**Backend використовує MongoDB.** PhpStorm і Swagger/API читають одну kindergarten_dev.groups. Створені через API записи зберігаються після перезапуску Node.js. GET /api/v1/groups/summary показує aggregation-звіт за віком.
+**Backend використовує MongoDB.** PhpStorm і Swagger/API читають одну kindergarten_dev.groups. Створені через API записи зберігаються після перезапуску Node.js. GET /api/v1/groups/summary показує aggregation-звіт за віком. Список GET /api/v1/groups підтримує page/pageSize: [контракт та приклади](../api/groups-pagination.md).
 
 ## Що встановити
 

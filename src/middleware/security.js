@@ -1,11 +1,18 @@
-import helmet from 'helmet';
-import { rateLimit } from 'express-rate-limit';
-import { AppError } from '../utils/errors.js';
-import { HTTP_STATUS, HTTP_ERROR_CODES } from '../utils/httpConstants.js';
-import { WRITE_METHODS, RATE_LIMIT_OPTIONS } from './securityConstants.js';
+import helmet from "helmet";
+import { rateLimit } from "express-rate-limit";
+import { AppError } from "../utils/errors.js";
+import { HTTP_STATUS, HTTP_ERROR_CODES } from "../utils/httpConstants.js";
+import { WRITE_METHODS, RATE_LIMIT_OPTIONS } from "./securityConstants.js";
 
 // Кожен екземпляр застосунку отримує власні лічильники в пам’яті.
-function createLimiter({ windowMs, limit, identifier, requestPropertyName, errorCode, message }) {
+function createLimiter({
+  windowMs,
+  limit,
+  identifier,
+  requestPropertyName,
+  errorCode,
+  message,
+}) {
   return rateLimit({
     windowMs,
     limit,
@@ -32,7 +39,8 @@ export function createSecurityMiddleware(config) {
     identifier: RATE_LIMIT_OPTIONS.API_IDENTIFIER,
     requestPropertyName: RATE_LIMIT_OPTIONS.API_REQUEST_PROPERTY,
     errorCode: HTTP_ERROR_CODES.RATE_LIMIT_EXCEEDED,
-    message: 'Забагато запитів. Повторіть спробу після зазначеного часу очікування',
+    message:
+      "Забагато запитів. Повторіть спробу після зазначеного часу очікування",
   });
 
   const writeRateLimiter = createLimiter({
@@ -41,7 +49,7 @@ export function createSecurityMiddleware(config) {
     identifier: RATE_LIMIT_OPTIONS.WRITE_IDENTIFIER,
     requestPropertyName: RATE_LIMIT_OPTIONS.WRITE_REQUEST_PROPERTY,
     errorCode: HTTP_ERROR_CODES.WRITE_RATE_LIMIT_EXCEEDED,
-    message: 'Перевищено ліміт операцій запису. Спробуйте пізніше',
+    message: "Перевищено ліміт операцій запису. Спробуйте пізніше",
   });
 
   return {

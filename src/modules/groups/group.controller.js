@@ -1,5 +1,5 @@
-import { HTTP_STATUS } from '../../utils/httpConstants.js';
-import { toGroupDto, toAgeSummaryDto } from './group.dto.js';
+import { HTTP_STATUS } from "../../utils/httpConstants.js";
+import { toGroupDto, toAgeSummaryDto } from "./group.dto.js";
 
 export class GroupController {
   constructor({ groupService }) {
@@ -7,8 +7,14 @@ export class GroupController {
   }
 
   async list(request, response) {
-    const groups = await this.groupService.listGroups();
-    response.json({ data: groups.map(toGroupDto), meta: { total: groups.length } });
+    const { groups, pagination } = await this.groupService.listGroups(
+      request.validatedQuery,
+    );
+
+    response.json({
+      data: groups.map(toGroupDto),
+      meta: pagination,
+    });
   }
 
   async get(request, response) {

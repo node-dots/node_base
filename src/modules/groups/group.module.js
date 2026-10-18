@@ -1,6 +1,6 @@
-import { GroupService } from './group.service.js';
-import { GroupController } from './group.controller.js';
-import { createGroupRoutes } from './group.routes.js';
+import { GroupService } from "./group.service.js";
+import { GroupController } from "./group.controller.js";
+import { createGroupRoutes } from "./group.routes.js";
 
 // Місце складання DI: залежності передаємо через конструктори.
 export class GroupModule {

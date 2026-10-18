@@ -1,13 +1,13 @@
-import { randomUUID } from 'node:crypto';
-import { getSafeRequestPath } from './tracing.js';
+import { randomUUID } from "node:crypto";
+import { getSafeRequestPath } from "./tracing.js";
 
 // Ідентифікатор і технічний журнал спільні для всіх HTTP-запитів.
 export function requestContext(request, response, next) {
   request.requestId = randomUUID();
-  response.setHeader('X-Request-Id', request.requestId);
+  response.setHeader("X-Request-Id", request.requestId);
   const started = performance.now();
 
-  response.once('finish', () => {
+  response.once("finish", () => {
     console.log(
       JSON.stringify({
         requestId: request.requestId,

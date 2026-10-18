@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 // Технічні поля MongoDB не виходять за межі репозиторію.
 function toGroup(document) {
@@ -16,9 +16,17 @@ export class GroupRepository {
     this.groupModel = groupModel;
   }
 
-  async findAll() {
-    const documents = await this.groupModel.find().sort({ _id: 1 }).lean();
-    return documents.map(toGroup);
+  async findAll({ page, pageSize }) {
+    const skip = (page - 1) * pageSize;
+
+    const [documents, total] = await Promise.all([
+      this.groupModel.find().sort({ _id: 1 }).skip(skip).limit(pageSize).lean(),
+      this.groupModel.countDocuments(),
+    ]);
+    return {
+      groups: documents.map(toGroup),
+      total,
+    };
   }
 
   async findById(groupId) {
@@ -37,12 +45,19 @@ export class GroupRepository {
     return this.groupModel.aggregate([
       {
         $group: {
-          _id: '$ageCategory',
+          _id: "$ageCategory",
           groupsCount: { $sum: 1 },
-          totalCapacity: { $sum: '$capacity' },
+          totalCapacity: { $sum: "$capacity" },
         },
       },
-      { $project: { _id: 0, ageCategory: '$_id', groupsCount: 1, totalCapacity: 1 } },
+      {
+        $project: {
+          _id: 0,
+          ageCategory: "$_id",
+          groupsCount: 1,
+          totalCapacity: 1,
+        },
+      },
       { $sort: { ageCategory: 1 } },
     ]);
   }

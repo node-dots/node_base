@@ -16,6 +16,8 @@
 - [Карта сутностей майбутньої системи](docs/architecture/04_Entity_Diagrams.md).
 - [Стан реалізації та наступні кроки](docs/planning/plans/Implementation_Plan.md).
 
+[Пагінація груп: контракт і приклади](docs/api/groups-pagination.md).
+
 [Зміст документації](docs/README.md) · [Плани та задачі](docs/planning/README.md).
 
 ## Що працює
@@ -25,14 +27,14 @@
 | GET /health/live | Стан процесу |
 | GET /health/ready | Перевірка з’єднання й ping MongoDB: 200 READY або 503 NOT_READY |
 | GET /api/v1 | Назва, версія та посилання на Swagger/OpenAPI |
-| GET /api/v1/groups | Список груп із MongoDB, meta.total |
+| GET /api/v1/groups | Сторінка груп із MongoDB; page/pageSize та meta.page/pageSize/total/totalPages |
 | GET /api/v1/groups/:id | Група зі строковим id |
 | POST /api/v1/groups | Створення DRAFT-групи та HTTP 201 |
 | GET /api/v1/groups/summary | Aggregation: кількість груп і місткість за віком |
 | GET /api/v1/openapi.json | Поточний OpenAPI-контракт |
 | GET /api-docs/ | Локальний Swagger UI |
 
-Записи зберігаються після перезапуску Node.js. Seed додає 8 вигаданих груп і зберігає ручні зміни. API використовує ту саму kindergarten_dev.groups, яку видно в PhpStorm. Пагінація, авторизація та інші бізнес-модулі ще не реалізовані.
+Записи зберігаються після перезапуску Node.js. Seed додає 8 вигаданих груп і зберігає ручні зміни. API використовує ту саму kindergarten_dev.groups, яку видно в PhpStorm. Пагінацію списку груп реалізовано: page=1 і pageSize=20 за замовчуванням, максимальний pageSize=100. Некоректні параметри повертають 400; сторінка за межами списку — порожній data. Авторизація та інші бізнес-модулі ще не реалізовані.
 
 Helmet, загальний rate limit, окремий ліміт запису, обмеження JSON, HTTP-тайм-аути та безпечні помилки збережені. Tracing показує один HTTP-span на запит і дозволяє dev-перегляд JSON запиту/відповіді з маскуванням секретних полів. У бізнес-модулях немає tracing-коду.
 

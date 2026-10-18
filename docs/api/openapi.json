@@ -405,13 +405,29 @@
           "meta": {
             "type": "object",
             "properties": {
+              "page": {
+                "type": "integer",
+                "minimum": 1
+              },
+              "pageSize": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              },
               "total": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "totalPages": {
                 "type": "integer",
                 "minimum": 0
               }
             },
             "required": [
-              "total"
+              "page",
+              "pageSize",
+              "total",
+              "totalPages"
             ],
             "additionalProperties": false
           }
@@ -421,7 +437,7 @@
           "meta"
         ],
         "additionalProperties": false,
-        "description": "Без пагінації на цьому етапі. Дані зберігаються в MongoDB."
+        "description": "Сторінка груп із MongoDB та загальна кількість записів."
       },
       "AgeSummary": {
         "type": "object",
@@ -666,11 +682,38 @@
         "tags": [
           "Групи"
         ],
-        "summary": "Переглянути всі демонстраційні групи",
-        "description": "Пагінація й фільтри ще не реалізовані.",
+        "summary": "Переглянути сторінку груп",
+        "description": "Повертає групи зі стабільним сортуванням за ID. За межами списку data порожній.",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1,
+              "description": "Номер сторінки, починаючи з 1."
+            },
+            "required": false,
+            "description": "Номер сторінки, починаючи з 1.",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "description": "Максимальна кількість груп на сторінці."
+            },
+            "required": false,
+            "description": "Максимальна кількість груп на сторінці.",
+            "name": "pageSize",
+            "in": "query"
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Список груп і meta.total.",
+            "description": "Сторінка груп і метадані пагінації.",
             "headers": {
               "X-Request-Id": {
                 "description": "Ідентифікатор запиту для пошуку в логах.",
@@ -687,6 +730,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
           },
           "429": {
             "$ref": "#/components/responses/TooManyRequests"

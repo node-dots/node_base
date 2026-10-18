@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import { z as zod } from 'zod';
+import mongoose from "mongoose";
+import { z as zod } from "zod";
 
 export function readDatabaseConfig(environment = process.env) {
   const result = zod
@@ -10,14 +10,15 @@ export function readDatabaseConfig(environment = process.env) {
         .regex(/^mongodb(?:\+srv)?:\/\//),
     })
     .safeParse(environment);
-  if (!result.success) throw new Error('MONGO_URI має бути адресою підключення MongoDB');
+  if (!result.success)
+    throw new Error("MONGO_URI має бути адресою підключення MongoDB");
   return result.data;
 }
 
 // Відкриває спільне з’єднання застосунку з MongoDB.
 export async function connectMongo(uri) {
   if (!uri) {
-    throw new Error('Не задано MONGO_URI');
+    throw new Error("Не задано MONGO_URI");
   }
 
   await mongoose.connect(uri, {
@@ -39,7 +40,10 @@ export async function isMongoReady(connection = mongoose.connection) {
   }
 
   try {
-    const result = await connection.db.command({ ping: 1 }, { timeoutMS: 2000 });
+    const result = await connection.db.command(
+      { ping: 1 },
+      { timeoutMS: 2000 },
+    );
 
     return result.ok === 1;
   } catch {
