@@ -36,6 +36,7 @@
 
 - [Запуск Windows/macOS та MongoDB](development/06_Local_Startup.md).
 - [Шпаргалка команд](development/07_Commands_Cheatsheet.md).
+- [GitHub Actions та перевірки PR](development/08_GitHub_Actions.md).
 - [Tracing у Jaeger](development/05_Local_Telemetry.md).
 - [Генерація Swagger](development/11_OpenAPI_Generation.md).
 - [Технічний контекст та журнал співпраці](development/PROJECT_CONTEXT.md).

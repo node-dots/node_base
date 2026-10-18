@@ -18,6 +18,8 @@
 
 [Пагінація груп: контракт і приклади](docs/api/groups-pagination.md).
 
+[GitHub Actions: запуск і налаштування обов’язкових перевірок](docs/development/08_GitHub_Actions.md).
+
 [Зміст документації](docs/README.md) · [Плани та задачі](docs/planning/README.md).
 
 ## Що працює
