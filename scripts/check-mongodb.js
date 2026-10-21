@@ -3,7 +3,11 @@ import { spawnSync } from "node:child_process";
 // Однаково працює в PowerShell і macOS: без shell-запису змінних оточення.
 const result = spawnSync(
   process.execPath,
-  ["--test", "tests/integration/groups.mongodb.test.js"],
+  [
+    "--test",
+    "tests/integration/groups.mongodb.test.js",
+    "tests/integration/people.mongodb.test.js",
+  ],
   {
     stdio: "inherit",
     env: { ...process.env, RUN_MONGO_TESTS: "true" },
