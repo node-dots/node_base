@@ -7,6 +7,7 @@ const result = spawnSync(
     "--test",
     "tests/integration/groups.mongodb.test.js",
     "tests/integration/people.mongodb.test.js",
+    "tests/integration/readiness.mongodb.test.js",
   ],
   {
     stdio: "inherit",
