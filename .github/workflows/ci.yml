@@ -3,9 +3,9 @@ name: CI
 # Перевіряємо PR та зміни в основних гілках.
 on:
   pull_request:
-    branches: [ develop, main ]
+    branches: [develop, main]
   push:
-    branches: [ develop, main ]
+    branches: [develop, main]
 
 # Для перевірок достатньо читання репозиторію.
 permissions:
@@ -34,3 +34,44 @@ jobs:
 
       - name: Перевірити форматування, синтаксис і тести
         run: npm run check
+
+  mongodb-integration:
+    name: MongoDB integration
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Отримати код
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Налаштувати Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Встановити залежності
+        run: npm ci
+
+      - name: Запустити MongoDB replica set
+        run: |
+          docker run --detach \
+            --name task-mongodb \
+            --publish 127.0.0.1:27017:27017 \
+            mongo:8.0 \
+            mongod --replSet rs0 --bind_ip_all
+
+          timeout 60 bash -c 'until docker exec task-mongodb mongosh --quiet --eval "db.adminCommand({ ping: 1 }).ok" | grep -qx 1; do sleep 2; done'
+          docker exec task-mongodb mongosh --quiet --eval 'rs.initiate({ _id: "rs0", members: [{ _id: 0, host: "127.0.0.1:27017" }] })'
+          timeout 60 bash -c 'until docker exec task-mongodb mongosh --quiet --eval "rs.status().myState" | grep -qx 1; do sleep 2; done'
+
+      - name: Виконати MongoDB integration tests
+        env:
+          MONGO_URI: mongodb://127.0.0.1:27017/kindergarten_ci_${{ github.run_id }}_${{ github.run_attempt }}?replicaSet=rs0&directConnection=true
+        run: npm run test:mongodb
+
+      - name: Показати журнал MongoDB після помилки
+        if: failure()
+        run: docker logs task-mongodb
