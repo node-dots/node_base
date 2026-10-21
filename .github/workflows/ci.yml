@@ -60,7 +60,7 @@ jobs:
           docker run --detach \
             --name task-mongodb \
             --publish 127.0.0.1:27017:27017 \
-            mongo:8.0 \
+            mongo:8.2.12 \
             mongod --replSet rs0 --bind_ip_all
 
           timeout 60 bash -c 'until docker exec task-mongodb mongosh --quiet --eval "db.adminCommand({ ping: 1 }).ok" | grep -qx 1; do sleep 2; done'
