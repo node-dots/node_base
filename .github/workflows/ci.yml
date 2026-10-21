@@ -68,8 +68,6 @@ jobs:
           timeout 60 bash -c 'until docker exec task-mongodb mongosh --quiet --eval "rs.status().myState" | grep -qx 1; do sleep 2; done'
 
       - name: Виконати MongoDB integration tests
-        env:
-          MONGO_URI: mongodb://127.0.0.1:27017/kindergarten_ci_${{ github.run_id }}_${{ github.run_attempt }}?replicaSet=rs0&directConnection=true
         run: npm run test:mongodb
 
       - name: Показати журнал MongoDB після помилки
