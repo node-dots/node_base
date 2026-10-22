@@ -72,6 +72,10 @@
 - [Інструкція панелі](tools/developer-panel/README.md).
 - [Демопанель](tools/developer-panel/index.html).
 
+### Фінансові контракти — `finance/`
+
+- [Контракт фінансових показників і контрольна арифметика](finance/financial-metrics-contract.md).
+
 ## Правила підтримки
 
 Змінюємо бізнес-правило в requirements, пов’язані задачі — у planning/tasks, строки — у planning/gantt. Інструкції запуску й API-генерації оновлюємо в development. Стабільні anchors req-*, task-* та gantt-task-* зберігаємо. Посилання на картку не означає, що функція реалізована.
