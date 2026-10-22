@@ -9,3 +9,20 @@ export function toPersonDto(person) {
     status: person.status,
   };
 }
+
+// Дозволений працівницький перегляд: без зарплати та секретів account.
+export function toEmployeePersonDto(person) {
+  const dto = toPersonDto(person);
+
+  if (!person.employee) {
+    return dto;
+  }
+
+  return {
+    ...dto,
+    employee: {
+      positionCode: person.employee.positionCode,
+      status: person.employee.status,
+    },
+  };
+}

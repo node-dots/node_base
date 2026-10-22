@@ -4,11 +4,32 @@ export const PERSON_STATUS = Object.freeze({
   INACTIVE: "INACTIVE",
 });
 
+// Ролі доступу з узгодженого контракту. Посада працівника зберігається окремо.
+export const ACCOUNT_ROLE = Object.freeze({
+  ADMIN: "ADMIN",
+  MANAGER: "MANAGER",
+  PARENT: "PARENT",
+  TEACHER: "TEACHER",
+  EDUCATOR: "EDUCATOR",
+  ASSISTANT: "ASSISTANT",
+});
+
+// Базові стани працівника; детальні кадрові переходи належать TASK-014.
+export const EMPLOYEE_STATUS = Object.freeze({
+  ACTIVE: "ACTIVE",
+  ON_LEAVE: "ON_LEAVE",
+  SICK_LEAVE: "SICK_LEAVE",
+  TERMINATED: "TERMINATED",
+});
+
 // Обмеження базових полів людини.
 export const PERSON_LIMITS = Object.freeze({
   MIN_NAME_LENGTH: 1,
   MAX_NAME_LENGTH: 100,
   MAX_PHONE_LENGTH: 32,
+  MAX_EMAIL_LENGTH: 254,
+  MAX_PASSWORD_HASH_LENGTH: 255,
+  MAX_POSITION_CODE_LENGTH: 64,
 });
 
 // Коди помилок модуля людей.
