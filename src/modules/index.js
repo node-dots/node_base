@@ -12,6 +12,10 @@ import { CatalogModel } from "./catalog/catalog.model.js";
 import { CatalogRepository } from "./catalog/catalog.repository.js";
 import { FinancialCatalogService } from "./catalog/financialCatalog.service.js";
 import { createFinancialCatalogRoutes } from "./catalog/financialCatalog.routes.js";
+import { InvoiceModel } from "./invoices/invoice.model.js";
+import { InvoiceRepository } from "./invoices/invoice.repository.js";
+import { InvoiceService } from "./invoices/invoice.service.js";
+import { createInvoiceRoutes } from "./invoices/invoice.routes.js";
 import { AccountRolesService } from "./people/accountRoles.service.js";
 import { createAccountRolesRoutes } from "./people/accountRoles.routes.js";
 import { EmployeeService } from "./people/employee.service.js";
@@ -50,6 +54,24 @@ export function createApiRouter({
         authService: authModule.authService,
       }),
     );
+    if (authModule.unitOfWork) {
+      const invoiceService = new InvoiceService({
+        invoiceRepository: new InvoiceRepository({
+          invoiceModel: InvoiceModel,
+        }),
+        childRepository: guardianGroupsReader,
+        catalogRepository: settingsRepository,
+        authorizer,
+        unitOfWork: authModule.unitOfWork,
+      });
+      router.use(
+        "/invoices",
+        createInvoiceRoutes({
+          service: invoiceService,
+          authService: authModule.authService,
+        }),
+      );
+    }
     if (authModule.personRepository && authModule.unitOfWork) {
       const childService = new ChildService({
         childRepository: guardianGroupsReader,
