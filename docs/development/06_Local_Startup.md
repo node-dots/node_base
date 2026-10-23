@@ -191,6 +191,31 @@ npm run infra:down
 
 Дані MongoDB залишаються в іменованому volume `mongodb_data`; звичайний `down` його не видаляє. Трейси Jaeger зберігаються в пам’яті й після зупинки втрачаються. Не додавайте `--volumes` / `-v` до `down`, якщо хочете зберегти базу. [Поведінка Docker Compose down](https://docs.docker.com/reference/cli/docker/compose/down/).
 
+## Налаштування автентифікації та першого ADMIN
+
+Скопіюйте `.env.example` у локальний `.env`, створіть випадковий `JWT_SECRET` щонайменше з 32 байтів і задайте `JWT_ISSUER` та `JWT_AUDIENCE`. Не використовуйте приклад чи пароль за замовчуванням; `.env` не додається до Git.
+
+PowerShell може створити секрет і покласти його в clipboard, не виводячи значення в термінал:
+
+```powershell
+$rng = [Security.Cryptography.RandomNumberGenerator]::Create()
+$bytes = New-Object byte[] 32
+$rng.GetBytes($bytes)
+[Convert]::ToBase64String($bytes) | Set-Clipboard
+$rng.Dispose()
+Remove-Variable bytes
+```
+
+Вставте значення в `JWT_SECRET` локального `.env`. Для початкового облікового запису задайте `BOOTSTRAP_ADMIN_EMAIL`, `BOOTSTRAP_ADMIN_PASSWORD`, `BOOTSTRAP_ADMIN_FIRST_NAME` та `BOOTSTRAP_ADMIN_LAST_NAME`, а тоді запустіть:
+
+```bash
+npm run bootstrap:admin
+```
+
+Команда створює активний ADMIN лише за відсутності такого облікового запису. Повторний запуск не змінює наявний пароль. Публічної реєстрації немає; пароль не друкується командою чи логами.
+
+Після bootstrap сервер потребує валідних JWT-параметрів і доступної MongoDB replica set. Login обмежено 10 запитами з IP за 15 хвилин. Access JWT діє 30 хвилин; зміна пароля та `logout-all` відкликають попередні токени.
+
 ## Налаштування підключення backend
 
 Mongoose 9.11.1 встановлено. config/database.js перевіряє MONGO_URI, відкриває та закриває з’єднання; server.js чекає базу перед запуском HTTP. У .env та .env.example є адреса:

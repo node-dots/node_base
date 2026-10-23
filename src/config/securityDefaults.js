@@ -3,6 +3,8 @@ export const SECURITY_DEFAULTS = Object.freeze({
   RATE_LIMIT_WINDOW_MS: 60_000, // Вікно підрахунку запитів: одна хвилина.
   RATE_LIMIT_REQUESTS: 300, // Загальна кількість запитів з однієї IP-адреси.
   WRITE_RATE_LIMIT_REQUESTS: 30, // Операції запису з однієї IP-адреси за хвилину.
+  LOGIN_RATE_LIMIT_WINDOW_MS: 15 * 60_000, // Вікно окремого обмеження входу.
+  LOGIN_RATE_LIMIT_REQUESTS: 10, // Спроби входу з однієї IP-адреси.
   JSON_BODY_LIMIT_BYTES: 32 * 1024, // Максимальне тіло JSON: 32 КБ.
   HEADERS_TIMEOUT_MS: 10_000, // Час отримання заголовків.
   REQUEST_TIMEOUT_MS: 30_000, // Час отримання всього запиту.
