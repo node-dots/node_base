@@ -52,6 +52,15 @@ export function createSecurityMiddleware(config) {
     message: "Перевищено ліміт операцій запису. Спробуйте пізніше",
   });
 
+  const loginRateLimiter = createLimiter({
+    windowMs: config.LOGIN_RATE_LIMIT_WINDOW_MS,
+    limit: config.LOGIN_RATE_LIMIT_REQUESTS,
+    identifier: "login",
+    requestPropertyName: "loginRateLimit",
+    errorCode: "LOGIN_RATE_LIMIT_EXCEEDED",
+    message: "Забагато спроб входу. Повторіть спробу після зазначеного часу",
+  });
+
   return {
     headers: helmet({
       // Локальна розробка використовує HTTP, тому не примушуємо браузер до HTTPS.
@@ -59,6 +68,7 @@ export function createSecurityMiddleware(config) {
       contentSecurityPolicy: { directives: { upgradeInsecureRequests: null } },
     }),
     apiRateLimiter,
+    loginRateLimiter,
     limitWrites(request, response, next) {
       if (WRITE_METHODS.includes(request.method)) {
         return writeRateLimiter(request, response, next);

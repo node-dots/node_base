@@ -68,4 +68,52 @@ export class PersonRepository {
 
     return document ? toPerson(document) : null;
   }
+
+  async findAccountByEmail(email, { session } = {}) {
+    let query = this.personModel.findOne({ "account.email": email });
+    if (session) query = query.session(session);
+    const document = await query.lean();
+    return document ? toPerson(document) : null;
+  }
+
+  async findAccountById(personId, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(personId)) return null;
+
+    let query = this.personModel.findOne({
+      _id: personId,
+      "account.email": { $type: "string" },
+    });
+    if (session) query = query.session(session);
+    const document = await query.lean();
+    return document ? toPerson(document) : null;
+  }
+
+  async findFirstEnabledAdmin() {
+    const document = await this.personModel
+      .findOne({ "account.roles": "ADMIN", "account.enabled": true })
+      .lean();
+    return document ? toPerson(document) : null;
+  }
+
+  async advanceAccountTokenVersion(
+    { personId, expectedTokenVersion, passwordHash },
+    { session } = {},
+  ) {
+    let query = this.personModel.findOneAndUpdate(
+      {
+        _id: personId,
+        "account.enabled": true,
+        "account.tokenVersion": expectedTokenVersion,
+      },
+      {
+        $inc: { "account.tokenVersion": 1 },
+        ...(passwordHash
+          ? { $set: { "account.passwordHash": passwordHash } }
+          : {}),
+      },
+      { new: true, runValidators: true, session },
+    );
+    const document = await query.lean();
+    return document ? toPerson(document) : null;
+  }
 }

@@ -10,10 +10,11 @@ export function createTestApp(options = {}) {
       buildGroupDraft({ name: "Сонечка", ageCategory: 2, capacity: 20 }),
       buildGroupDraft({ name: "Зірочки", ageCategory: 3, capacity: 20 }),
     ]),
+    authModule,
     ...appOptions
   } = options;
   return createApp({
-    apiRouter: createApiRouter({ groupRepository }),
+    apiRouter: createApiRouter({ groupRepository, authModule }),
     ...appOptions,
   });
 }
