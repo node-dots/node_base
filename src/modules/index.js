@@ -9,6 +9,8 @@ import { CatalogRepository } from "./catalog/catalog.repository.js";
 import { AccountRolesService } from "./people/accountRoles.service.js";
 import { createAccountRolesRoutes } from "./people/accountRoles.routes.js";
 import { authorizer } from "./people/access/authorizer.js";
+import { EmployeeService } from "./people/employee.service.js";
+import { createEmployeeRoutes } from "./people/employee.routes.js";
 
 // Єдине місце реєстрації бізнес-модулів і складання їхніх залежностей.
 export function createApiRouter({
@@ -28,6 +30,20 @@ export function createApiRouter({
   if (authModule) {
     router.use("/auth", authModule.router ?? authModule);
     if (authModule.personRepository && authModule.unitOfWork) {
+      const employeeService = new EmployeeService({
+        personRepository: authModule.personRepository,
+        catalogRepository: settingsRepository,
+        groupRepository,
+        unitOfWork: authModule.unitOfWork,
+        authorizer,
+      });
+      router.use(
+        "/people",
+        createEmployeeRoutes({
+          employeeService,
+          authService: authModule.authService,
+        }),
+      );
       const accountRolesService = new AccountRolesService({
         authorizer,
         personRepository: authModule.personRepository,

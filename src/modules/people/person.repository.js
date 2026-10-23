@@ -26,6 +26,16 @@ function toEmployee(employee) {
   };
   if (employee.subjectCode !== undefined)
     result.subjectCode = employee.subjectCode;
+  if (employee.startedAt !== undefined) result.startedAt = employee.startedAt;
+  if (employee.endedAt !== undefined) result.endedAt = employee.endedAt;
+  result.availability = Array.from(
+    employee.availability ?? [],
+    ({ weekday, startTime, endTime }) => ({
+      weekday,
+      startTime,
+      endTime,
+    }),
+  );
   return result;
 }
 
@@ -69,6 +79,18 @@ export class PersonRepository {
 
     const document = await this.personModel.findById(personId).lean();
 
+    return document ? toPerson(document) : null;
+  }
+
+  async updateEmployee(personId, employee, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(personId)) return null;
+    const document = await this.personModel
+      .findByIdAndUpdate(
+        personId,
+        { $set: { employee } },
+        { new: true, runValidators: true, session },
+      )
+      .lean();
     return document ? toPerson(document) : null;
   }
 

@@ -7,6 +7,7 @@ import { registerCommonDocumentation } from "./common.js";
 import { registerGroupDocumentation } from "../modules/groups/group.openapi.js";
 import { registerAuthDocumentation } from "../modules/auth/auth.openapi.js";
 import { registerAccountRolesDocumentation } from "../modules/people/accountRoles.openapi.js";
+import { registerEmployeeDocumentation } from "../modules/people/employee.openapi.js";
 
 export function createOpenApiDocument() {
   const registry = new OpenAPIRegistry();
@@ -15,6 +16,7 @@ export function createOpenApiDocument() {
   registerGroupDocumentation(registry);
   registerAuthDocumentation(registry);
   registerAccountRolesDocumentation(registry);
+  registerEmployeeDocumentation(registry);
 
   return new OpenApiGeneratorV31(registry.definitions).generateDocument({
     openapi: "3.1.0",
