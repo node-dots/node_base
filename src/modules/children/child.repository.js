@@ -61,8 +61,8 @@ export class ChildRepository {
     this.childModel = childModel;
   }
 
-  async insertApplicant(applicant) {
-    const document = await this.childModel.create(applicant);
+  async insertApplicant(applicant, { session } = {}) {
+    const [document] = await this.childModel.create([applicant], { session });
     return toChild(document.toObject());
   }
 
@@ -128,7 +128,7 @@ export class ChildRepository {
     return this.findActiveGroupIdsForGuardian(personId);
   }
 
-  async updateProfileById(childId, profileUpdate) {
+  async updateProfileById(childId, profileUpdate, { session } = {}) {
     if (!mongoose.isObjectIdOrHexString(childId)) return null;
     const fields = Object.keys(profileUpdate);
     if (
@@ -140,7 +140,34 @@ export class ChildRepository {
     const document = await this.childModel.findByIdAndUpdate(
       childId,
       { $set: profileUpdate },
-      { returnDocument: "after", runValidators: true },
+      { returnDocument: "after", runValidators: true, session },
+    );
+    return document ? toChild(document.toObject()) : null;
+  }
+
+  async updateProfileByIdInScope(
+    childId,
+    profileUpdate,
+    scope,
+    { session } = {},
+  ) {
+    if (!mongoose.isObjectIdOrHexString(childId)) return null;
+    const fields = Object.keys(profileUpdate);
+    if (
+      fields.length === 0 ||
+      fields.some((field) => !PROFILE_FIELDS.has(field))
+    ) {
+      throw new TypeError("Only child profile fields can be updated here");
+    }
+    const document = await this.childModel.findOneAndUpdate(
+      {
+        $and: [
+          { _id: new mongoose.Types.ObjectId(childId) },
+          childScopeFilter(scope),
+        ],
+      },
+      { $set: profileUpdate },
+      { returnDocument: "after", runValidators: true, session },
     );
     return document ? toChild(document.toObject()) : null;
   }
