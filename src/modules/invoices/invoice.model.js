@@ -73,6 +73,13 @@ const invoiceSchema = new mongoose.Schema(
       required: true,
       validate: (items) => items.length === 1,
     },
+    paidAmountCents: {
+      type: Number,
+      required: true,
+      min: 0,
+      default: 0,
+      validate: Number.isSafeInteger,
+    },
   },
   {
     collection: "invoices",

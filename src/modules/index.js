@@ -16,6 +16,10 @@ import { InvoiceModel } from "./invoices/invoice.model.js";
 import { InvoiceRepository } from "./invoices/invoice.repository.js";
 import { InvoiceService } from "./invoices/invoice.service.js";
 import { createInvoiceRoutes } from "./invoices/invoice.routes.js";
+import { PaymentModel } from "./payments/payment.model.js";
+import { PaymentRepository } from "./payments/payment.repository.js";
+import { PaymentService } from "./payments/payment.service.js";
+import { createPaymentRoutes } from "./payments/payment.routes.js";
 import { AccountRolesService } from "./people/accountRoles.service.js";
 import { createAccountRolesRoutes } from "./people/accountRoles.routes.js";
 import { EmployeeService } from "./people/employee.service.js";
@@ -68,6 +72,24 @@ export function createApiRouter({
         "/invoices",
         createInvoiceRoutes({
           service: invoiceService,
+          authService: authModule.authService,
+        }),
+      );
+      const paymentService = new PaymentService({
+        paymentRepository: new PaymentRepository({
+          paymentModel: PaymentModel,
+        }),
+        invoiceRepository: new InvoiceRepository({
+          invoiceModel: InvoiceModel,
+        }),
+        childRepository: guardianGroupsReader,
+        authorizer,
+        unitOfWork: authModule.unitOfWork,
+      });
+      router.use(
+        "/payments",
+        createPaymentRoutes({
+          service: paymentService,
           authService: authModule.authService,
         }),
       );

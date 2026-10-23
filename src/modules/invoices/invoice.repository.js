@@ -9,6 +9,7 @@ function toInvoice(document) {
     status: document.status,
     origAmountCents: document.origAmountCents,
     remainingAmountCents: document.remainingAmountCents,
+    paidAmountCents: document.paidAmountCents ?? 0,
     tariffSnapshot: structuredClone(document.tariffSnapshot),
     ...(document.benefitSnapshot
       ? { benefitSnapshot: structuredClone(document.benefitSnapshot) }
@@ -32,6 +33,14 @@ export class InvoiceRepository {
   async findByUnique({ childId, service, serviceMonth }, { session } = {}) {
     if (!mongoose.isObjectIdOrHexString(childId)) return null;
     let query = this.invoiceModel.findOne({ childId, service, serviceMonth });
+    if (session) query = query.session(session);
+    const document = await query.lean();
+    return document ? toInvoice(document) : null;
+  }
+
+  async findById(invoiceId, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(invoiceId)) return null;
+    let query = this.invoiceModel.findById(invoiceId);
     if (session) query = query.session(session);
     const document = await query.lean();
     return document ? toInvoice(document) : null;
