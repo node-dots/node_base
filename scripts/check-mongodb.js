@@ -7,6 +7,7 @@ const result = spawnSync(
     "--test",
     "tests/integration/children.mongodb.test.js",
     "tests/integration/groups.mongodb.test.js",
+    "tests/integration/groups.resources.mongodb.test.js",
     "tests/integration/people.mongodb.test.js",
     "tests/integration/audit.mongodb.test.js",
     "tests/integration/auth.mongodb.test.js",

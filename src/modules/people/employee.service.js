@@ -140,26 +140,27 @@ export class EmployeeService {
       });
     }
     await this.assertReferences(next);
-    if (
-      next.status === EMPLOYEE_STATUS.TERMINATED &&
-      before.employee?.status !== EMPLOYEE_STATUS.TERMINATED
-    ) {
-      const assignments =
-        await this.groupRepository.findActiveEmployeeAssignments(personId);
-      if (assignments.length)
-        throw new AppError(
-          409,
-          "EMPLOYEE_ASSIGNED_TO_ACTIVE_GROUP",
-          "Remove or replace the employee assignment before termination",
-        );
-    }
-
     await this.catalogRepository.ensureEmployeeResourceGuard();
     const updated = await this.unitOfWork.execute(
       async ({ session, recordAudit }) => {
         await this.catalogRepository.incrementEmployeeResourceGuard({
           session,
         });
+        if (
+          next.status === EMPLOYEE_STATUS.TERMINATED &&
+          before.employee?.status !== EMPLOYEE_STATUS.TERMINATED
+        ) {
+          const assignments =
+            await this.groupRepository.findActiveEmployeeAssignments(personId, {
+              session,
+            });
+          if (assignments.length)
+            throw new AppError(
+              409,
+              "EMPLOYEE_ASSIGNED_TO_ACTIVE_GROUP",
+              "Remove or replace the employee assignment before termination",
+            );
+        }
         const person = await this.personRepository.updateEmployee(
           personId,
           next,
@@ -177,8 +178,11 @@ export class EmployeeService {
           entityType: "PERSON",
           entityId: personId,
           before: { employeeProfileUpdated: false },
-          after: { employeeProfileUpdated: true },
-          safeFields: ["employeeProfileUpdated"],
+          after: {
+            employeeProfileUpdated: true,
+            changedFields: Object.keys(input).sort(),
+          },
+          safeFields: ["employeeProfileUpdated", "changedFields"],
         });
         return person;
       },

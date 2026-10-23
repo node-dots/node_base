@@ -24,6 +24,10 @@ export function createApiRouter({
     groupRepository,
     guardianGroupsReader,
     authService: authModule?.authService,
+    catalogRepository: settingsRepository,
+    personRepository: authModule?.personRepository,
+    childRepository: guardianGroupsReader,
+    unitOfWork: authModule?.unitOfWork,
   });
 
   router.use("/groups", groupModule.router);

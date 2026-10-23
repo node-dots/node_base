@@ -6,6 +6,12 @@ export function toGroupDto(group) {
     ageCategory: group.ageCategory,
     capacity: group.capacity,
     status: group.status,
+    ...(group.schoolYear ? { schoolYear: group.schoolYear } : {}),
+    ...(group.ageCategoryId ? { ageCategoryId: group.ageCategoryId } : {}),
+    ...(group.roomId ? { roomId: group.roomId } : {}),
+    ...(group.educatorId ? { educatorId: group.educatorId } : {}),
+    ...(group.assistantId ? { assistantId: group.assistantId } : {}),
+    occupiedSeats: group.occupiedSeats ?? 0,
   };
 }
 

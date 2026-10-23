@@ -128,6 +128,16 @@ export class ChildRepository {
     return this.findActiveGroupIdsForGuardian(personId);
   }
 
+  async countOccupiedByGroup(groupId, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(groupId)) return 0;
+    let query = this.childModel.countDocuments({
+      groupId: new mongoose.Types.ObjectId(groupId),
+      status: { $in: ["ACTIVE", "SUSPENDED"] },
+    });
+    if (session) query = query.session(session);
+    return query;
+  }
+
   async updateProfileById(childId, profileUpdate) {
     if (!mongoose.isObjectIdOrHexString(childId)) return null;
     const fields = Object.keys(profileUpdate);

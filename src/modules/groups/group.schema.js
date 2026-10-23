@@ -59,6 +59,15 @@ export const groupSchema = createGroupSchema
       .enum(Object.values(GROUP_STATUS))
       .meta({ description: "Чернетка; активацію ще не реалізовано." }),
   })
+  .meta({ id: "Group" })
+  .extend({
+    schoolYear: zod.string().optional(),
+    ageCategoryId: zod.string().optional(),
+    roomId: zod.string().optional(),
+    educatorId: zod.string().optional(),
+    assistantId: zod.string().optional(),
+    occupiedSeats: zod.number().int().min(0),
+  })
   .meta({ id: "Group" });
 
 export const groupResponseSchema = zod
