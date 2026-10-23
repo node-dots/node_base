@@ -5,6 +5,7 @@ import { GroupModule } from "./groups/group.module.js";
 import { ChildModel } from "./children/child.model.js";
 import { ChildRepository } from "./children/child.repository.js";
 import { ChildService } from "./children/child.service.js";
+import { ChildMembershipService } from "./children/childMembership.service.js";
 import { createChildRoutes } from "./children/child.routes.js";
 import { CatalogModel } from "./catalog/catalog.model.js";
 import { CatalogRepository } from "./catalog/catalog.repository.js";
@@ -42,10 +43,18 @@ export function createApiRouter({
         authorizer,
         unitOfWork: authModule.unitOfWork,
       });
+      const childMembershipService = new ChildMembershipService({
+        childRepository: guardianGroupsReader,
+        groupRepository,
+        catalogRepository: settingsRepository,
+        authorizer,
+        unitOfWork: authModule.unitOfWork,
+      });
       router.use(
         "/children",
         createChildRoutes({
           childService,
+          membershipService: childMembershipService,
           authService: authModule.authService,
         }),
       );

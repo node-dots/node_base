@@ -72,6 +72,28 @@ export class ChildRepository {
     return document ? toChild(document) : null;
   }
 
+  async findByIdForUpdate(childId, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(childId)) return null;
+    let query = this.childModel.findById(childId);
+    if (session) query = query.session(session);
+    const document = await query.lean();
+    return document ? toChild(document) : null;
+  }
+
+  async updateMembershipById(childId, membershipUpdate, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(childId)) return null;
+    const fields = new Set(["status", "schoolYear", "ageCategoryId", "groupId", "enrolledAt", "leftAt", "billingStartMonth", "firstUnbilledMonth", "membershipHistory"]);
+    if (!membershipUpdate || Object.keys(membershipUpdate).length === 0 || Object.keys(membershipUpdate).some((field) => !fields.has(field))) {
+      throw new TypeError("Only child membership fields can be updated here");
+    }
+    const document = await this.childModel.findByIdAndUpdate(
+      childId,
+      { $set: membershipUpdate },
+      { new: true, runValidators: true, session },
+    ).lean();
+    return document ? toChild(document) : null;
+  }
+
   async findByIdInScope(childId, scope) {
     if (!mongoose.isObjectIdOrHexString(childId)) return null;
     const document = await this.childModel

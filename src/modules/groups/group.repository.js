@@ -160,4 +160,29 @@ export class GroupRepository {
       .lean();
     return document ? toGroup(document) : null;
   }
+
+  async reserveSeat(groupId, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(groupId)) return null;
+    let query = this.groupModel.findOneAndUpdate(
+      {
+        _id: groupId,
+        status: "ACTIVE",
+        $expr: { $lt: [{ $ifNull: ["$occupiedSeats", 0] }, "$capacity"] },
+      },
+      { $inc: { occupiedSeats: 1 } },
+      { new: true, runValidators: true, session },
+    );
+    const document = await query.lean();
+    return document ? toGroup(document) : null;
+  }
+
+  async releaseSeat(groupId, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(groupId)) return false;
+    let query = this.groupModel.findOneAndUpdate(
+      { _id: groupId, occupiedSeats: { $gt: 0 } },
+      { $inc: { occupiedSeats: -1 } },
+      { new: true, runValidators: true, session },
+    );
+    return Boolean(await query.lean());
+  }
 }
