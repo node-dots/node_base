@@ -9,6 +9,7 @@ function validateKindFields() {
   const hasAge = this.age !== undefined;
   const hasRoomType = this.roomType !== undefined;
   const hasCapacity = this.capacity !== undefined;
+  const hasRevision = this.revision !== undefined;
 
   if (this.kind === CATALOG_KIND.AGE_CATEGORY) {
     return hasAge && !hasRoomType && !hasCapacity;
@@ -22,7 +23,11 @@ function validateKindFields() {
     return this.roomType === ROOM_TYPE.GROUP ? hasCapacity : !hasCapacity;
   }
 
-  return !hasAge && !hasRoomType && !hasCapacity;
+  if (this.kind === CATALOG_KIND.SETTINGS) {
+    return !hasAge && !hasRoomType && !hasCapacity && hasRevision;
+  }
+
+  return !hasAge && !hasRoomType && !hasCapacity && !hasRevision;
 }
 
 const catalogSchema = new mongoose.Schema(
@@ -66,6 +71,11 @@ const catalogSchema = new mongoose.Schema(
       type: Number,
       min: CATALOG_LIMITS.MIN_GROUP_ROOM_CAPACITY,
       max: CATALOG_LIMITS.MAX_GROUP_ROOM_CAPACITY,
+      validate: Number.isSafeInteger,
+    },
+    revision: {
+      type: Number,
+      min: 0,
       validate: Number.isSafeInteger,
     },
   },

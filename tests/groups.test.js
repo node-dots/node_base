@@ -11,12 +11,22 @@ import {
   GROUP_STATUS,
 } from "../src/modules/groups/group.constants.js";
 import { HTTP_STATUS, HTTP_ERROR_CODES } from "../src/utils/httpConstants.js";
+import { authorizer } from "../src/modules/people/access/authorizer.js";
+import { testAuthHeaders } from "./helpers/app.js";
 
 test("Сценарій без HTTP відхиляє переповнену групу та не зберігає її", async () => {
   const groupRepository = new InMemoryGroupRepository();
-  const scenario = new GroupService({ groupRepository });
+  const scenario = new GroupService({
+    groupRepository,
+    authorizer,
+    groupAccessPolicy: { readScope: async () => ({ kind: "ALL" }) },
+  });
+  const actor = { id: "admin-1", roles: ["ADMIN"] };
   await assert.rejects(
-    scenario.createGroup({ name: "Сонечка", ageCategory: 2, capacity: 21 }),
+    scenario.createGroup(
+      { name: "Сонечка", ageCategory: 2, capacity: 21 },
+      actor,
+    ),
     {
       code: GROUP_ERROR_CODES.INVALID_CAPACITY,
     },
@@ -46,10 +56,29 @@ test("Маршрути створюють і читають групу та ко
     server.once("error", reject);
   });
   const baseUrl = `http://127.0.0.1:${server.address().port}`;
+  const authorization = testAuthHeaders();
   try {
+    assert.equal(
+      (await fetch(`${baseUrl}/api/v1/groups`)).status,
+      HTTP_STATUS.UNAUTHORIZED,
+    );
+    const parentWrite = await fetch(`${baseUrl}/api/v1/groups`, {
+      method: "POST",
+      headers: {
+        ...testAuthHeaders("test-parent"),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: "Батьківська",
+        ageCategory: 3,
+        capacity: 15,
+      }),
+    });
+    assert.equal(parentWrite.status, HTTP_STATUS.FORBIDDEN);
+
     const response = await fetch(`${baseUrl}/api/v1/groups`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { ...authorization, "Content-Type": "application/json" },
       body: JSON.stringify({
         name: " Мандрівники ",
         ageCategory: 4,
@@ -62,10 +91,13 @@ test("Маршрути створюють і читають групу та ко
     assert.equal(group.status, GROUP_STATUS.DRAFT);
     const readResponse = await fetch(
       baseUrl + response.headers.get("location"),
+      { headers: authorization },
     );
     assert.deepEqual((await readResponse.json()).data, group);
 
-    const missing = await fetch(`${baseUrl}/api/v1/groups/missing`);
+    const missing = await fetch(`${baseUrl}/api/v1/groups/missing`, {
+      headers: authorization,
+    });
     assert.equal(missing.status, HTTP_STATUS.NOT_FOUND);
     assert.equal(
       (await missing.json()).error.code,
@@ -74,7 +106,7 @@ test("Маршрути створюють і читають групу та ко
 
     const malformed = await fetch(`${baseUrl}/api/v1/groups`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { ...authorization, "Content-Type": "application/json" },
       body: "{",
     });
     assert.equal(malformed.status, HTTP_STATUS.BAD_REQUEST);
@@ -85,7 +117,7 @@ test("Маршрути створюють і читають групу та ко
 
     const invalid = await fetch(`${baseUrl}/api/v1/groups`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { ...authorization, "Content-Type": "application/json" },
       body: JSON.stringify({ name: "Група", ageCategory: 3, capacity: 21 }),
     });
     assert.equal(invalid.status, HTTP_STATUS.BAD_REQUEST);
@@ -96,7 +128,7 @@ test("Маршрути створюють і читають групу та ко
     );
     const unknownField = await fetch(`${baseUrl}/api/v1/groups`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { ...authorization, "Content-Type": "application/json" },
       body: JSON.stringify({
         name: "Група",
         ageCategory: 3,
@@ -112,7 +144,7 @@ test("Маршрути створюють і читають групу та ко
 
     const oversized = await fetch(`${baseUrl}/api/v1/groups`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { ...authorization, "Content-Type": "application/json" },
       body: JSON.stringify({
         name: "а".repeat(40000),
         ageCategory: 3,
@@ -124,8 +156,14 @@ test("Маршрути створюють і читають групу та ко
       (await oversized.json()).error.code,
       HTTP_ERROR_CODES.BODY_TOO_LARGE,
     );
-    const list = await fetch(`${baseUrl}/api/v1/groups`);
+    const list = await fetch(`${baseUrl}/api/v1/groups`, {
+      headers: authorization,
+    });
     assert.equal((await list.json()).meta.total, 3);
+    const parentList = await fetch(`${baseUrl}/api/v1/groups`, {
+      headers: testAuthHeaders("test-parent"),
+    });
+    assert.equal((await parentList.json()).meta.total, 0);
   } finally {
     await new Promise((resolve) => server.close(resolve));
   }

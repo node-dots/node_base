@@ -74,6 +74,12 @@ const employeeSchema = new mongoose.Schema(
       min: 0,
       validate: Number.isSafeInteger,
     },
+    subjectCode: {
+      type: String,
+      trim: true,
+      uppercase: true,
+      match: /^[A-Z][A-Z0-9_]*$/,
+    },
   },
   { _id: false, strict: "throw" },
 );

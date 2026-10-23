@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { groupScopeFilter } from "./groupAccessPolicy.js";
 
 // Технічні поля MongoDB не виходять за межі репозиторію.
 function toGroup(document) {
@@ -16,12 +17,18 @@ export class GroupRepository {
     this.groupModel = groupModel;
   }
 
-  async findAll({ page, pageSize }) {
+  async findAll({ page, pageSize, scope }) {
     const skip = (page - 1) * pageSize;
+    const filter = groupScopeFilter(scope);
 
     const [documents, total] = await Promise.all([
-      this.groupModel.find().sort({ _id: 1 }).skip(skip).limit(pageSize).lean(),
-      this.groupModel.countDocuments(),
+      this.groupModel
+        .find(filter)
+        .sort({ _id: 1 })
+        .skip(skip)
+        .limit(pageSize)
+        .lean(),
+      this.groupModel.countDocuments(filter),
     ]);
     return {
       groups: documents.map(toGroup),
@@ -29,10 +36,12 @@ export class GroupRepository {
     };
   }
 
-  async findById(groupId) {
+  async findById(groupId, { scope } = {}) {
     // Некоректний ID, як і відсутній запис, повертає null замість CastError.
     if (!mongoose.isObjectIdOrHexString(groupId)) return null;
-    const document = await this.groupModel.findById(groupId).lean();
+    const document = await this.groupModel
+      .findOne({ $and: [{ _id: groupId }, groupScopeFilter(scope)] })
+      .lean();
     return document ? toGroup(document) : null;
   }
 
@@ -41,8 +50,9 @@ export class GroupRepository {
     return toGroup(document);
   }
 
-  async summarizeByAge() {
+  async summarizeByAge({ scope } = {}) {
     return this.groupModel.aggregate([
+      { $match: groupScopeFilter(scope) },
       {
         $group: {
           _id: "$ageCategory",
@@ -60,5 +70,21 @@ export class GroupRepository {
       },
       { $sort: { ageCategory: 1 } },
     ]);
+  }
+
+  async findActiveGroupIds({ personId, positions }) {
+    if (!mongoose.isObjectIdOrHexString(personId) || positions.length === 0) {
+      return [];
+    }
+    const clauses = [];
+    if (positions.includes("educator")) clauses.push({ educatorId: personId });
+    if (positions.includes("assistant"))
+      clauses.push({ assistantId: personId });
+    if (clauses.length === 0) return [];
+    const documents = await this.groupModel
+      .find({ $or: clauses, status: "ACTIVE" })
+      .select({ _id: 1 })
+      .lean();
+    return documents.map(({ _id }) => _id.toString());
   }
 }

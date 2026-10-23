@@ -19,11 +19,14 @@ function toEmployee(employee) {
     return undefined;
   }
 
-  return {
+  const result = {
     positionCode: employee.positionCode,
     status: employee.status,
     salaryMinor: employee.salaryMinor,
   };
+  if (employee.subjectCode !== undefined)
+    result.subjectCode = employee.subjectCode;
+  return result;
 }
 
 // Явно визначаємо внутрішні поля, які повертає репозиторій.
@@ -91,6 +94,36 @@ export class PersonRepository {
   async findFirstEnabledAdmin() {
     const document = await this.personModel
       .findOne({ "account.roles": "ADMIN", "account.enabled": true })
+      .lean();
+    return document ? toPerson(document) : null;
+  }
+
+  async countEnabledAdmins({ session } = {}) {
+    let query = this.personModel.countDocuments({
+      "account.roles": "ADMIN",
+      "account.enabled": true,
+    });
+    if (session) query = query.session(session);
+    return query;
+  }
+
+  async updateAccountRoles(
+    { personId, roles, expectedTokenVersion },
+    { session } = {},
+  ) {
+    const document = await this.personModel
+      .findOneAndUpdate(
+        {
+          _id: personId,
+          "account.email": { $type: "string" },
+          "account.tokenVersion": expectedTokenVersion,
+        },
+        {
+          $set: { "account.roles": roles },
+          $inc: { "account.tokenVersion": 1 },
+        },
+        { new: true, runValidators: true, session },
+      )
       .lean();
     return document ? toPerson(document) : null;
   }

@@ -31,6 +31,8 @@ export function createAuthModule({
 
   return {
     authService,
+    personRepository,
+    unitOfWork,
     router: createAuthRoutes({
       authService,
       authController,

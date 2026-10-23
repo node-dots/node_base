@@ -24,6 +24,12 @@ export function registerGroupDocumentation(registry) {
     registry.register(schema.meta().id, schema);
   }
   const commonErrors = {
+    [HTTP_STATUS.UNAUTHORIZED]: {
+      description: "Потрібна чинна автентифікація.",
+    },
+    [HTTP_STATUS.FORBIDDEN]: {
+      description: "Недостатньо прав для цієї дії.",
+    },
     [HTTP_STATUS.TOO_MANY_REQUESTS]: {
       $ref: "#/components/responses/TooManyRequests",
     },
@@ -37,6 +43,7 @@ export function registerGroupDocumentation(registry) {
     operationId: "listGroups",
     tags: ["Групи"],
     summary: "Переглянути сторінку груп",
+    security: [{ BearerAuth: [] }],
     description:
       "Повертає групи зі стабільним сортуванням за ID. За межами списку data порожній.",
     request: {
@@ -59,6 +66,7 @@ export function registerGroupDocumentation(registry) {
     operationId: "createGroup",
     tags: ["Групи"],
     summary: "Створити чернетку групи",
+    security: [{ BearerAuth: [] }],
     description:
       "Невідомі поля відхиляються. Нова група має статус DRAFT; кімнати та персонал ще не призначаються.",
     request: {
@@ -95,6 +103,7 @@ export function registerGroupDocumentation(registry) {
     operationId: "getGroup",
     tags: ["Групи"],
     summary: "Переглянути групу за ID",
+    security: [{ BearerAuth: [] }],
     request: { params: groupIdParamsSchema },
     responses: {
       [HTTP_STATUS.OK]: jsonResponse(groupResponseSchema, "Групу знайдено."),
@@ -108,6 +117,7 @@ export function registerGroupDocumentation(registry) {
     operationId: "getGroupsAgeSummary",
     tags: ["Групи"],
     summary: "Підсумки груп за віковими категоріями",
+    security: [{ BearerAuth: [] }],
     description:
       "MongoDB Aggregation Framework: кількість груп і сумарна місткість. Місткість не є кількістю зарахованих дітей.",
     responses: {

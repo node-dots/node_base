@@ -11,6 +11,7 @@ import {
   ROOM_TYPE,
 } from "../src/modules/catalog/catalog.constants.js";
 import { initialCatalogEntries } from "../src/modules/catalog/catalog.seed.js";
+import { CatalogModel } from "../src/modules/catalog/catalog.model.js";
 
 test("кожний catalog kind приймає лише власні поля", () => {
   const examples = [
@@ -56,6 +57,24 @@ test("кожний catalog kind приймає лише власні поля", 
   ]) {
     assert.equal(catalogEntrySchema.safeParse(invalid).success, false);
   }
+});
+
+test("внутрішній SETTINGS guard має revision і не доступний як публічний каталог", async () => {
+  const guard = {
+    kind: CATALOG_KIND.SETTINGS,
+    code: "ACCOUNT_ADMIN_GUARD",
+    name: "Account admin guard",
+    active: true,
+    revision: 0,
+  };
+  assert.equal(catalogEntrySchema.safeParse(guard).success, false);
+  await assert.doesNotReject(new CatalogModel(guard).validate());
+  await assert.rejects(
+    new CatalogModel({ ...guard, revision: undefined }).validate(),
+  );
+  await assert.rejects(async () =>
+    new CatalogModel({ ...guard, age: 2 }).validate(),
+  );
 });
 
 test("службова або недоступна кімната не проходить перевірку групового ресурсу", () => {

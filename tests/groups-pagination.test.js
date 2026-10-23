@@ -9,6 +9,13 @@ import {
 } from "../src/modules/groups/group.constants.js";
 import { HTTP_STATUS, HTTP_ERROR_CODES } from "../src/utils/httpConstants.js";
 import { groupListResponseSchema } from "../src/modules/groups/group.schema.js";
+import { testAuthHeaders } from "./helpers/app.js";
+
+const fetchAdmin = (url, options = {}) =>
+  fetch(url, {
+    ...options,
+    headers: { ...testAuthHeaders(), ...(options.headers ?? {}) },
+  });
 
 test("Список груп повертає сторінки у стабільному порядку", async (t) => {
   // Однакові назви та зворотний порядок перевіряють сортування за ID.
@@ -30,7 +37,7 @@ test("Список груп повертає сторінки у стабіль�
   const url = `http://127.0.0.1:${server.address().port}/api/v1/groups`;
 
   for (const page of [1, 2, 3]) {
-    const response = await fetch(`${url}?page=${page}&pageSize=5`);
+    const response = await fetchAdmin(`${url}?page=${page}&pageSize=5`);
 
     assert.equal(response.status, HTTP_STATUS.OK);
 
@@ -54,13 +61,13 @@ test("Список груп повертає сторінки у стабіль�
   }
 
   // Повторне читання повертає ту саму сторінку.
-  const repeated = await fetch(`${url}?page=1&pageSize=5`);
+  const repeated = await fetchAdmin(`${url}?page=1&pageSize=5`);
   assert.deepEqual(
     (await repeated.json()).data.map((group) => group.id),
     groups.slice(0, 5).map((group) => group.id),
   );
 
-  const defaults = await fetch(url);
+  const defaults = await fetchAdmin(url);
   const body = await defaults.json();
 
   assert.equal(defaults.status, HTTP_STATUS.OK);
@@ -82,7 +89,7 @@ test("Порожній список та помилки параметрів о�
 
   const url = `http://127.0.0.1:${server.address().port}/api/v1/groups`;
 
-  const emptyResponse = await fetch(`${url}?page=1&pageSize=5`);
+  const emptyResponse = await fetchAdmin(`${url}?page=1&pageSize=5`);
 
   assert.equal(emptyResponse.status, HTTP_STATUS.OK);
   assert.deepEqual(await emptyResponse.json(), {
@@ -106,7 +113,7 @@ test("Порожній список та помилки параметрів о�
     "page=1&page=2",
     "unknown=value",
   ]) {
-    const response = await fetch(`${url}?${query}`);
+    const response = await fetchAdmin(`${url}?${query}`);
     const body = await response.json();
 
     assert.equal(response.status, HTTP_STATUS.BAD_REQUEST, query);
