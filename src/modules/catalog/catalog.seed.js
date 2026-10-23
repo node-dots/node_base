@@ -77,12 +77,57 @@ const subjects = Object.values(SUBJECT_CODE).map((code, index) => ({
   active: true,
 }));
 
+const financialSeed = [
+  {
+    _id: stableId("50", 1),
+    kind: CATALOG_KIND.TUITION_RATE,
+    code: "TUITION_MONTHLY",
+    name: "Monthly tuition",
+    active: true,
+    effectiveFrom: "2026-01-01",
+    amountCents: 1_500_000,
+  },
+  ...[300, 400, 500, 600].map((uah, index) => ({
+    _id: stableId("51", index + 1),
+    kind: CATALOG_KIND.MEAL_RATE,
+    code: `MEAL_AGE_${index + 2}`,
+    name: `Meal age ${index + 2}`,
+    active: true,
+    effectiveFrom: "2026-01-01",
+    ageCategoryCode: `AGE_${index + 2}`,
+    amountCents: uah * 100,
+  })),
+  ...[1000, 2000, 3000].map((basisPoints, index) => ({
+    _id: stableId("52", index + 1),
+    kind: CATALOG_KIND.BENEFIT,
+    code: `BENEFIT_${(index + 1) * 10}`,
+    name: `Benefit ${(index + 1) * 10}%`,
+    active: true,
+    effectiveFrom: "2026-01-01",
+    basisPoints,
+  })),
+  {
+    _id: stableId("53", 1),
+    kind: CATALOG_KIND.PROGRAM,
+    code: "STANDARD_PROGRAM",
+    name: "Standard weekly program",
+    active: true,
+    effectiveFrom: "2026-01-05",
+    lessons: Object.values(SUBJECT_CODE).map((subjectCode) => ({
+      subjectCode,
+      sessionsPerWeek: 2,
+      durationMinutes: 30,
+    })),
+  },
+];
+
 export const initialCatalogEntries = Object.freeze([
   ...ageCategories,
   ...groupRooms,
   ...serviceRooms,
   ...positions,
   ...subjects,
+  ...financialSeed,
 ]);
 
 export async function seedCatalog(catalogModel) {

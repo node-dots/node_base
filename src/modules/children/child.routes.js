@@ -26,10 +26,19 @@ const membershipTargetSchema = zod.strictObject({
 const childIdParamsSchema = zod.strictObject({
   id: zod.string().regex(/^[a-f\d]{24}$/i),
 });
+const benefitAssignmentSchema = zod.strictObject({
+  benefitCode: zod.string().trim().min(1).max(64),
+  startMonth: zod.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/),
+  endMonth: zod
+    .string()
+    .regex(/^\d{4}-(0[1-9]|1[0-2])$/)
+    .optional(),
+});
 
 export function createChildRoutes({
   childService,
   membershipService,
+  benefitService,
   authService,
 }) {
   if (!authService) throw new TypeError("authService is required for children");
@@ -207,6 +216,31 @@ export function createChildRoutes({
       try {
         const child = await membershipService.resume(
           request.validatedParams.id,
+          request.actor,
+          request.requestId,
+        );
+        response.json({
+          data: childService.viewPolicy.toReadDto(child, request.actor),
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+  router.post(
+    "/:id/benefits",
+    authenticate,
+    createRequirePermission({
+      authorizer,
+      permission: PERMISSIONS.CHILDREN_BENEFIT_ASSIGN,
+    }),
+    validateParams(childIdParamsSchema),
+    validateBody(benefitAssignmentSchema),
+    async (request, response, next) => {
+      try {
+        const child = await benefitService.assign(
+          request.validatedParams.id,
+          request.validatedBody,
           request.actor,
           request.requestId,
         );

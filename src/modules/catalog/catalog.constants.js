@@ -4,6 +4,10 @@ export const CATALOG_KIND = Object.freeze({
   POSITION: "POSITION",
   SUBJECT: "SUBJECT",
   SETTINGS: "SETTINGS",
+  TUITION_RATE: "TUITION_RATE",
+  MEAL_RATE: "MEAL_RATE",
+  BENEFIT: "BENEFIT",
+  PROGRAM: "PROGRAM",
 });
 
 export const ROOM_TYPE = Object.freeze({

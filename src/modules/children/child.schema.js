@@ -72,7 +72,6 @@ const editableChildFields = {
     .max(CHILD_LIMITS.MAX_RELATIVES)
     .default([]),
   food: foodDataSchema.default({}),
-  benefitCode: zod.string().trim().min(1).max(64).optional(),
 };
 
 const foodUpdateSchema = zod
@@ -135,7 +134,6 @@ export const updateChildProfileSchema = zod
       .max(CHILD_LIMITS.MAX_RELATIVES)
       .optional(),
     food: foodUpdateSchema.optional(),
-    benefitCode: zod.string().trim().min(1).max(64).optional(),
   })
   .refine((value) => Object.keys(value).length > 0, {
     message: "At least one editable field is required",

@@ -13,7 +13,6 @@ const PROFILE_FIELDS = new Set([
   "guardians",
   "relatives",
   "food",
-  "benefitCode",
 ]);
 
 function toChild(document) {
@@ -47,6 +46,7 @@ function toChild(document) {
   ]) {
     if (document[field] !== undefined) child[field] = document[field];
   }
+  child.benefitAssignments = cloneNested(document.benefitAssignments) ?? [];
   for (const field of ["ageCategoryId", "groupId"]) {
     if (document[field]) child[field] = document[field].toString();
   }
@@ -82,15 +82,47 @@ export class ChildRepository {
 
   async updateMembershipById(childId, membershipUpdate, { session } = {}) {
     if (!mongoose.isObjectIdOrHexString(childId)) return null;
-    const fields = new Set(["status", "schoolYear", "ageCategoryId", "groupId", "enrolledAt", "leftAt", "billingStartMonth", "firstUnbilledMonth", "membershipHistory"]);
-    if (!membershipUpdate || Object.keys(membershipUpdate).length === 0 || Object.keys(membershipUpdate).some((field) => !fields.has(field))) {
+    const fields = new Set([
+      "status",
+      "schoolYear",
+      "ageCategoryId",
+      "groupId",
+      "enrolledAt",
+      "leftAt",
+      "billingStartMonth",
+      "firstUnbilledMonth",
+      "membershipHistory",
+    ]);
+    if (
+      !membershipUpdate ||
+      Object.keys(membershipUpdate).length === 0 ||
+      Object.keys(membershipUpdate).some((field) => !fields.has(field))
+    ) {
       throw new TypeError("Only child membership fields can be updated here");
     }
-    const document = await this.childModel.findByIdAndUpdate(
-      childId,
-      { $set: membershipUpdate },
-      { new: true, runValidators: true, session },
-    ).lean();
+    const document = await this.childModel
+      .findByIdAndUpdate(
+        childId,
+        { $set: membershipUpdate },
+        { new: true, runValidators: true, session },
+      )
+      .lean();
+    return document ? toChild(document) : null;
+  }
+
+  async updateBenefitAssignmentsById(
+    childId,
+    benefitAssignments,
+    { session } = {},
+  ) {
+    if (!mongoose.isObjectIdOrHexString(childId)) return null;
+    const document = await this.childModel
+      .findByIdAndUpdate(
+        childId,
+        { $set: { benefitAssignments } },
+        { new: true, runValidators: true, session },
+      )
+      .lean();
     return document ? toChild(document) : null;
   }
 

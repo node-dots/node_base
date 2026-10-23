@@ -6,9 +6,12 @@ import { ChildModel } from "./children/child.model.js";
 import { ChildRepository } from "./children/child.repository.js";
 import { ChildService } from "./children/child.service.js";
 import { ChildMembershipService } from "./children/childMembership.service.js";
+import { ChildBenefitService } from "./children/childBenefit.service.js";
 import { createChildRoutes } from "./children/child.routes.js";
 import { CatalogModel } from "./catalog/catalog.model.js";
 import { CatalogRepository } from "./catalog/catalog.repository.js";
+import { FinancialCatalogService } from "./catalog/financialCatalog.service.js";
+import { createFinancialCatalogRoutes } from "./catalog/financialCatalog.routes.js";
 import { AccountRolesService } from "./people/accountRoles.service.js";
 import { createAccountRolesRoutes } from "./people/accountRoles.routes.js";
 import { EmployeeService } from "./people/employee.service.js";
@@ -35,6 +38,18 @@ export function createApiRouter({
   router.use("/groups", groupModule.router);
   if (authModule) {
     router.use("/auth", authModule.router ?? authModule);
+    const financialCatalogService = new FinancialCatalogService({
+      catalogRepository: settingsRepository,
+      authorizer,
+      unitOfWork: authModule.unitOfWork,
+    });
+    router.use(
+      "/catalog",
+      createFinancialCatalogRoutes({
+        service: financialCatalogService,
+        authService: authModule.authService,
+      }),
+    );
     if (authModule.personRepository && authModule.unitOfWork) {
       const childService = new ChildService({
         childRepository: guardianGroupsReader,
@@ -50,11 +65,18 @@ export function createApiRouter({
         authorizer,
         unitOfWork: authModule.unitOfWork,
       });
+      const childBenefitService = new ChildBenefitService({
+        childRepository: guardianGroupsReader,
+        catalogRepository: settingsRepository,
+        authorizer,
+        unitOfWork: authModule.unitOfWork,
+      });
       router.use(
         "/children",
         createChildRoutes({
           childService,
           membershipService: childMembershipService,
+          benefitService: childBenefitService,
           authService: authModule.authService,
         }),
       );

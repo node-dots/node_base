@@ -16,8 +16,20 @@ function toCatalogEntry(document) {
     active: document.active,
   };
 
-  for (const field of ["age", "roomType", "capacity"]) {
-    if (document[field] !== undefined) {
+  for (const field of [
+    "age",
+    "roomType",
+    "capacity",
+    "effectiveFrom",
+    "amountCents",
+    "ageCategoryCode",
+    "basisPoints",
+    "lessons",
+  ]) {
+    if (
+      document[field] !== undefined &&
+      (field !== "lessons" || document[field].length > 0)
+    ) {
       entry[field] = document[field];
     }
   }
@@ -60,6 +72,20 @@ export class CatalogRepository {
       .findOne({ kind, code, active: true })
       .lean();
     return document ? toCatalogEntry(document) : null;
+  }
+
+  async findLatestValid(kind, code, date) {
+    assertKnownKind(kind);
+    const document = await this.catalogModel
+      .findOne({ kind, code, active: true, effectiveFrom: { $lte: date } })
+      .sort({ effectiveFrom: -1, _id: -1 })
+      .lean();
+    return document ? toCatalogEntry(document) : null;
+  }
+
+  async insertVersion(entry, { session } = {}) {
+    const [document] = await this.catalogModel.create([entry], { session });
+    return toCatalogEntry(document);
   }
 
   async deactivateById(entryId) {

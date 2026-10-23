@@ -10,13 +10,42 @@ function validateKindFields() {
   const hasRoomType = this.roomType !== undefined;
   const hasCapacity = this.capacity !== undefined;
   const hasRevision = this.revision !== undefined;
+  const hasAmount = this.amountCents !== undefined;
+  const hasCategoryCode = this.ageCategoryCode !== undefined;
+  const hasBasisPoints = this.basisPoints !== undefined;
+  const hasLessons = Array.isArray(this.lessons) && this.lessons.length > 0;
+  const financial = [
+    CATALOG_KIND.TUITION_RATE,
+    CATALOG_KIND.MEAL_RATE,
+    CATALOG_KIND.BENEFIT,
+  ].includes(this.kind);
+  const hasEffectiveFrom = this.effectiveFrom !== undefined;
 
   if (this.kind === CATALOG_KIND.AGE_CATEGORY) {
-    return hasAge && !hasRoomType && !hasCapacity;
+    return (
+      hasAge &&
+      !hasRoomType &&
+      !hasCapacity &&
+      !hasRevision &&
+      !hasEffectiveFrom &&
+      !hasAmount &&
+      !hasCategoryCode &&
+      !hasBasisPoints &&
+      !hasLessons
+    );
   }
 
   if (this.kind === CATALOG_KIND.ROOM) {
-    if (hasAge || !hasRoomType) {
+    if (
+      hasAge ||
+      !hasRoomType ||
+      hasRevision ||
+      hasEffectiveFrom ||
+      hasAmount ||
+      hasCategoryCode ||
+      hasBasisPoints ||
+      hasLessons
+    ) {
       return false;
     }
 
@@ -24,10 +53,88 @@ function validateKindFields() {
   }
 
   if (this.kind === CATALOG_KIND.SETTINGS) {
-    return !hasAge && !hasRoomType && !hasCapacity && hasRevision;
+    return (
+      !hasAge &&
+      !hasRoomType &&
+      !hasCapacity &&
+      hasRevision &&
+      !hasEffectiveFrom &&
+      !hasAmount &&
+      !hasCategoryCode &&
+      !hasBasisPoints &&
+      !hasLessons
+    );
   }
 
-  return !hasAge && !hasRoomType && !hasCapacity && !hasRevision;
+  if (this.kind === CATALOG_KIND.TUITION_RATE)
+    return (
+      hasEffectiveFrom &&
+      hasAmount &&
+      !hasCategoryCode &&
+      !hasBasisPoints &&
+      !hasLessons &&
+      !hasAge &&
+      !hasRoomType &&
+      !hasCapacity &&
+      !hasRevision &&
+      Number.isSafeInteger(this.amountCents) &&
+      this.amountCents >= 0
+    );
+  if (this.kind === CATALOG_KIND.MEAL_RATE)
+    return (
+      hasEffectiveFrom &&
+      hasAmount &&
+      hasCategoryCode &&
+      !hasBasisPoints &&
+      !hasLessons &&
+      !hasAge &&
+      !hasRoomType &&
+      !hasCapacity &&
+      !hasRevision &&
+      Number.isSafeInteger(this.amountCents) &&
+      this.amountCents >= 0 &&
+      typeof this.ageCategoryCode === "string"
+    );
+  if (this.kind === CATALOG_KIND.BENEFIT)
+    return (
+      hasEffectiveFrom &&
+      hasBasisPoints &&
+      !hasAmount &&
+      !hasCategoryCode &&
+      !hasLessons &&
+      !hasAge &&
+      !hasRoomType &&
+      !hasCapacity &&
+      !hasRevision &&
+      Number.isSafeInteger(this.basisPoints) &&
+      this.basisPoints >= 0 &&
+      this.basisPoints <= 10_000
+    );
+  if (this.kind === CATALOG_KIND.PROGRAM)
+    return (
+      hasEffectiveFrom &&
+      hasLessons &&
+      !hasAmount &&
+      !hasCategoryCode &&
+      !hasBasisPoints &&
+      !hasAge &&
+      !hasRoomType &&
+      !hasCapacity &&
+      !hasRevision
+    );
+
+  return (
+    !financial &&
+    !hasEffectiveFrom &&
+    !hasAmount &&
+    !hasCategoryCode &&
+    !hasBasisPoints &&
+    !hasLessons &&
+    !hasAge &&
+    !hasRoomType &&
+    !hasCapacity &&
+    !hasRevision
+  );
 }
 
 const catalogSchema = new mongoose.Schema(
@@ -78,6 +185,38 @@ const catalogSchema = new mongoose.Schema(
       min: 0,
       validate: Number.isSafeInteger,
     },
+    effectiveFrom: { type: String, match: /^\d{4}-\d{2}-\d{2}$/ },
+    amountCents: { type: Number, min: 0, validate: Number.isSafeInteger },
+    ageCategoryCode: { type: String, match: /^[A-Z][A-Z0-9_]*$/ },
+    basisPoints: {
+      type: Number,
+      min: 0,
+      max: 10_000,
+      validate: Number.isSafeInteger,
+    },
+    lessons: [
+      {
+        subjectCode: {
+          type: String,
+          required: true,
+          match: /^[A-Z][A-Z0-9_]*$/,
+        },
+        sessionsPerWeek: {
+          type: Number,
+          required: true,
+          min: 1,
+          max: 20,
+          validate: Number.isSafeInteger,
+        },
+        durationMinutes: {
+          type: Number,
+          required: true,
+          min: 1,
+          max: 240,
+          validate: Number.isSafeInteger,
+        },
+      },
+    ],
   },
   {
     collection: "catalog",
@@ -92,8 +231,8 @@ catalogSchema.path("kind").validate({
 });
 
 catalogSchema.index(
-  { kind: 1, code: 1 },
-  { unique: true, name: "catalog_kind_code_unique" },
+  { kind: 1, code: 1, effectiveFrom: 1 },
+  { unique: true, name: "catalog_kind_code_effective_unique" },
 );
 
 export const CatalogModel = mongoose.model("Catalog", catalogSchema);
