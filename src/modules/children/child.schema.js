@@ -75,6 +75,47 @@ const editableChildFields = {
   benefitCode: zod.string().trim().min(1).max(64).optional(),
 };
 
+const foodUpdateSchema = zod
+  .strictObject({
+    preferences: zod
+      .array(foodItemSchema)
+      .max(CHILD_LIMITS.MAX_FOOD_ITEMS)
+      .optional(),
+    exclusions: zod
+      .array(foodItemSchema)
+      .max(CHILD_LIMITS.MAX_FOOD_ITEMS)
+      .optional(),
+    allergyNotes: zod
+      .array(foodItemSchema)
+      .max(CHILD_LIMITS.MAX_FOOD_ITEMS)
+      .optional(),
+    note: noteSchema.optional(),
+  })
+  .refine((value) => Object.keys(value).length > 0, {
+    message: "At least one nutrition field is required",
+  });
+
+export const parentNutritionUpdateSchema = zod.strictObject({
+  food: zod
+    .strictObject({
+      preferences: zod
+        .array(foodItemSchema)
+        .max(CHILD_LIMITS.MAX_FOOD_ITEMS)
+        .optional(),
+      exclusions: zod
+        .array(foodItemSchema)
+        .max(CHILD_LIMITS.MAX_FOOD_ITEMS)
+        .optional(),
+      allergyNotes: zod
+        .array(foodItemSchema)
+        .max(CHILD_LIMITS.MAX_FOOD_ITEMS)
+        .optional(),
+    })
+    .refine((value) => Object.keys(value).length > 0, {
+      message: "At least one nutrition field is required",
+    }),
+});
+
 export const createChildSchema = zod
   .strictObject(editableChildFields)
   .meta({ id: "CreateChildInput" });
@@ -93,7 +134,7 @@ export const updateChildProfileSchema = zod
       .array(relativeSchema)
       .max(CHILD_LIMITS.MAX_RELATIVES)
       .optional(),
-    food: foodDataSchema.optional(),
+    food: foodUpdateSchema.optional(),
     benefitCode: zod.string().trim().min(1).max(64).optional(),
   })
   .refine((value) => Object.keys(value).length > 0, {
