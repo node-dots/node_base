@@ -30,7 +30,13 @@ export function createApp({
   app.use(security.apiRateLimiter); // Усі адреси, включно з невідомими та health.
   app.use("/api/v1", security.limitWrites);
   // Ліміти стоять перед парсером: заблоковане тіло не потрібно розбирати.
-  app.use(express.json({ limit: securityConfig.JSON_BODY_LIMIT_BYTES }));
+  const standardJsonParser = express.json({
+    limit: securityConfig.JSON_BODY_LIMIT_BYTES,
+  });
+  app.use((request, response, next) => {
+    if (/^\/api\/v1\/schedules(?:\/|$)/.test(request.path)) return next();
+    return standardJsonParser(request, response, next);
+  });
 
   app.get("/health/live", (req, res) => {
     res.json({
