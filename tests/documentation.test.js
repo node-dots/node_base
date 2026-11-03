@@ -182,6 +182,8 @@ test("OpenAPI бере обмеження входу зі схем Zod і збе
       "POST /api/v1/groups/{id}/transfer-next-year",
       "POST /api/v1/invoices/children/{childId}/generate-current-month",
       "POST /api/v1/payments",
+      "POST /api/v1/payments/{paymentId}/confirm",
+      "POST /api/v1/payments/{paymentId}/reject",
       "PUT /api/v1/groups/{id}/resources",
       "PUT /api/v1/people/{id}/employee",
       "PUT /api/v1/people/{id}/account/roles",

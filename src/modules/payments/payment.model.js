@@ -17,7 +17,7 @@ const paymentSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ["PENDING"],
+      enum: ["PENDING", "CONFIRMED", "REJECTED"],
       default: "PENDING",
     },
     payerPersonId: {
@@ -38,6 +38,10 @@ const paymentSchema = new mongoose.Schema(
     },
     payloadHash: { type: String, required: true, match: /^[a-f0-9]{64}$/ },
     reportedAt: { type: Date, required: true },
+    occurredAt: { type: Date },
+    confirmedAt: { type: Date },
+    rejectedAt: { type: Date },
+    reviewedById: { type: mongoose.Schema.Types.ObjectId, ref: "Person" },
   },
   {
     collection: "payments",
@@ -52,5 +56,6 @@ paymentSchema.index(
   { unique: true, name: "payment_actor_idempotency_unique" },
 );
 paymentSchema.index({ invoiceId: 1, reportedAt: 1 });
+paymentSchema.index({ invoiceId: 1, status: 1, occurredAt: 1 });
 
 export const PaymentModel = mongoose.model("Payment", paymentSchema);

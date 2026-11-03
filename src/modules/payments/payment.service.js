@@ -2,7 +2,10 @@ import { createHash } from "node:crypto";
 import { AppError, ResourceNotFoundError } from "../../utils/errors.js";
 import { PERMISSIONS } from "../../utils/access/permissions.js";
 import { systemClock } from "../../utils/calendar.js";
-import { createPendingPaymentSchema } from "./payment.schema.js";
+import {
+  confirmPaymentSchema,
+  createPendingPaymentSchema,
+} from "./payment.schema.js";
 
 function hashPayload({ invoiceId, amountCents, method, payerPersonId }) {
   return createHash("sha256")
@@ -12,7 +15,17 @@ function hashPayload({ invoiceId, amountCents, method, payerPersonId }) {
 
 function toPublicPayment(payment) {
   const { id, invoiceId, amountCents, method, status, reportedAt } = payment;
-  return { id, invoiceId, amountCents, method, status, reportedAt };
+  return {
+    id,
+    invoiceId,
+    amountCents,
+    method,
+    status,
+    reportedAt,
+    ...(payment.occurredAt ? { occurredAt: payment.occurredAt } : {}),
+    ...(payment.confirmedAt ? { confirmedAt: payment.confirmedAt } : {}),
+    ...(payment.rejectedAt ? { rejectedAt: payment.rejectedAt } : {}),
+  };
 }
 
 export class PaymentService {
@@ -33,6 +46,8 @@ export class PaymentService {
       clock,
     });
     authorizer.assertKnown(PERMISSIONS.PAYMENTS_CREATE);
+    authorizer.assertKnown(PERMISSIONS.PAYMENTS_CONFIRM);
+    authorizer.assertKnown(PERMISSIONS.PAYMENTS_REJECT);
   }
 
   async reportPending(input, actor, requestId) {
@@ -140,6 +155,136 @@ export class PaymentService {
         ),
       );
     }
+  }
+
+  async confirm(paymentId, input, actor, requestId) {
+    this.authorizer.assertPermission(actor, PERMISSIONS.PAYMENTS_CONFIRM);
+    let occurredAt;
+    try {
+      occurredAt = new Date(confirmPaymentSchema.parse(input).occurredAt);
+    } catch (error) {
+      throw new AppError(
+        400,
+        "INVALID_PAYMENT_CONFIRMATION",
+        "Payment confirmation is invalid",
+        error.issues,
+      );
+    }
+    const now = this.clock.now();
+    if (occurredAt > now)
+      throw new AppError(
+        400,
+        "PAYMENT_OCCURRED_IN_FUTURE",
+        "Payment occurrence time cannot be in the future",
+      );
+
+    return this.unitOfWork.execute(async ({ session, recordAudit }) => {
+      const payment = await this.paymentRepository.findById(paymentId, {
+        session,
+      });
+      if (!payment)
+        throw new ResourceNotFoundError(
+          "PAYMENT_NOT_FOUND",
+          "Payment not found",
+        );
+      if (payment.status === "CONFIRMED") return toPublicPayment(payment);
+      if (payment.status !== "PENDING")
+        throw new AppError(
+          409,
+          "PAYMENT_STATE_CONFLICT",
+          "Only pending payments can be confirmed",
+        );
+
+      const invoice = await this.invoiceRepository.applyReceipt(
+        payment.invoiceId,
+        payment.amountCents,
+        { session },
+      );
+      if (!invoice)
+        throw new AppError(
+          409,
+          "PAYMENT_EXCEEDS_BALANCE",
+          "Payment exceeds the current invoice balance",
+        );
+      const confirmed = await this.paymentRepository.confirmPending(
+        payment.id,
+        { occurredAt, confirmedAt: now, reviewedById: actor.id },
+        { session },
+      );
+      if (!confirmed)
+        throw new AppError(
+          409,
+          "PAYMENT_STATE_CONFLICT",
+          "Payment was changed by another operation",
+        );
+      await recordAudit({
+        actorId: actor.id,
+        requestId,
+        action: "payment.confirm",
+        entityType: "PAYMENT",
+        entityId: payment.id,
+        before: { status: "PENDING" },
+        after: {
+          invoiceId: payment.invoiceId,
+          amountCents: payment.amountCents,
+          status: "CONFIRMED",
+          occurredAt: occurredAt.toISOString(),
+          confirmedAt: now.toISOString(),
+        },
+        safeFields: [
+          "invoiceId",
+          "amountCents",
+          "status",
+          "occurredAt",
+          "confirmedAt",
+        ],
+      });
+      return toPublicPayment(confirmed);
+    });
+  }
+
+  async reject(paymentId, actor, requestId) {
+    this.authorizer.assertPermission(actor, PERMISSIONS.PAYMENTS_REJECT);
+    const now = this.clock.now();
+    return this.unitOfWork.execute(async ({ session, recordAudit }) => {
+      const payment = await this.paymentRepository.findById(paymentId, {
+        session,
+      });
+      if (!payment)
+        throw new ResourceNotFoundError(
+          "PAYMENT_NOT_FOUND",
+          "Payment not found",
+        );
+      if (payment.status === "REJECTED") return toPublicPayment(payment);
+      if (payment.status !== "PENDING")
+        throw new AppError(
+          409,
+          "PAYMENT_STATE_CONFLICT",
+          "Only pending payments can be rejected",
+        );
+      const rejected = await this.paymentRepository.rejectPending(
+        payment.id,
+        { rejectedAt: now, reviewedById: actor.id },
+        { session },
+      );
+      if (!rejected)
+        throw new AppError(
+          409,
+          "PAYMENT_STATE_CONFLICT",
+          "Payment was changed by another operation",
+        );
+      await recordAudit({
+        actorId: actor.id,
+        requestId,
+        action: "payment.reject",
+        entityType: "PAYMENT",
+        entityId: payment.id,
+        before: { status: "PENDING" },
+        after: { invoiceId: payment.invoiceId, status: "REJECTED" },
+        safeFields: ["invoiceId", "status"],
+      });
+      return toPublicPayment(rejected);
+    });
   }
 
   assertSamePayload(payment, payloadHash) {
