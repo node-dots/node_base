@@ -46,6 +46,7 @@ export class ScheduleService {
     });
     authorizer.assertKnown(PERMISSIONS.SCHEDULES_READ);
     authorizer.assertKnown(PERMISSIONS.SCHEDULES_UPDATE);
+    authorizer.assertKnown(PERMISSIONS.SCHEDULES_GENERATE);
   }
 
   async getDraft(weekStart, actor) {
@@ -152,7 +153,7 @@ export class ScheduleService {
   }
 
   async generateDraft(weekStart, input, actor) {
-    this.authorizer.assertPermission(actor, PERMISSIONS.SCHEDULES_UPDATE);
+    this.authorizer.assertPermission(actor, PERMISSIONS.SCHEDULES_GENERATE);
     const week = scheduleWeekSchema.safeParse(weekStart);
     if (!week.success)
       throw new AppError(

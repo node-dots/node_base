@@ -24,7 +24,10 @@ export function createScheduleRoutes({ service, authService }) {
   router.post(
     "/:weekStart/generate",
     authenticate,
-    requireEditor,
+    createRequirePermission({
+      authorizer,
+      permission: PERMISSIONS.SCHEDULES_GENERATE,
+    }),
     scheduleJsonParser,
     validateBody(generateScheduleSchema),
     async (req, res, next) => {
