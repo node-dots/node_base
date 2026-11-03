@@ -298,6 +298,86 @@ test("confirmation rejects future occurrence times", async () => {
   );
 });
 
+test("annual tuition rejects partial reports and late confirmation", async () => {
+  const { service, invoice, records } = buildFixture();
+  invoice.billingType = "ANNUAL";
+  invoice.serviceMonth = "2026-12";
+  invoice.origAmountCents = 50_000;
+  const parent = { id: "000000000000000000000030", roles: ["PARENT"] };
+  const manager = { id: "000000000000000000000040", roles: ["MANAGER"] };
+  await assert.rejects(
+    service.reportPending(
+      {
+        invoiceId: invoice.id,
+        amountCents: 10_000,
+        method: "CASH",
+        idempotencyKey: "annual-partial-001",
+      },
+      parent,
+      "req-partial",
+    ),
+    { code: "ANNUAL_PAYMENT_MUST_BE_FULL" },
+  );
+  const payment = await service.reportPending(
+    {
+      invoiceId: invoice.id,
+      amountCents: 50_000,
+      method: "CASH",
+      idempotencyKey: "annual-full-0001",
+    },
+    parent,
+    "req-full",
+  );
+  service.clock = { now: () => new Date("2026-12-01T00:00:00.000Z") };
+  await assert.rejects(
+    service.confirm(
+      payment.id,
+      { occurredAt: "2026-11-30T20:00:00.000Z" },
+      manager,
+      "req-late",
+    ),
+    { code: "ANNUAL_PAYMENT_DEADLINE_PASSED" },
+  );
+  assert.equal(records[0].status, "PENDING");
+  assert.equal(invoice.remainingAmountCents, 50_000);
+});
+
+test("annual tuition confirms only the complete payment before the Kyiv deadline", async () => {
+  const { service, invoice, records, audits } = buildFixture();
+  invoice.billingType = "ANNUAL";
+  invoice.serviceMonth = "2026-12";
+  invoice.origAmountCents = invoice.remainingAmountCents;
+  const parent = { id: "000000000000000000000030", roles: ["PARENT"] };
+  const manager = { id: "000000000000000000000040", roles: ["MANAGER"] };
+  const payment = await service.reportPending(
+    {
+      invoiceId: invoice.id,
+      amountCents: invoice.remainingAmountCents,
+      method: "BANK_TRANSFER",
+      idempotencyKey: "annual-confirm-0001",
+    },
+    parent,
+    "req-report",
+  );
+  const confirmed = await service.confirm(
+    payment.id,
+    { occurredAt: "2026-11-30T20:00:00.000Z" },
+    manager,
+    "req-confirm",
+  );
+  assert.equal(confirmed.status, "CONFIRMED");
+  assert.equal(invoice.status, "PAID");
+  assert.equal(invoice.remainingAmountCents, 0);
+  assert.equal(
+    records[0].confirmedAt.toISOString(),
+    "2026-11-05T12:00:00.000Z",
+  );
+  assert.equal(
+    audits.filter(({ action }) => action === "payment.confirm").length,
+    1,
+  );
+});
+
 test("audit failure rolls confirmation and invoice balance back together", async () => {
   const { service, invoice, records, audits } = buildFixture();
   const parent = { id: "000000000000000000000030", roles: ["PARENT"] };

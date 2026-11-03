@@ -5,9 +5,13 @@ import { createAuthenticationMiddleware } from "../auth/auth.middleware.js";
 import { createRequirePermission } from "../../middleware/requirePermission.js";
 import { authorizer } from "../people/access/authorizer.js";
 import { PERMISSIONS } from "../../utils/access/permissions.js";
+import { AppError } from "../../utils/errors.js";
 
 const childIdParams = zod.strictObject({
   childId: zod.string().regex(/^[a-f\d]{24}$/i),
+});
+const annualBody = zod.strictObject({
+  firstMonth: zod.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/),
 });
 
 export function createInvoiceRoutes({ service, authService }) {
@@ -15,6 +19,59 @@ export function createInvoiceRoutes({ service, authService }) {
     throw new TypeError("authService is required for invoice routes");
   const router = Router();
   const authenticate = createAuthenticationMiddleware({ authService });
+  router.post(
+    "/children/:childId/annual-tuition",
+    authenticate,
+    createRequirePermission({
+      authorizer,
+      permission: PERMISSIONS.INVOICES_CREATE,
+    }),
+    validateParams(childIdParams),
+    async (request, response, next) => {
+      try {
+        const parsed = annualBody.safeParse(request.body);
+        if (!parsed.success)
+          throw new AppError(
+            400,
+            "INVALID_ANNUAL_INVOICE",
+            "Annual invoice request is invalid",
+            parsed.error.issues,
+          );
+        response.status(201).json({
+          data: await service.createAnnualTuition(
+            request.validatedParams.childId,
+            parsed.data.firstMonth,
+            request.actor,
+            request.requestId,
+          ),
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+  router.post(
+    "/children/:childId/fallback-expired-annual",
+    authenticate,
+    createRequirePermission({
+      authorizer,
+      permission: PERMISSIONS.INVOICES_CREATE,
+    }),
+    validateParams(childIdParams),
+    async (request, response, next) => {
+      try {
+        response.json({
+          data: await service.fallbackExpiredAnnual(
+            request.validatedParams.childId,
+            request.actor,
+            request.requestId,
+          ),
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
   router.post(
     "/children/:childId/generate-current-month",
     authenticate,

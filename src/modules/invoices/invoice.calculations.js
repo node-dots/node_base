@@ -18,6 +18,44 @@ export function calculateTuitionCents(tariffCents, discountBasisPoints = 0) {
   return applyDiscount(assertMoneyMinor(tariffCents), discountBasisPoints);
 }
 
+export function calculateAnnualTuitionParts(
+  monthlyTariffCents,
+  benefitBasisPoints = 0,
+) {
+  const firstMonthCents = calculateTuitionCents(
+    monthlyTariffCents,
+    benefitBasisPoints,
+  );
+  const discountedMonthlyCents = calculateTuitionCents(firstMonthCents, 1_200);
+  const totalCents = discountedMonthlyCents * 12;
+  assertMoneyMinor(totalCents);
+  const basePartCents = Math.floor(totalCents / 12);
+  const remainder = totalCents % 12;
+  return Array.from({ length: 12 }, (_, index) => ({
+    amountCents: basePartCents + (index < remainder ? 1 : 0),
+    monthOffset: index,
+  }));
+}
+
+export function addServiceMonths(serviceMonth, count) {
+  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(serviceMonth))
+    throw new RangeError("serviceMonth must use YYYY-MM");
+  if (!Number.isInteger(count))
+    throw new RangeError("count must be an integer");
+  const [year, month] = serviceMonth.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1 + count, 1))
+    .toISOString()
+    .slice(0, 7);
+}
+
+export function annualPaymentDeadline(firstMonth) {
+  if (!/^\d{4}-(0[1-9]|1[0-2])$/.test(firstMonth))
+    throw new RangeError("firstMonth must use YYYY-MM");
+  return new Date(
+    zonedDateTimeToUtc(`${firstMonth}-01`, "00:00:00").getTime() - 1,
+  );
+}
+
 export function calculateMealCents(dailyTariffCents, serviceMonth) {
   return assertMoneyMinor(
     assertMoneyMinor(dailyTariffCents) *
