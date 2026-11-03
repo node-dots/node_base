@@ -1,6 +1,7 @@
 import { HTTP_STATUS } from "../../utils/httpConstants.js";
 import {
   publishScheduleSchema,
+  generateScheduleSchema,
   scheduleWeekSchema,
   updateScheduleDraftSchema,
 } from "./schedule.schema.js";
@@ -10,12 +11,36 @@ export function registerScheduleDocumentation(registry) {
   registry.register("ScheduleWeek", scheduleWeekSchema);
   registry.register("UpdateScheduleDraftInput", updateScheduleDraftSchema);
   registry.register("PublishScheduleInput", publishScheduleSchema);
+  registry.register("GenerateScheduleInput", generateScheduleSchema);
   const draftSchema = zod.object({
     weekStart: scheduleWeekSchema,
     revision: zod.number().int().nonnegative(),
     slots: zod.array(zod.object({})),
     updatedById: zod.string().optional(),
     updatedAt: zod.string().nullable(),
+  });
+  registry.registerPath({
+    method: "post",
+    path: "/api/v1/schedules/{weekStart}/generate",
+    operationId: "generateScheduleDraft",
+    tags: ["Schedules"],
+    security: [{ BearerAuth: [] }],
+    request: {
+      body: {
+        required: true,
+        content: { "application/json": { schema: generateScheduleSchema } },
+      },
+    },
+    responses: {
+      [HTTP_STATUS.OK]: {
+        description:
+          "Generates and saves a bounded draft; it never publishes it.",
+      },
+      [HTTP_STATUS.CONFLICT]: { description: "Draft revision changed." },
+      [HTTP_STATUS.FORBIDDEN]: {
+        description: "Draft generation is forbidden.",
+      },
+    },
   });
   registry.registerPath({
     method: "get",

@@ -182,6 +182,7 @@ test("OpenAPI бере обмеження входу зі схем Zod і збе
       "GET /api/v1/schedules/{weekStart}/draft",
       "PUT /api/v1/schedules/{weekStart}/draft",
       "POST /api/v1/schedules/{weekStart}/publish",
+      "POST /api/v1/schedules/{weekStart}/generate",
       "GET /api/v1/schedules/{weekStart}/published",
       "PUT /api/v1/groups/{id}/resources",
       "PUT /api/v1/people/{id}/employee",

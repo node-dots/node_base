@@ -3,6 +3,7 @@ import { PERMISSIONS } from "../../utils/access/permissions.js";
 import { ROLES } from "../../utils/access/roles.js";
 import { systemClock } from "../../utils/calendar.js";
 import { validateSchedule } from "./schedule.validator.js";
+import { generateScheduleDraft } from "./schedule.generator.js";
 import { publishScheduleSchema } from "./schedule.schema.js";
 import {
   scheduleWeekSchema,
@@ -148,6 +149,43 @@ export class ScheduleService {
         );
       throw error;
     }
+  }
+
+  async generateDraft(weekStart, input, actor) {
+    this.authorizer.assertPermission(actor, PERMISSIONS.SCHEDULES_UPDATE);
+    const week = scheduleWeekSchema.safeParse(weekStart);
+    if (!week.success)
+      throw new AppError(
+        400,
+        "INVALID_SCHEDULE_WEEK",
+        "Schedule week is invalid",
+      );
+    const current = await this.scheduleRepository.findDraft(week.data);
+    if ((current?.revision ?? 0) !== input.expectedRevision)
+      throw new AppError(
+        409,
+        "SCHEDULE_REVISION_CONFLICT",
+        "Schedule draft has changed; reload it before generating",
+      );
+    const snapshot = await this.snapshotProvider.read(week.data);
+    const generated = await generateScheduleDraft({
+      weekStart: week.data,
+      snapshot,
+      fixedSlots: input.fixedSlots,
+    });
+    const saved = await this.scheduleRepository.updateDraft({
+      weekStart: week.data,
+      expectedRevision: input.expectedRevision,
+      slots: generated.slots,
+      updatedById: actor.id,
+    });
+    if (!saved)
+      throw new AppError(
+        409,
+        "SCHEDULE_REVISION_CONFLICT",
+        "Schedule draft changed while generating",
+      );
+    return { ...generated, draft: saved };
   }
 
   async publish(weekStart, input, actor, requestId) {
