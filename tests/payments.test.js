@@ -359,6 +359,7 @@ test("annual tuition confirms only the complete payment before the Kyiv deadline
     parent,
     "req-report",
   );
+  service.clock = { now: () => new Date("2026-11-30T21:00:00.000Z") };
   const confirmed = await service.confirm(
     payment.id,
     { occurredAt: "2026-11-30T20:00:00.000Z" },
@@ -370,7 +371,7 @@ test("annual tuition confirms only the complete payment before the Kyiv deadline
   assert.equal(invoice.remainingAmountCents, 0);
   assert.equal(
     records[0].confirmedAt.toISOString(),
-    "2026-11-05T12:00:00.000Z",
+    "2026-11-30T21:00:00.000Z",
   );
   assert.equal(
     audits.filter(({ action }) => action === "payment.confirm").length,
