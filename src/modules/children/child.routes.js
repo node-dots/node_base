@@ -228,6 +228,33 @@ export function createChildRoutes({
     },
   );
   router.post(
+    "/:id/withdraw",
+    authenticate,
+    membershipUpdate,
+    validateParams(childIdParamsSchema),
+    async (request, response, next) => {
+      try {
+        const result = await membershipService.withdraw(
+          request.validatedParams.id,
+          request.actor,
+          request.requestId,
+        );
+        response.json({
+          data: {
+            child: childService.viewPolicy.toReadDto(
+              result.child,
+              request.actor,
+            ),
+            billing: result.billing,
+            repeated: result.repeated,
+          },
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+  router.post(
     "/:id/benefits",
     authenticate,
     createRequirePermission({

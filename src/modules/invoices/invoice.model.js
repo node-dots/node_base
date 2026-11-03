@@ -81,9 +81,11 @@ const invoiceSchema = new mongoose.Schema(
       required: true,
       validate: {
         validator(items) {
-          return this.billingType === "ANNUAL"
-            ? items.length === 12
-            : items.length === 1;
+          const billingType =
+            this.billingType ?? this.getUpdate?.()?.$set?.billingType;
+          if (billingType === "ANNUAL") return items.length === 12;
+          if (billingType === "MONTHLY") return items.length === 1;
+          return items.length === 1 || items.length === 12;
         },
         message: "Invoice part count must match billing type",
       },

@@ -106,6 +106,9 @@ export function createApiRouter({
         childRepository: guardianGroupsReader,
         groupRepository,
         catalogRepository: settingsRepository,
+        invoiceRepository: new InvoiceRepository({
+          invoiceModel: InvoiceModel,
+        }),
         authorizer,
         unitOfWork: authModule.unitOfWork,
       });

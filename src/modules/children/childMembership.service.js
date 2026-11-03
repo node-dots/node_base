@@ -6,6 +6,7 @@ import {
   getSchoolYear,
   systemClock,
 } from "../../utils/calendar.js";
+import { addServiceMonths } from "../invoices/invoice.calculations.js";
 import { PERMISSIONS } from "../../utils/access/permissions.js";
 import { CHILD_LIMITS, CHILD_STATUS } from "./child.constants.js";
 import { assertChildStateTransition } from "./child.rules.js";
@@ -19,6 +20,7 @@ export class ChildMembershipService {
     childRepository,
     groupRepository,
     catalogRepository,
+    invoiceRepository,
     authorizer,
     unitOfWork,
     clock = systemClock,
@@ -27,6 +29,7 @@ export class ChildMembershipService {
       childRepository,
       groupRepository,
       catalogRepository,
+      invoiceRepository,
       authorizer,
       unitOfWork,
       clock,
@@ -258,6 +261,105 @@ export class ChildMembershipService {
       requestId,
       "child.resume",
     );
+  }
+
+  async withdraw(childId, actor, requestId) {
+    this.authorizer.assertPermission(actor, PERMISSIONS.CHILDREN_UPDATE);
+    if (!this.invoiceRepository?.cancelAfterBillingEnd)
+      throw new TypeError("invoiceRepository is required for withdrawal");
+    return this.unitOfWork.execute(async ({ session, recordAudit }) => {
+      const child = await this.childRepository.findByIdForUpdate(childId, {
+        session,
+      });
+      if (!child)
+        throw new ResourceNotFoundError(CHILD_NOT_FOUND, "Child not found");
+      if (child.status === CHILD_STATUS.LEFT)
+        return {
+          child,
+          billing: child.withdrawalSummary,
+          repeated: true,
+        };
+      if (![CHILD_STATUS.ACTIVE, CHILD_STATUS.SUSPENDED].includes(child.status))
+        throw new AppError(
+          409,
+          "INVALID_CHILD_STATE",
+          "Only an enrolled child can be withdrawn",
+        );
+      if (!child.groupId)
+        throw new AppError(
+          409,
+          "INVALID_CHILD_STATE",
+          "An enrolled group is required",
+        );
+      const now = this.clock.now();
+      const currentMonth = getCurrentCalendarDate({ now: () => now }).slice(
+        0,
+        7,
+      );
+      const billingEndMonth =
+        child.billingStartMonth && currentMonth < child.billingStartMonth
+          ? child.billingStartMonth
+          : addServiceMonths(currentMonth, 1);
+      const billing = await this.invoiceRepository.cancelAfterBillingEnd(
+        childId,
+        billingEndMonth,
+        now,
+        { session },
+      );
+      if (!(await this.groupRepository.releaseSeat(child.groupId, { session })))
+        throw new AppError(
+          409,
+          "GROUP_OCCUPANCY_MISMATCH",
+          "The child's group seat could not be released",
+        );
+      const history = child.membershipHistory.map((entry, index) =>
+        index === child.membershipHistory.length - 1 && !entry.endedAt
+          ? { ...entry, endedAt: now }
+          : entry,
+      );
+      const withdrawalSummary = {
+        withdrawnAt: now,
+        billingEndMonth,
+        obligationCents: billing.obligationCents,
+        refundDueCents: billing.refundDueCents,
+      };
+      const updated = await this.childRepository.updateMembershipById(
+        childId,
+        {
+          status: CHILD_STATUS.LEFT,
+          groupId: null,
+          leftAt: now,
+          billingEndMonth,
+          withdrawalSummary,
+          membershipHistory: history,
+        },
+        { session },
+      );
+      if (!updated)
+        throw new ResourceNotFoundError(CHILD_NOT_FOUND, "Child not found");
+      await recordAudit({
+        actorId: actor.id,
+        requestId,
+        action: "child.withdraw",
+        entityType: "CHILD",
+        entityId: childId,
+        before: { status: child.status, groupId: child.groupId },
+        after: {
+          status: updated.status,
+          billingEndMonth,
+          obligationCents: billing.obligationCents,
+          refundDueCents: billing.refundDueCents,
+        },
+        safeFields: [
+          "status",
+          "groupId",
+          "billingEndMonth",
+          "obligationCents",
+          "refundDueCents",
+        ],
+      });
+      return { child: updated, billing: withdrawalSummary, repeated: false };
+    });
   }
 
   async changeStatus(childId, status, actor, requestId, action) {
