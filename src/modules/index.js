@@ -20,6 +20,8 @@ import { PaymentModel } from "./payments/payment.model.js";
 import { PaymentRepository } from "./payments/payment.repository.js";
 import { PaymentService } from "./payments/payment.service.js";
 import { createPaymentRoutes } from "./payments/payment.routes.js";
+import { RefundModel } from "./payments/refund.model.js";
+import { RefundRepository } from "./payments/refund.repository.js";
 import { AccountRolesService } from "./people/accountRoles.service.js";
 import { createAccountRolesRoutes } from "./people/accountRoles.routes.js";
 import { EmployeeService } from "./people/employee.service.js";
@@ -83,6 +85,7 @@ export function createApiRouter({
           invoiceModel: InvoiceModel,
         }),
         childRepository: guardianGroupsReader,
+        refundRepository: new RefundRepository({ refundModel: RefundModel }),
         authorizer,
         unitOfWork: authModule.unitOfWork,
       });
