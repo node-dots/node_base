@@ -64,6 +64,10 @@ export function createChildRoutes({
     authorizer,
     permission: PERMISSIONS.CHILDREN_UPDATE,
   });
+  const withdraw = createRequirePermission({
+    authorizer,
+    permission: PERMISSIONS.CHILDREN_WITHDRAW,
+  });
   const update = (request, response, next) => {
     try {
       if (request.actor.roles.includes("PARENT"))
@@ -230,7 +234,7 @@ export function createChildRoutes({
   router.post(
     "/:id/withdraw",
     authenticate,
-    membershipUpdate,
+    withdraw,
     validateParams(childIdParamsSchema),
     async (request, response, next) => {
       try {

@@ -38,6 +38,7 @@ export class ChildMembershipService {
       PERMISSIONS.CHILDREN_ENROLL,
       PERMISSIONS.CHILDREN_TRANSFER,
       PERMISSIONS.CHILDREN_UPDATE,
+      PERMISSIONS.CHILDREN_WITHDRAW,
     ])
       authorizer.assertKnown(permission);
   }
@@ -264,7 +265,7 @@ export class ChildMembershipService {
   }
 
   async withdraw(childId, actor, requestId) {
-    this.authorizer.assertPermission(actor, PERMISSIONS.CHILDREN_UPDATE);
+    this.authorizer.assertPermission(actor, PERMISSIONS.CHILDREN_WITHDRAW);
     if (!this.invoiceRepository?.cancelAfterBillingEnd)
       throw new TypeError("invoiceRepository is required for withdrawal");
     return this.unitOfWork.execute(async ({ session, recordAudit }) => {
