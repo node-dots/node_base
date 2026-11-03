@@ -78,6 +78,8 @@ function makeService({ assignments = [] } = {}) {
               : null,
         ensureEmployeeResourceGuard: async () => {},
         incrementEmployeeResourceGuard: async () => {},
+        ensureScheduleResourceGuard: async () => {},
+        incrementScheduleResourceGuard: async () => {},
       },
       groupRepository: {
         findActiveEmployeeAssignments: async () => assignments,
