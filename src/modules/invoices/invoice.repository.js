@@ -44,8 +44,11 @@ export class InvoiceRepository {
     let query = this.invoiceModel.findOne({
       childId,
       service: "TUITION",
-      "parts.month": serviceMonth,
       status: { $ne: "CANCELLED" },
+      $or: [
+        { reservedMonths: serviceMonth },
+        { reservedMonths: { $exists: false }, "parts.month": serviceMonth },
+      ],
     });
     if (session) query = query.session(session);
     const document = await query.lean();
@@ -70,6 +73,8 @@ export class InvoiceRepository {
             status: "CANCELLED",
             remainingAmountCents: 0,
             "parts.$[].remainingCents": 0,
+            "parts.$[].cancelled": true,
+            reservedMonths: [],
           },
         },
         { new: true, runValidators: true, session },
