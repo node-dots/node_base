@@ -84,6 +84,25 @@ test(
       const monthly = await repository.insert(monthlyDraft);
       assert.equal(monthly.billingType, "MONTHLY");
       assert.equal(monthly.serviceMonth, "2026-11");
+
+      const paidAnnual = await repository.insert({
+        ...monthlyDraft,
+        childId: "000000000000000000000002",
+        billingType: "ANNUAL",
+        serviceMonth: "2026-10",
+        origAmountCents: annualAmount,
+        remainingAmountCents: annualAmount,
+        parts: parts.map((part) => ({ ...part })),
+      });
+      const receipt = await repository.applyReceipt(
+        paidAnnual.id,
+        annualAmount,
+      );
+      assert.equal(receipt.status, "PAID");
+      assert.equal(receipt.remainingAmountCents, 0);
+      assert.ok(
+        receipt.parts.every(({ remainingCents }) => remainingCents === 0),
+      );
     } finally {
       try {
         await connection.dropDatabase();
