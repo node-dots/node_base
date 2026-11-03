@@ -26,6 +26,7 @@ import { ExpenseModel } from "./expenses/expense.model.js";
 import { ExpenseRepository } from "./expenses/expense.repository.js";
 import { ExpenseService } from "./expenses/expense.service.js";
 import { createExpenseRoutes } from "./expenses/expense.routes.js";
+import { OpenMonthService } from "./expenses/openMonth.service.js";
 import { AccountRolesService } from "./people/accountRoles.service.js";
 import { createAccountRolesRoutes } from "./people/accountRoles.routes.js";
 import { EmployeeService } from "./people/employee.service.js";
@@ -72,10 +73,22 @@ export function createApiRouter({
         authorizer,
         unitOfWork: authModule.unitOfWork,
       });
+      const openMonthService = new OpenMonthService({
+        expenseRepository: new ExpenseRepository({
+          expenseModel: ExpenseModel,
+        }),
+        catalogRepository: settingsRepository,
+        personRepository: authModule.personRepository,
+        groupRepository,
+        childRepository: guardianGroupsReader,
+        authorizer,
+        unitOfWork: authModule.unitOfWork,
+      });
       router.use(
         "/expenses",
         createExpenseRoutes({
           service: expenseService,
+          openMonthService,
           authService: authModule.authService,
         }),
       );

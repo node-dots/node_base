@@ -17,6 +17,7 @@ function dto(d) {
           correctionDirection: d.correctionDirection,
         }
       : {}),
+    ...(d.snapshot ? { snapshot: structuredClone(d.snapshot) } : {}),
   };
 }
 
@@ -40,6 +41,13 @@ export class ExpenseRepository {
     if (session) query = query.session(session);
     const doc = await query.lean();
     return doc ? dto(doc) : null;
+  }
+  async findBySourcePrefix(sourceKeyPrefix, { session } = {}) {
+    let query = this.expenseModel
+      .find({ sourceKey: { $regex: `^${sourceKeyPrefix}` } })
+      .sort({ _id: 1 });
+    if (session) query = query.session(session);
+    return (await query.lean()).map(dto);
   }
   async #transition(id, filter, update, { session } = {}) {
     const doc = await this.expenseModel

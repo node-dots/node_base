@@ -32,6 +32,7 @@ const expenseSchema = new mongoose.Schema(
     sourceKey: { type: String, maxlength: 160 },
     correctionOf: { type: mongoose.Schema.Types.ObjectId, ref: "Expense" },
     correctionDirection: { type: String, enum: ["INCREASE", "DECREASE"] },
+    snapshot: { type: mongoose.Schema.Types.Mixed },
   },
   {
     collection: "expenses",

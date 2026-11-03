@@ -82,6 +82,14 @@ export class PersonRepository {
     return document ? toPerson(document) : null;
   }
 
+  async findActiveEmployees({ session } = {}) {
+    let query = this.personModel
+      .find({ "employee.status": "ACTIVE" })
+      .sort({ _id: 1 });
+    if (session) query = query.session(session);
+    return (await query.lean()).map(toPerson);
+  }
+
   async updateEmployee(personId, employee, { session } = {}) {
     if (!mongoose.isObjectIdOrHexString(personId)) return null;
     const document = await this.personModel
