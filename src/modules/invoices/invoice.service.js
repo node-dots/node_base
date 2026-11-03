@@ -454,4 +454,15 @@ export class InvoiceService {
       throw new ResourceNotFoundError("CHILD_NOT_FOUND", "Child not found");
     return this.invoiceRepository.listByChild(childId);
   }
+
+  async getCurrentBalances(actor) {
+    this.authorizer.assertPermission(actor, PERMISSIONS.INVOICES_READ);
+    const asOf = this.clock.now();
+    const guardianId = actor.roles.includes("PARENT") ? actor.id : undefined;
+    const totals = await this.invoiceRepository.aggregateCurrentBalances({
+      asOf,
+      guardianId,
+    });
+    return { ...totals, asOf, basis: "CURRENT_BALANCE_NOT_HISTORICAL" };
+  }
 }

@@ -162,6 +162,7 @@ test("OpenAPI бере обмеження входу зі схем Zod і збе
       "GET /api/v1/groups/summary",
       "GET /api/v1/groups/{id}",
       "GET /api/v1/invoices/children/{childId}",
+      "GET /api/v1/invoices/current-balances",
       "PATCH /api/v1/groups/{id}/capacity",
       "GET /api/v1/openapi.json",
       "GET /health/live",
