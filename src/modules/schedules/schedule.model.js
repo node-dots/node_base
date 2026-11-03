@@ -18,6 +18,17 @@ const slotSchema = new mongoose.Schema(
   { _id: false, strict: "throw" },
 );
 
+const publishedSchema = new mongoose.Schema(
+  {
+    revision: { type: Number, required: true, min: 1 },
+    publishedAt: { type: Date, required: true },
+    publishedById: { type: mongoose.Schema.Types.ObjectId, required: true },
+    resourceRevision: { type: Number, required: true, min: 0 },
+    slots: { type: [slotSchema], required: true },
+  },
+  { _id: false, strict: "throw" },
+);
+
 const scheduleSchema = new mongoose.Schema(
   {
     weekStart: { type: String, required: true, match: /^\d{4}-\d{2}-\d{2}$/ },
@@ -33,6 +44,7 @@ const scheduleSchema = new mongoose.Schema(
       required: true,
       ref: "Person",
     },
+    published: { type: publishedSchema },
   },
   {
     collection: "schedules",
