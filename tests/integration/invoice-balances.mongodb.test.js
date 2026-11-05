@@ -74,26 +74,37 @@ test(
       const ownInvoiceId = new mongoose.Types.ObjectId();
       const foreignInvoiceId = new mongoose.Types.ObjectId();
       await invoices.create([
-        invoiceBase(ownInvoiceId, childId, [
-          {
-            month: "2027-01",
-            amountCents: 1000,
-            remainingCents: 0,
-            cancelled: false,
-          },
-          {
-            month: "2027-02",
-            amountCents: 2000,
-            remainingCents: 500,
-            cancelled: false,
-          },
-          {
-            month: "2027-03",
-            amountCents: 3000,
-            remainingCents: 0,
-            cancelled: true,
-          },
-        ]),
+        invoiceBase(
+          ownInvoiceId,
+          childId,
+          [
+            {
+              month: "2027-01",
+              amountCents: 1000,
+              remainingCents: 0,
+              cancelled: false,
+            },
+            {
+              month: "2027-02",
+              amountCents: 2000,
+              remainingCents: 500,
+              cancelled: false,
+            },
+            {
+              month: "2027-03",
+              amountCents: 3000,
+              remainingCents: 0,
+              cancelled: true,
+            },
+            ...Array.from({ length: 9 }, (_, index) => ({
+              month: `2027-${String(index + 4).padStart(2, "0")}`,
+              amountCents: 0,
+              remainingCents: 0,
+              cancelled: false,
+            })),
+          ],
+          { billingType: "ANNUAL" },
+        ),
         invoiceBase(foreignInvoiceId, foreignChildId, [
           {
             month: "2027-01",
