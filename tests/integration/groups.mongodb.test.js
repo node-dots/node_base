@@ -127,6 +127,7 @@ test(
         "capacity",
         "id",
         "name",
+        "occupiedSeats",
         "status",
       ]);
       const read = await fetch(baseUrl + "/" + group.id, {
