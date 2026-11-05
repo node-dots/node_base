@@ -1,5 +1,6 @@
 import { spawnSync } from "node:child_process";
 import { demoGroups } from "./demo-groups.js";
+import { initialCatalogEntries } from "../src/modules/catalog/catalog.seed.js";
 
 function docker(argumentsList, timeout = 60000) {
   const result = spawnSync("docker", argumentsList, {
@@ -38,6 +39,7 @@ try {
   const script = `
     const database = db.getSiblingDB(${JSON.stringify(databaseName)});
     const groups = ${JSON.stringify(demoGroups)};
+    const catalogEntries = ${JSON.stringify(initialCatalogEntries)};
     let inserted = 0;
     for (const group of groups) {
       const { _id, ...fields } = group;
@@ -48,7 +50,21 @@ try {
       );
       inserted += result.upsertedCount;
     }
-    print(JSON.stringify({ database: database.getName(), inserted, existing: groups.length - inserted, total: database.groups.countDocuments() }));
+    let catalogInserted = 0;
+    for (const entry of catalogEntries) {
+      const { _id, ...fields } = entry;
+      const result = database.catalog.updateOne(
+        { _id: ObjectId(_id) },
+        { $setOnInsert: fields },
+        { upsert: true }
+      );
+      catalogInserted += result.upsertedCount;
+    }
+    print(JSON.stringify({
+      database: database.getName(),
+      groups: { inserted, existing: groups.length - inserted, total: database.groups.countDocuments() },
+      catalog: { inserted: catalogInserted, existing: catalogEntries.length - catalogInserted, total: database.catalog.countDocuments() }
+    }));
   `;
   // Аргументи передаємо без shell; дані вставляємо як JSON, а не команди оболонки.
   docker([
@@ -62,7 +78,7 @@ try {
     script,
   ]);
   console.log(
-    `Seed завершено. Наявні записи збережено. База: ${databaseName}; колекція: groups.`,
+    `Seed завершено. Наявні записи збережено. База: ${databaseName}; колекції: groups, catalog.`,
   );
 } catch (error) {
   console.error(error.message);
