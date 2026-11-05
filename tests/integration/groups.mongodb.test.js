@@ -51,6 +51,13 @@ test(
         { ageCategory: 4, groupsCount: 2, totalCapacity: 38 },
         { ageCategory: 5, groupsCount: 2, totalCapacity: 36 },
       ];
+      const expectedApiSummary = expectedSummary.map((entry) => ({
+        ...entry,
+        currentOccupied: 0,
+        storedOccupied: 0,
+        freePlaces: entry.totalCapacity,
+        mismatchGroups: 0,
+      }));
       assert.deepEqual(
         await repository.summarizeByAge(allScope),
         expectedSummary,
@@ -70,7 +77,7 @@ test(
         headers: testAuthHeaders(),
       });
       assert.equal(summary.status, 200);
-      assert.deepEqual((await summary.json()).data, expectedSummary);
+      assert.deepEqual((await summary.json()).data, expectedApiSummary);
 
       // Перевіряємо пагінацію на справжній MongoDB.
       const expectedIds = demoGroups
@@ -107,7 +114,7 @@ test(
 
       assert.deepEqual(
         (await summaryAfterPagination.json()).data,
-        expectedSummary,
+        expectedApiSummary,
       );
 
       const created = await fetch(baseUrl, {
@@ -127,6 +134,7 @@ test(
         "capacity",
         "id",
         "name",
+        "occupiedSeats",
         "status",
       ]);
       const read = await fetch(baseUrl + "/" + group.id, {
