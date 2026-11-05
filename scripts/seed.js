@@ -1,6 +1,7 @@
 import { spawnSync } from "node:child_process";
 import { demoGroups } from "./demo-groups.js";
 import { initialCatalogEntries } from "../src/modules/catalog/catalog.seed.js";
+import { isSeedDatabaseAllowed } from "./seed-policy.js";
 
 function docker(argumentsList, timeout = 60000) {
   const result = spawnSync("docker", argumentsList, {
@@ -16,12 +17,12 @@ function docker(argumentsList, timeout = 60000) {
 
 try {
   const databaseName = process.env.SEED_DATABASE ?? "kindergarten_dev";
-  if (!["kindergarten_dev", "kindergarten_seed_test"].includes(databaseName)) {
+  if (!isSeedDatabaseAllowed(databaseName)) {
     throw new Error(
-      "Seed дозволений тільки для kindergarten_dev або kindergarten_seed_test",
+      "Не вдалося виконати Docker-команду. Перевірте Docker Desktop і повідомлення вище.",
     );
   }
-  // Запускаємо тільки БД; Jaeger не потрібний для seed.
+  // Запускаємо тільки MongoDB; Jaeger для seed не потрібен.
   docker(
     ["compose", "up", "-d", "--wait", "--wait-timeout", "60", "mongodb"],
     180000,
@@ -66,7 +67,7 @@ try {
       catalog: { inserted: catalogInserted, existing: catalogEntries.length - catalogInserted, total: database.catalog.countDocuments() }
     }));
   `;
-  // Аргументи передаємо без shell; дані вставляємо як JSON, а не команди оболонки.
+  // Аргументи передаємо без shell; дані вставляємо як JSON, а не як команди оболонки.
   docker([
     "compose",
     "exec",
@@ -77,8 +78,10 @@ try {
     "--eval",
     script,
   ]);
+  const { seedDemoScenario } = await import("./demo-scenario.js");
+  await seedDemoScenario({ databaseName });
   console.log(
-    `Seed завершено. Наявні записи збережено. База: ${databaseName}; колекції: groups, catalog.`,
+    `Seed завершено. Наявні записи збережено. База: ${databaseName}; сценарій охоплює групи, каталог, людей, дітей, фінанси та розклад.`,
   );
 } catch (error) {
   console.error(error.message);
