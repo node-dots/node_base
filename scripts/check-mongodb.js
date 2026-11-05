@@ -26,6 +26,7 @@ const result = spawnSync(
     "tests/integration/schedule-publish.mongodb.test.js",
     "tests/integration/operations-reports.mongodb.test.js",
     "tests/integration/access-control.mongodb.test.js",
+    "tests/integration/demo-seed.mongodb.test.js",
   ],
   {
     stdio: "inherit",
