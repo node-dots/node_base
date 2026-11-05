@@ -48,6 +48,12 @@ export class GroupRepository {
     };
   }
 
+  async findActiveForSnapshot({ session } = {}) {
+    let query = this.groupModel.find({ status: "ACTIVE" }).sort({ _id: 1 });
+    if (session) query = query.session(session);
+    return (await query.lean()).map(toGroup);
+  }
+
   async findById(groupId, { scope } = {}) {
     // Некоректний ID, як і відсутній запис, повертає null замість CastError.
     if (!mongoose.isObjectIdOrHexString(groupId)) return null;
