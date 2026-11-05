@@ -82,13 +82,18 @@ export class GroupService {
     return this.groupRepository.insert(buildGroupDraft(input));
   }
 
-  async listGroups({ page, pageSize }, actor) {
+  async listGroups({ page, pageSize, schoolYear, status, ageCategory }, actor) {
     this.authorizer.assertPermission(actor, PERMISSIONS.GROUPS_READ);
     const scope = await this.groupAccessPolicy.readScope(actor);
-    const { groups, total } = await this.groupRepository.findAll({
+    const findPage =
+      this.groupRepository.findOccupancyPage ?? this.groupRepository.findAll;
+    const { groups, total } = await findPage.call(this.groupRepository, {
       page,
       pageSize,
       scope,
+      schoolYear,
+      status,
+      ageCategory,
     });
 
     return {
@@ -117,7 +122,10 @@ export class GroupService {
   async getAgeSummary(actor) {
     this.authorizer.assertPermission(actor, PERMISSIONS.GROUPS_READ);
     const scope = await this.groupAccessPolicy.readScope(actor);
-    return this.groupRepository.summarizeByAge({ scope });
+    const summarize =
+      this.groupRepository.summarizeOccupancyByAge ??
+      this.groupRepository.summarizeByAge;
+    return summarize.call(this.groupRepository, { scope });
   }
 
   assertMutationDependencies() {

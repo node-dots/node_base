@@ -244,4 +244,87 @@ export class InvoiceRepository {
         .lean()
     ).map(toInvoice);
   }
+
+  async aggregateCurrentBalances({ asOf, guardianId } = {}) {
+    const pipeline = [];
+    if (guardianId) {
+      pipeline.push(
+        {
+          $lookup: {
+            from: "children",
+            let: { childId: "$childId" },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ["$_id", "$$childId"] },
+                  "guardians.personId": new mongoose.Types.ObjectId(guardianId),
+                },
+              },
+              { $project: { _id: 1 } },
+            ],
+            as: "visibleChild",
+          },
+        },
+        { $match: { "visibleChild.0": { $exists: true } } },
+      );
+    }
+    pipeline.push(
+      { $unwind: "$parts" },
+      {
+        $group: {
+          _id: "$_id",
+          outstandingCents: {
+            $sum: {
+              $cond: [
+                { $eq: ["$parts.cancelled", true] },
+                0,
+                "$parts.remainingCents",
+              ],
+            },
+          },
+          overdueCents: {
+            $sum: {
+              $cond: [
+                {
+                  $and: [
+                    { $ne: ["$parts.cancelled", true] },
+                    { $lt: ["$dueAt", asOf] },
+                  ],
+                },
+                "$parts.remainingCents",
+                0,
+              ],
+            },
+          },
+          refundDueCents: {
+            $first: { $ifNull: ["$refundableAmountCents", 0] },
+          },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          currentOutstandingCents: { $sum: "$outstandingCents" },
+          currentOverdueCents: { $sum: "$overdueCents" },
+          currentRefundDueCents: { $sum: "$refundDueCents" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          currentOutstandingCents: 1,
+          currentOverdueCents: 1,
+          currentRefundDueCents: 1,
+        },
+      },
+    );
+    const [totals] = await this.invoiceModel.aggregate(pipeline);
+    return (
+      totals ?? {
+        currentOutstandingCents: 0,
+        currentOverdueCents: 0,
+        currentRefundDueCents: 0,
+      }
+    );
+  }
 }
