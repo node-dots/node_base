@@ -10,7 +10,7 @@ Updated 2026-11-05. This plan records implementation and verification evidence f
 | TASK-013–019 | #96–102 | Open stacked PRs; GitHub Code checks and MongoDB integration checks passed; independent review is pending. |
 | TASK-020–035 | #75–90 | Open stacked PRs; GitHub Code checks and MongoDB integration checks passed; independent review is pending. |
 | TASK-036–038 | #91–93 | Open stacked PRs; GitHub Code checks and MongoDB integration checks passed; independent review is pending. TASK-032 and TASK-033 report modules are integrated into the downstream stack. |
-| TASK-039 | #94 | Safe allowlisted insert-only seed for groups/catalog is verified. The full demo dataset required by the issue is not yet implemented. |
+| TASK-039 | #94, #105 | Complete demo dataset implemented and locally verified in #105. GitHub CI passed; independent review and normal merge chain remain. |
 | TASK-040 | #95 | Integrated Linux/Windows checks are green. Fresh macOS checkout, MongoDB integration, service readiness, Swagger, and bootstrap login passed in CI via #103. Full live business-flow/browser and team walkthrough are not recorded. |
 
 PRs #75–95 form a dependency chain; PRs #96–102 are a separate prerequisite chain. CI runs for stacked PRs. Do not merge around repository review requirements.
@@ -19,16 +19,16 @@ PRs #75–95 form a dependency chain; PRs #96–102 are a separate prerequisite 
 
 On the Windows checkout with Node.js 24.22.1 and Docker MongoDB 8.0:
 
-- `npm.cmd run check` passed: Prettier, syntax check for 224 JavaScript files, and 170 unit/HTTP tests passed. The 26 MongoDB tests are intentionally skipped by this command.
-- `npm.cmd run test:mongodb` passed: 25 passed, 0 failed, 0 skipped.
-- GitHub CI Code checks and MongoDB integration checks passed on open PRs #75–102 at the latest check.
-- The allowlisted `kindergarten_seed_test` was seeded twice: first run inserted 8 groups and 46 catalog records; second inserted none; a synthetic manual edit survived.
+- `npm.cmd run check` passed: Prettier, syntax check for 229 JavaScript files, and 172 unit/HTTP tests passed. The 27 MongoDB-only tests are intentionally skipped by this command.
+- `npm.cmd run test:mongodb` passed: 26 passed, 0 failed, 0 skipped, including the full repeatable TASK-039 seed scenario.
+- GitHub Code checks and MongoDB integration passed on PRs #75–#105 at the latest observed checks; PR #105 is the complete TASK-039 dataset.
+- The full synthetic TASK-039 scenario was seeded twice in the dedicated Docker replica-set database; stable IDs/statuses remained unchanged, and manual group/person edits plus a cancelled expense were preserved.
 
 ## Remaining acceptance evidence
 
-TASK-039 requires own/foreign users, empty/full groups, annual/monthly billing, refund, expenses, and a published schedule in a repeatable demo seed. The current seed only creates groups and catalog entries. This issue is not fully implemented.
+TASK-039 full-seed acceptance criteria are implemented in PR #105: own/foreign parent accounts, empty/full/partially occupied groups, monthly/annual billing, payment/refund, expenses, and published schedule. Local unit and MongoDB integration suites pass; PR #105 awaits independent review and the normal merge sequence.
 
-TASK-040 asks for clean Windows and macOS checkouts and a live end-to-end walkthrough, plus a team session where participants explain their implementations. Windows checks passed locally. A fresh macOS-15 GitHub-hosted runner passed `npm ci`, `npm run check`, `npm run test:mongodb`, server readiness, OpenAPI, and bootstrap-admin login smoke checks in PR #103. A full live business-flow/browser demonstration and team session are not recorded. Independent review is also required before PRs can be accepted.
+TASK-040 Windows checks passed locally. A fresh macOS-15 GitHub-hosted runner passed setup, unit and MongoDB integration checks, service readiness, OpenAPI, and bootstrap-admin smoke checks in PR #103. The seed and Swagger instructions now support the complete scenario; a recorded live browser walkthrough and team session are not yet evidenced. Independent review is required before integration PRs are accepted.
 
 ## Reproduction commands
 
@@ -43,4 +43,4 @@ npm.cmd run seed
 Remove-Item Env:SEED_DATABASE
 ```
 
-The seed permits only `kindergarten_dev` and `kindergarten_seed_test`; verify the configured MongoDB target before running it. Do not put credentials or real personal data in the repository or demo fixtures.
+Manual seed runs permit `kindergarten_dev` and `kindergarten_seed_test`; automated integration tests use a unique, generated `kindergarten_test_<32 hex>` database and drop only that database. Verify the configured MongoDB target before manual runs. Do not put credentials or real personal data in the repository or demo fixtures.
