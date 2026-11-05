@@ -11,7 +11,7 @@ Updated 2026-11-05. This plan records implementation and verification evidence f
 | TASK-020–035 | #75–90 | Open stacked PRs; GitHub Code checks and MongoDB integration checks passed; independent review is pending. |
 | TASK-036–038 | #91–93 | Open stacked PRs; GitHub Code checks and MongoDB integration checks passed; independent review is pending. TASK-032 and TASK-033 report modules are integrated into the downstream stack. |
 | TASK-039 | #94 | Safe allowlisted insert-only seed for groups/catalog is verified. The full demo dataset required by the issue is not yet implemented. |
-| TASK-040 | #95 | Integrated code and automated checks are green. The full live browser demonstration, macOS checkout, and team walkthrough have not been recorded. |
+| TASK-040 | #95 | Integrated Linux/Windows checks are green. Fresh macOS checkout, MongoDB integration, service readiness, Swagger, and bootstrap login passed in CI via #103. Full live business-flow/browser and team walkthrough are not recorded. |
 
 PRs #75–95 form a dependency chain; PRs #96–102 are a separate prerequisite chain. CI runs for stacked PRs. Do not merge around repository review requirements.
 
@@ -28,7 +28,7 @@ On the Windows checkout with Node.js 24.22.1 and Docker MongoDB 8.0:
 
 TASK-039 requires own/foreign users, empty/full groups, annual/monthly billing, refund, expenses, and a published schedule in a repeatable demo seed. The current seed only creates groups and catalog entries. This issue is not fully implemented.
 
-TASK-040 asks for a clean Windows and macOS checkout and a live end-to-end walkthrough, plus a team session where participants explain their implementations. The current evidence covers Windows automated tests and MongoDB integration; it does not include a macOS run or a recorded team/browser demonstration. These should not be claimed as passed. Independent review is also required before PRs can be accepted.
+TASK-040 asks for clean Windows and macOS checkouts and a live end-to-end walkthrough, plus a team session where participants explain their implementations. Windows checks passed locally. A fresh macOS-15 GitHub-hosted runner passed `npm ci`, `npm run check`, `npm run test:mongodb`, server readiness, OpenAPI, and bootstrap-admin login smoke checks in PR #103. A full live business-flow/browser demonstration and team session are not recorded. Independent review is also required before PRs can be accepted.
 
 ## Reproduction commands
 
