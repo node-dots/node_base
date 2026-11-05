@@ -219,6 +219,26 @@ export class ChildRepository {
     return query;
   }
 
+  async countOccupiedByGroups(groupIds, { session } = {}) {
+    const ids = groupIds
+      .filter(mongoose.isObjectIdOrHexString)
+      .map((id) => new mongoose.Types.ObjectId(id));
+    if (!ids.length) return new Map();
+    let query = this.childModel.aggregate([
+      {
+        $match: {
+          groupId: { $in: ids },
+          status: { $in: ["ACTIVE", "SUSPENDED"] },
+        },
+      },
+      { $group: { _id: "$groupId", count: { $sum: 1 } } },
+    ]);
+    if (session) query = query.session(session);
+    return new Map(
+      (await query).map(({ _id, count }) => [_id.toString(), count]),
+    );
+  }
+
   async updateProfileById(childId, profileUpdate, { session } = {}) {
     if (!mongoose.isObjectIdOrHexString(childId)) return null;
     const fields = Object.keys(profileUpdate);

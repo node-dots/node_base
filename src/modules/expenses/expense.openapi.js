@@ -13,6 +13,23 @@ export function registerExpenseDocumentation(registry) {
   const secured = [{ BearerAuth: [] }];
   registry.registerPath({
     method: "post",
+    path: "/api/v1/expenses/open-current-month",
+    operationId: "openCurrentFinanceMonth",
+    tags: ["Expenses"],
+    security: secured,
+    responses: {
+      [HTTP_STATUS.CREATED]: {
+        description:
+          "Atomically snapshots current rent, active payroll, occupancy, month marker, and audit; repeated calls return the stored snapshot.",
+      },
+      [HTTP_STATUS.FORBIDDEN]: { description: "ADMIN permission required." },
+      [HTTP_STATUS.CONFLICT]: {
+        description: "The month snapshot could not be completed.",
+      },
+    },
+  });
+  registry.registerPath({
+    method: "post",
     path: "/api/v1/expenses",
     operationId: "createExpenseDraft",
     tags: ["Expenses"],

@@ -43,8 +43,8 @@ export class CatalogRepository {
     this.catalogModel = catalogModel;
   }
 
-  async insert(entry) {
-    const document = await this.catalogModel.create(entry);
+  async insert(entry, { session } = {}) {
+    const [document] = await this.catalogModel.create([entry], { session });
     return toCatalogEntry(document);
   }
 
@@ -66,11 +66,11 @@ export class CatalogRepository {
     return documents.map(toCatalogEntry);
   }
 
-  async findActiveByCode(kind, code) {
+  async findActiveByCode(kind, code, { session } = {}) {
     assertKnownKind(kind);
-    const document = await this.catalogModel
-      .findOne({ kind, code, active: true })
-      .lean();
+    let query = this.catalogModel.findOne({ kind, code, active: true });
+    if (session) query = query.session(session);
+    const document = await query.lean();
     return document ? toCatalogEntry(document) : null;
   }
 
