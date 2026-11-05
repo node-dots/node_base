@@ -175,6 +175,7 @@ test("OpenAPI бере обмеження входу зі схем Zod і збе
       "POST /api/v1/children/{id}/resume",
       "POST /api/v1/children/{id}/suspend",
       "POST /api/v1/children/{id}/transfer",
+      "POST /api/v1/children/{id}/withdraw",
       "POST /api/v1/children/{id}/benefits",
       "POST /api/v1/catalog/versions",
       "POST /api/v1/groups",

@@ -42,6 +42,7 @@ function toChild(document) {
     "schoolYear",
     "benefitCode",
     "billingStartMonth",
+    "billingEndMonth",
     "firstUnbilledMonth",
   ]) {
     if (document[field] !== undefined) child[field] = document[field];
@@ -52,6 +53,14 @@ function toChild(document) {
   }
   for (const field of ["enrolledAt", "leftAt"]) {
     if (document[field]) child[field] = new Date(document[field]);
+  }
+  if (document.withdrawalSummary) {
+    child.withdrawalSummary = {
+      withdrawnAt: new Date(document.withdrawalSummary.withdrawnAt),
+      billingEndMonth: document.withdrawalSummary.billingEndMonth,
+      obligationCents: document.withdrawalSummary.obligationCents,
+      refundDueCents: document.withdrawalSummary.refundDueCents,
+    };
   }
   return child;
 }
@@ -90,8 +99,10 @@ export class ChildRepository {
       "enrolledAt",
       "leftAt",
       "billingStartMonth",
+      "billingEndMonth",
       "firstUnbilledMonth",
       "membershipHistory",
+      "withdrawalSummary",
     ]);
     if (
       !membershipUpdate ||

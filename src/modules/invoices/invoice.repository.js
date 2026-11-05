@@ -83,6 +83,74 @@ export class InvoiceRepository {
     return document ? toInvoice(document) : null;
   }
 
+  async cancelAfterBillingEnd(
+    childId,
+    billingEndMonth,
+    withdrawnAt,
+    { session } = {},
+  ) {
+    if (!mongoose.isObjectIdOrHexString(childId))
+      throw new TypeError("childId must be a MongoDB ObjectId");
+    const documents = await this.invoiceModel
+      .find({ childId })
+      .session(session ?? null)
+      .lean();
+    let obligationCents = 0;
+    let paidAmountCents = 0;
+    let cancelledParts = 0;
+    const cancelledInvoiceIds = [];
+    for (const document of documents) {
+      const invoice = toInvoice(document);
+      paidAmountCents += invoice.paidAmountCents;
+      const parts = invoice.parts.map((part) => {
+        if (part.month < billingEndMonth && !part.cancelled)
+          obligationCents += part.amountCents;
+        if (part.month >= billingEndMonth && !part.cancelled) {
+          cancelledParts += 1;
+          return {
+            ...part,
+            remainingCents: 0,
+            cancelled: true,
+            cancelledAt: withdrawnAt,
+          };
+        }
+        return part;
+      });
+      const changed = parts.some(
+        (part, index) => part !== invoice.parts[index],
+      );
+      if (!changed) continue;
+      const allCancelled = parts.every(({ cancelled }) => cancelled);
+      const remainingAmountCents = parts.reduce(
+        (sum, part) => sum + part.remainingCents,
+        0,
+      );
+      await this.invoiceModel.updateOne(
+        { _id: document._id, status: document.status },
+        {
+          $set: {
+            parts,
+            reservedMonths: parts
+              .filter(({ cancelled }) => !cancelled)
+              .map(({ month }) => month),
+            remainingAmountCents,
+            ...(allCancelled ? { status: "CANCELLED" } : {}),
+          },
+        },
+        { runValidators: true, session },
+      );
+      cancelledInvoiceIds.push(invoice.id);
+    }
+    return {
+      billingEndMonth,
+      obligationCents,
+      paidAmountCents,
+      refundDueCents: Math.max(0, paidAmountCents - obligationCents),
+      cancelledInvoiceIds,
+      cancelledParts,
+    };
+  }
+
   async findById(invoiceId, { session } = {}) {
     if (!mongoose.isObjectIdOrHexString(invoiceId)) return null;
     let query = this.invoiceModel.findById(invoiceId);
