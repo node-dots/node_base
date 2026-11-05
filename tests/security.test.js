@@ -10,11 +10,19 @@ import { testAuthHeaders } from "./helpers/app.js";
 
 // Кожен тест отримує окремий застосунок і сховище, без спільних лічильників.
 async function withServer(
-  { settings = {}, repository = new InMemoryGroupRepository() },
+  {
+    settings = {},
+    repository = new InMemoryGroupRepository(),
+    developerPanelCorsEnabled = false,
+  },
   run,
 ) {
   const securityConfig = readSecurityConfig(settings);
-  const app = createApp({ groupRepository: repository, securityConfig });
+  const app = createApp({
+    groupRepository: repository,
+    securityConfig,
+    developerPanelCorsEnabled,
+  });
   const server = createHttpServer({ app, securityConfig });
   server.listen(0, "127.0.0.1");
   await new Promise((resolve, reject) => {
@@ -32,6 +40,57 @@ async function withServer(
     await new Promise((resolve) => server.close(resolve));
   }
 }
+
+test("developer panel CORS allows only read preflight from its exact development origin", async () => {
+  await withServer({ developerPanelCorsEnabled: true }, async ({ baseUrl }) => {
+    const preflight = await fetch(`${baseUrl}/api/v1/groups`, {
+      method: "OPTIONS",
+      headers: {
+        Origin: "http://127.0.0.1:8088",
+        "Access-Control-Request-Method": "GET",
+        "Access-Control-Request-Headers": "authorization,accept",
+      },
+    });
+    assert.equal(preflight.status, 204);
+    assert.equal(
+      preflight.headers.get("access-control-allow-origin"),
+      "http://127.0.0.1:8088",
+    );
+    assert.equal(
+      preflight.headers.get("access-control-allow-methods"),
+      "GET, OPTIONS",
+    );
+
+    const unauthenticatedRead = await fetch(`${baseUrl}/api/v1/groups`, {
+      headers: { Origin: "http://127.0.0.1:8088" },
+    });
+    assert.equal(unauthenticatedRead.status, HTTP_STATUS.UNAUTHORIZED);
+    assert.equal(
+      unauthenticatedRead.headers.get("access-control-allow-origin"),
+      "http://127.0.0.1:8088",
+    );
+
+    const foreign = await fetch(`${baseUrl}/api/v1/groups`, {
+      method: "OPTIONS",
+      headers: {
+        Origin: "http://localhost:8088",
+        "Access-Control-Request-Method": "GET",
+        "Access-Control-Request-Headers": "authorization",
+      },
+    });
+    assert.equal(foreign.headers.get("access-control-allow-origin"), null);
+
+    const write = await fetch(`${baseUrl}/api/v1/groups`, {
+      method: "OPTIONS",
+      headers: {
+        Origin: "http://127.0.0.1:8088",
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "authorization,content-type",
+      },
+    });
+    assert.equal(write.status, 403);
+  });
+});
 
 test("Загальний ліміт повертає 429, requestId і час повторної спроби", async () => {
   await withServer(
