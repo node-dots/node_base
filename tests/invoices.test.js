@@ -252,6 +252,43 @@ test("annual tuition snapshots first-month terms, reserves 12 months and allocat
   assert.equal(state.audits.length, 1);
 });
 
+test("current balance report uses guardian scope and a supplied as-of clock without payment joins", async () => {
+  const asOf = new Date("2027-02-01T00:00:00.000Z");
+  const calls = [];
+  const service = new InvoiceService({
+    invoiceRepository: {
+      async aggregateCurrentBalances(input) {
+        calls.push(input);
+        return {
+          currentOutstandingCents: 500,
+          currentOverdueCents: 500,
+          currentRefundDueCents: 800,
+        };
+      },
+    },
+    childRepository: {},
+    catalogRepository: {},
+    authorizer,
+    unitOfWork: {},
+    clock: { now: () => asOf },
+  });
+  const parent = { id: "507f1f77bcf86cd799439011", roles: ["PARENT"] };
+  assert.deepEqual(await service.getCurrentBalances(parent), {
+    currentOutstandingCents: 500,
+    currentOverdueCents: 500,
+    currentRefundDueCents: 800,
+    asOf,
+    basis: "CURRENT_BALANCE_NOT_HISTORICAL",
+  });
+  assert.deepEqual(calls[0], { asOf, guardianId: parent.id });
+  await service.getCurrentBalances({ id: "staff", roles: ["MANAGER"] });
+  assert.deepEqual(calls[1], { asOf, guardianId: undefined });
+  await assert.rejects(
+    service.getCurrentBalances({ id: "teacher", roles: ["TEACHER"] }),
+    { status: 403 },
+  );
+});
+
 test("expired unpaid annual fallback is atomic in one transaction and repeat-safe", async () => {
   const childId = "000000000000000000000001";
   const annual = {
