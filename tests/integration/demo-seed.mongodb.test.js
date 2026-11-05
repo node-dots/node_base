@@ -123,6 +123,16 @@ test(
           headers: { authorization: `Bearer ${token}` },
         });
       }
+      async function post(path, token, body) {
+        return fetch(`${origin}${path}`, {
+          method: "POST",
+          headers: {
+            authorization: `Bearer ${token}`,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(body),
+        });
+      }
       try {
         const adminToken = await login(
           "demo-seed-admin@example.test",
@@ -194,6 +204,107 @@ test(
         );
         assert.equal(publishedResponse.status, 200);
         assert.equal((await publishedResponse.json()).data.slots.length, 30);
+
+        const financialScenario = {
+          groups: [{ id: "demo-group", age: 4, capacity: 10 }],
+          ages: [{ code: "AGE_4", age: 4, demand: 5, tariffMinor: 100_000 }],
+          discountMix: [{ basisPoints: 0, shareBasisPoints: 10_000 }],
+          staff: [],
+          rentMinor: 0,
+          otherCosts: [],
+        };
+        const forecastResponse = await post(
+          "/api/v1/finance/scenarios/forecast",
+          adminToken,
+          financialScenario,
+        );
+        assert.equal(forecastResponse.status, 200);
+        assert.ok((await forecastResponse.json()).data.assumptions.length > 0);
+        const breakevenResponse = await post(
+          "/api/v1/finance/scenarios/breakeven",
+          adminToken,
+          { scenario: financialScenario, maxCandidates: 10 },
+        );
+        assert.equal(breakevenResponse.status, 200);
+        const breakeven = (await breakevenResponse.json()).data;
+        assert.ok(
+          breakeven.candidatesChecked > 0 && breakeven.candidatesChecked <= 11,
+        );
+
+        const demoGroup = await GroupModel.findById(
+          second.records.groups[0],
+        ).lean();
+        const searchInput = {
+          weekStart: second.publishedWeek,
+          schoolYear: demoGroup.schoolYear,
+          groupRanges: [
+            {
+              ageCode: "AGE_4",
+              age: 4,
+              children: 2,
+              minGroups: 1,
+              maxGroups: 1,
+            },
+          ],
+          rooms: [
+            {
+              id: "0000000000000000000000a1",
+              active: true,
+              roomType: "GROUP",
+              capacity: 4,
+            },
+          ],
+          teacherVariants: [
+            {
+              id: "demo-teacher-variant",
+              teachers: [
+                {
+                  id: "0000000000000000000000a2",
+                  subjectCode: "MATH",
+                  availability: [
+                    { weekday: 1, startTime: "09:00", endTime: "17:00" },
+                  ],
+                },
+              ],
+            },
+          ],
+          program: [
+            { subjectCode: "MATH", sessionsPerWeek: 1, durationMinutes: 30 },
+          ],
+          fixedStaff: [],
+          financial: {
+            ages: financialScenario.ages,
+            discountMix: financialScenario.discountMix,
+            rentMinor: 0,
+            otherCosts: [],
+            foodCostMinor: 0,
+          },
+        };
+        const searchResponse = await post(
+          "/api/v1/finance/scenarios/compare-configurations",
+          adminToken,
+          searchInput,
+        );
+        assert.equal(searchResponse.status, 200);
+        const search = (await searchResponse.json()).data;
+        assert.ok(search.budget.candidatesChecked > 0);
+        assert.ok(
+          search.budget.candidatesChecked <= search.budget.candidateLimit,
+        );
+
+        const generatorWeek = new Date(`${second.publishedWeek}T00:00:00.000Z`);
+        generatorWeek.setUTCDate(generatorWeek.getUTCDate() + 14);
+        const generatorWeekStart = generatorWeek.toISOString().slice(0, 10);
+        const generatorResponse = await post(
+          `/api/v1/schedules/${generatorWeekStart}/generate`,
+          adminToken,
+          { expectedRevision: 0, fixedSlots: [] },
+        );
+        assert.equal(generatorResponse.status, 200);
+        const generated = (await generatorResponse.json()).data;
+        assert.equal(generated.draft.revision, 1);
+        assert.ok(generated.draft.slots.length > 0);
+        assert.ok(generated.budget.limits.checks > 0);
       } finally {
         await new Promise((resolve) => server.close(resolve));
       }
@@ -222,7 +333,13 @@ test(
         }),
         1,
       );
-      assert.equal(await ScheduleModel.countDocuments(), 2);
+      assert.equal(await ScheduleModel.countDocuments(), 3);
+      assert.equal(
+        await ScheduleModel.countDocuments({
+          published: { $exists: false },
+        }),
+        2,
+      );
       assert.equal(
         await ScheduleModel.countDocuments({
           weekStart: second.records.scheduleDraftWeek,

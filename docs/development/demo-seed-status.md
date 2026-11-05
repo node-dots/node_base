@@ -35,7 +35,7 @@ The seed creates monthly tuition and meal invoices plus one annual tuition invoi
 
 After the first run, the second run must retain the same demo child and invoice counts, payment/refund statuses, draft and cancelled expense states, published and draft schedules, and group occupancy. In particular, rerunning the seed must not restore the cancelled expense or add another receipt or refund.
 
-The MongoDB integration test starts the real API router against the seeded database, logs in as the synthetic ADMIN and both parents, and checks own/foreign child scope, invoices, refund history, finance and expense reports, and both schedule endpoints over HTTP.
+The MongoDB integration test starts the real API router against the seeded database, logs in as the synthetic ADMIN and both parents, and checks own/foreign child scope, invoices, refund history, finance and expense reports, draft/published schedules, financial forecast/breakeven/configuration search, and schedule generation over HTTP. It checks that forecast assumptions and the search/generator budget data are returned.
 
 ## Swagger demo
 
