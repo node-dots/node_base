@@ -121,3 +121,36 @@ jobs:
 
       - name: Run MongoDB integration tests
         run: npm run test:mongodb
+
+      - name: Start the service and verify login and documentation
+        run: |
+          export MONGO_URI='mongodb://127.0.0.1:27017/kindergarten_macos_ci?replicaSet=rs0&directConnection=true'
+          export JWT_SECRET="$(openssl rand -hex 32)"
+          export JWT_ISSUER='https://ci.example.invalid'
+          export JWT_AUDIENCE='kindergarten-ci'
+          export BOOTSTRAP_ADMIN_EMAIL='ci-admin@example.invalid'
+          export BOOTSTRAP_ADMIN_PASSWORD="$(openssl rand -hex 24)"
+          export BOOTSTRAP_ADMIN_FIRST_NAME='CI'
+          export BOOTSTRAP_ADMIN_LAST_NAME='Admin'
+          export HOST='127.0.0.1'
+          export PORT='3317'
+
+          npm run bootstrap:admin
+          npm start > "$RUNNER_TEMP/server.log" 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3317/health/ready >/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+          curl --fail --silent http://127.0.0.1:3317/health/ready >/dev/null
+          curl --fail --silent http://127.0.0.1:3317/api/v1/openapi.json >/dev/null
+          curl --fail --silent http://127.0.0.1:3317/api-docs/ >/dev/null
+          curl --fail --silent \
+            --header 'Content-Type: application/json' \
+            --data "{\"email\":\"$BOOTSTRAP_ADMIN_EMAIL\",\"password\":\"$BOOTSTRAP_ADMIN_PASSWORD\"}" \
+            http://127.0.0.1:3317/api/v1/auth/login \
+            | jq --exit-status '.data.accessToken | type == "string" and length > 10' >/dev/null
