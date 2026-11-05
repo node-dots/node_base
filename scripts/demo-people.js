@@ -54,36 +54,43 @@ export async function ensureDemoParents({
     }
 
     const passwordHash = await hasher.hash(password);
-    const person = await unitOfWork.execute(
-      async ({ session, recordAudit }) => {
-        const created = await personRepository.insert(
-          {
-            firstName: fixture.firstName,
-            lastName: fixture.lastName,
-            status: PERSON_STATUS.ACTIVE,
-            account: {
-              email: fixture.email,
-              passwordHash,
-              roles: [ACCOUNT_ROLE.PARENT],
-              enabled: true,
-              tokenVersion: 0,
+    try {
+      const person = await unitOfWork.execute(
+        async ({ session, recordAudit }) => {
+          const created = await personRepository.insert(
+            {
+              firstName: fixture.firstName,
+              lastName: fixture.lastName,
+              status: PERSON_STATUS.ACTIVE,
+              account: {
+                email: fixture.email,
+                passwordHash,
+                roles: [ACCOUNT_ROLE.PARENT],
+                enabled: true,
+                tokenVersion: 0,
+              },
             },
-          },
-          { session },
-        );
-        await recordAudit({
-          actorId,
-          requestId,
-          action: "demo.parent.provision",
-          entityType: "PERSON",
-          entityId: created.id,
-          after: { role: ACCOUNT_ROLE.PARENT },
-          safeFields: ["role"],
-        });
-        return created;
-      },
-    );
-    results.push({ key: fixture.key, id: person.id, created: true });
+            { session },
+          );
+          await recordAudit({
+            actorId,
+            requestId,
+            action: "demo.parent.provision",
+            entityType: "PERSON",
+            entityId: created.id,
+            after: { role: ACCOUNT_ROLE.PARENT },
+            safeFields: ["role"],
+          });
+          return created;
+        },
+      );
+      results.push({ key: fixture.key, id: person.id, created: true });
+    } catch (error) {
+      if (error?.code !== 11000) throw error;
+      const raced = await personRepository.findAccountByEmail(fixture.email);
+      if (!raced?.account.roles.includes(ACCOUNT_ROLE.PARENT)) throw error;
+      results.push({ key: fixture.key, id: raced.id, created: false });
+    }
   }
   return results;
 }
