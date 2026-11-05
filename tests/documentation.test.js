@@ -48,8 +48,11 @@ test("OpenAPI та Swagger UI описують і обслуговують по�
     const parameters = contract.paths["/api/v1/groups"].get.parameters;
 
     assert.deepEqual(parameters.map((parameter) => parameter.name).sort(), [
+      "ageCategory",
       "page",
       "pageSize",
+      "schoolYear",
+      "status",
     ]);
     const info = (await (await fetch(`${baseUrl}/api/v1`)).json()).data;
     assert.equal(info.version, packageInfo.version);
@@ -163,6 +166,7 @@ test("OpenAPI бере обмеження входу зі схем Zod і збе
       "GET /api/v1/groups/summary",
       "GET /api/v1/groups/{id}",
       "GET /api/v1/invoices/children/{childId}",
+      "GET /api/v1/invoices/current-balances",
       "PATCH /api/v1/groups/{id}/capacity",
       "GET /api/v1/openapi.json",
       "GET /health/live",
@@ -182,6 +186,7 @@ test("OpenAPI бере обмеження входу зі схем Zod і збе
       "POST /api/v1/expenses/open-current-month",
       "POST /api/v1/finance/scenarios/forecast",
       "POST /api/v1/finance/scenarios/breakeven",
+      "POST /api/v1/finance/scenarios/compare-configurations",
       "POST /api/v1/expenses/{expenseId}/approve",
       "POST /api/v1/expenses/{expenseId}/cancel",
       "POST /api/v1/expenses/{expenseId}/corrections",
@@ -198,6 +203,15 @@ test("OpenAPI бере обмеження входу зі схем Zod і збе
       "POST /api/v1/payments/{paymentId}/refund",
       "POST /api/v1/payments/{paymentId}/reject",
       "GET /api/v1/payments/{paymentId}/refunds",
+      "GET /api/v1/schedules/{weekStart}/draft",
+      "PUT /api/v1/schedules/{weekStart}/draft",
+      "POST /api/v1/schedules/{weekStart}/publish",
+      "POST /api/v1/schedules/{weekStart}/generate",
+      "GET /api/v1/schedules/{weekStart}/published",
+      "GET /api/v1/reports/finance/monthly",
+      "GET /api/v1/reports/operations/benefits",
+      "GET /api/v1/reports/operations/teacher-load",
+      "GET /api/v1/reports/finance/expense-categories",
       "PUT /api/v1/groups/{id}/resources",
       "PUT /api/v1/people/{id}/employee",
       "PUT /api/v1/people/{id}/account/roles",
