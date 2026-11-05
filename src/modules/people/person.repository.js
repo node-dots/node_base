@@ -66,8 +66,10 @@ export class PersonRepository {
     this.personModel = personModel;
   }
 
-  async insert(person) {
-    const document = await this.personModel.create(person);
+  async insert(person, { session } = {}) {
+    const document = session
+      ? (await this.personModel.create([person], { session }))[0]
+      : await this.personModel.create(person);
 
     return toPerson(document);
   }
