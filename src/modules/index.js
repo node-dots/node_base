@@ -26,6 +26,9 @@ import { ExpenseModel } from "./expenses/expense.model.js";
 import { FinanceReportRepository } from "./reports/financeReport.repository.js";
 import { FinanceReportService } from "./reports/financeReport.service.js";
 import { createFinanceReportRoutes } from "./reports/financeReport.routes.js";
+import { OperationsReportRepository } from "./reports/operationsReport.repository.js";
+import { OperationsReportService } from "./reports/operationsReport.service.js";
+import { createOperationsReportRoutes } from "./reports/operationsReport.routes.js";
 import { ExpenseRepository } from "./expenses/expense.repository.js";
 import { ExpenseService } from "./expenses/expense.service.js";
 import { createExpenseRoutes } from "./expenses/expense.routes.js";
@@ -130,6 +133,21 @@ export function createApiRouter({
         "/reports/finance",
         createFinanceReportRoutes({
           service: financeReportService,
+          authService: authModule.authService,
+        }),
+      );
+      const operationsReportService = new OperationsReportService({
+        reportRepository: new OperationsReportRepository({
+          childModel: ChildModel,
+          scheduleModel: ScheduleModel,
+          expenseModel: ExpenseModel,
+        }),
+        authorizer,
+      });
+      router.use(
+        "/reports",
+        createOperationsReportRoutes({
+          service: operationsReportService,
           authService: authModule.authService,
         }),
       );
