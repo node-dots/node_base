@@ -61,14 +61,52 @@ export class ChildRepository {
     this.childModel = childModel;
   }
 
-  async insertApplicant(applicant) {
-    const document = await this.childModel.create(applicant);
+  async insertApplicant(applicant, { session } = {}) {
+    const [document] = await this.childModel.create([applicant], { session });
     return toChild(document.toObject());
   }
 
   async findById(childId) {
     if (!mongoose.isObjectIdOrHexString(childId)) return null;
     const document = await this.childModel.findById(childId).lean();
+    return document ? toChild(document) : null;
+  }
+
+  async findByIdForUpdate(childId, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(childId)) return null;
+    let query = this.childModel.findById(childId);
+    if (session) query = query.session(session);
+    const document = await query.lean();
+    return document ? toChild(document) : null;
+  }
+
+  async updateMembershipById(childId, membershipUpdate, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(childId)) return null;
+    const fields = new Set([
+      "status",
+      "schoolYear",
+      "ageCategoryId",
+      "groupId",
+      "enrolledAt",
+      "leftAt",
+      "billingStartMonth",
+      "firstUnbilledMonth",
+      "membershipHistory",
+    ]);
+    if (
+      !membershipUpdate ||
+      Object.keys(membershipUpdate).length === 0 ||
+      Object.keys(membershipUpdate).some((field) => !fields.has(field))
+    ) {
+      throw new TypeError("Only child membership fields can be updated here");
+    }
+    const document = await this.childModel
+      .findByIdAndUpdate(
+        childId,
+        { $set: membershipUpdate },
+        { new: true, runValidators: true, session },
+      )
+      .lean();
     return document ? toChild(document) : null;
   }
 
@@ -138,7 +176,7 @@ export class ChildRepository {
     return query;
   }
 
-  async updateProfileById(childId, profileUpdate) {
+  async updateProfileById(childId, profileUpdate, { session } = {}) {
     if (!mongoose.isObjectIdOrHexString(childId)) return null;
     const fields = Object.keys(profileUpdate);
     if (
@@ -150,7 +188,34 @@ export class ChildRepository {
     const document = await this.childModel.findByIdAndUpdate(
       childId,
       { $set: profileUpdate },
-      { returnDocument: "after", runValidators: true },
+      { returnDocument: "after", runValidators: true, session },
+    );
+    return document ? toChild(document.toObject()) : null;
+  }
+
+  async updateProfileByIdInScope(
+    childId,
+    profileUpdate,
+    scope,
+    { session } = {},
+  ) {
+    if (!mongoose.isObjectIdOrHexString(childId)) return null;
+    const fields = Object.keys(profileUpdate);
+    if (
+      fields.length === 0 ||
+      fields.some((field) => !PROFILE_FIELDS.has(field))
+    ) {
+      throw new TypeError("Only child profile fields can be updated here");
+    }
+    const document = await this.childModel.findOneAndUpdate(
+      {
+        $and: [
+          { _id: new mongoose.Types.ObjectId(childId) },
+          childScopeFilter(scope),
+        ],
+      },
+      { $set: profileUpdate },
+      { returnDocument: "after", runValidators: true, session },
     );
     return document ? toChild(document.toObject()) : null;
   }
