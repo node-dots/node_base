@@ -2,6 +2,11 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import mongoose from "mongoose";
+import { createApp } from "../../src/app.js";
+import { readSecurityConfig } from "../../src/config/security.js";
+import { createSecurityMiddleware } from "../../src/middleware/security.js";
+import { createApiRouter } from "../../src/modules/index.js";
+import { createAuthModule } from "../../src/modules/auth/auth.module.js";
 import { AuditModel } from "../../src/modules/audit/audit.model.js";
 import { CatalogModel } from "../../src/modules/catalog/catalog.model.js";
 import { seedCatalog } from "../../src/modules/catalog/catalog.seed.js";
@@ -78,6 +83,120 @@ test(
         databaseName,
         password: "local-demo-parent-password",
       });
+
+      const securityConfig = readSecurityConfig({
+        RATE_LIMIT_REQUESTS: "100",
+        WRITE_RATE_LIMIT_REQUESTS: "30",
+        LOGIN_RATE_LIMIT_REQUESTS: "10",
+      });
+      const authModule = createAuthModule({
+        config: {
+          secret: "demo-seed-integration-secret-32-bytes-long",
+          issuer: "https://demo-seed.example.test",
+          audience: "demo-seed-integration",
+        },
+        loginRateLimiter:
+          createSecurityMiddleware(securityConfig).loginRateLimiter,
+      });
+      const app = createApp({
+        apiRouter: createApiRouter({ authModule }),
+        securityConfig,
+        isStorageReady: async () => mongoose.connection.readyState === 1,
+      });
+      const server = app.listen(0, "127.0.0.1");
+      await new Promise((resolve, reject) => {
+        server.once("listening", resolve);
+        server.once("error", reject);
+      });
+      const origin = `http://127.0.0.1:${server.address().port}`;
+      async function login(email, password) {
+        const response = await fetch(`${origin}/api/v1/auth/login`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ email, password }),
+        });
+        assert.equal(response.status, 200);
+        return (await response.json()).data.accessToken;
+      }
+      async function get(path, token) {
+        return fetch(`${origin}${path}`, {
+          headers: { authorization: `Bearer ${token}` },
+        });
+      }
+      try {
+        const adminToken = await login(
+          "demo-seed-admin@example.test",
+          "local-demo-admin-password",
+        );
+        const parentOneToken = await login(
+          "demo.parent1@example.test",
+          "local-demo-parent-password",
+        );
+        const parentTwoToken = await login(
+          "demo.parent2@example.test",
+          "local-demo-parent-password",
+        );
+        const ownChildId = second.records.children["child-full-group-01"];
+        const foreignChildId = second.records.children["child-annual-refund"];
+        assert.equal(
+          (await get(`/api/v1/children/${ownChildId}`, parentOneToken)).status,
+          200,
+        );
+        assert.equal(
+          (await get(`/api/v1/children/${foreignChildId}`, parentOneToken))
+            .status,
+          404,
+        );
+        assert.equal(
+          (await get(`/api/v1/invoices/children/${ownChildId}`, parentOneToken))
+            .status,
+          200,
+        );
+        const refundResponse = await get(
+          `/api/v1/payments/${second.records.payments.annualTuition}/refunds`,
+          parentTwoToken,
+        );
+        assert.equal(refundResponse.status, 200);
+        assert.equal((await refundResponse.json()).data[0].status, "CONFIRMED");
+
+        const groupsResponse = await get("/api/v1/groups/summary", adminToken);
+        assert.equal(groupsResponse.status, 200);
+        assert.ok((await groupsResponse.json()).data.length > 0);
+        const financeResponse = await get(
+          `/api/v1/reports/finance/monthly?month=${second.finance.month}`,
+          adminToken,
+        );
+        assert.equal(financeResponse.status, 200);
+        const financeBody = (await financeResponse.json()).data;
+        assert.equal(
+          financeBody.accruedIncomeMinor,
+          second.finance.accruedIncomeMinor,
+        );
+        assert.equal(financeBody.cashFlowMinor, second.finance.cashFlowMinor);
+        assert.equal(
+          (
+            await get(
+              `/api/v1/expenses/totals?month=${second.finance.month}`,
+              adminToken,
+            )
+          ).status,
+          200,
+        );
+        const draftResponse = await get(
+          `/api/v1/schedules/${second.records.scheduleDraftWeek}/draft`,
+          adminToken,
+        );
+        assert.equal(draftResponse.status, 200);
+        assert.equal((await draftResponse.json()).data.slots.length, 1);
+        const publishedResponse = await get(
+          `/api/v1/schedules/${second.publishedWeek}/published`,
+          adminToken,
+        );
+        assert.equal(publishedResponse.status, 200);
+        assert.equal((await publishedResponse.json()).data.slots.length, 30);
+      } finally {
+        await new Promise((resolve) => server.close(resolve));
+      }
 
       assert.equal(first.children, 22);
       assert.equal(second.children, 22);

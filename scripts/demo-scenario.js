@@ -472,7 +472,7 @@ async function ensureDemoSchedule({
 }) {
   const existingPublished =
     await services.scheduleService.scheduleRepository.findPublished(weekStart);
-  if (existingPublished) return existingPublished.published;
+  if (existingPublished) return { weekStart, ...existingPublished.published };
   const current = await services.scheduleService.getDraft(weekStart, actor);
   const subjects = Object.values(SUBJECT_CODE);
   const slots = [];
