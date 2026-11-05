@@ -12,10 +12,12 @@ import { registerChildDocumentation } from "../modules/children/child.openapi.js
 import { registerFinancialCatalogDocumentation } from "../modules/catalog/financialCatalog.openapi.js";
 import { registerInvoiceDocumentation } from "../modules/invoices/invoice.openapi.js";
 import { registerPaymentDocumentation } from "../modules/payments/payment.openapi.js";
+import { registerFinanceReportDocumentation } from "../modules/reports/financeReport.openapi.js";
 import { registerExpenseDocumentation } from "../modules/expenses/expense.openapi.js";
 import { registerScenarioDocumentation } from "../modules/finance/scenario.openapi.js";
 import { registerConfigurationSearchDocumentation } from "../modules/finance/configurationSearch.openapi.js";
 import { registerScheduleDocumentation } from "../modules/schedules/schedule.openapi.js";
+import { registerOperationsReportDocumentation } from "../modules/reports/operationsReport.openapi.js";
 
 export function createOpenApiDocument() {
   const registry = new OpenAPIRegistry();
@@ -29,10 +31,12 @@ export function createOpenApiDocument() {
   registerFinancialCatalogDocumentation(registry);
   registerInvoiceDocumentation(registry);
   registerPaymentDocumentation(registry);
+  registerFinanceReportDocumentation(registry);
   registerExpenseDocumentation(registry);
   registerScenarioDocumentation(registry);
   registerConfigurationSearchDocumentation(registry);
   registerScheduleDocumentation(registry);
+  registerOperationsReportDocumentation(registry);
 
   return new OpenApiGeneratorV31(registry.definitions).generateDocument({
     openapi: "3.1.0",
