@@ -123,7 +123,7 @@ test("фізичне видалення fail-closed без повної пере
 });
 
 test("початковий catalog має очікувані ресурси та унікальні сталі ID/коди", () => {
-  assert.equal(initialCatalogEntries.length, 37);
+  assert.equal(initialCatalogEntries.length, 46);
   assert.equal(
     initialCatalogEntries.filter((entry) => entry.kind === CATALOG_KIND.ROOM)
       .length,
@@ -142,14 +142,51 @@ test("початковий catalog має очікувані ресурси та
   );
   assert.equal(
     new Set(initialCatalogEntries.map((entry) => entry._id)).size,
-    37,
+    46,
   );
   assert.equal(
     new Set(initialCatalogEntries.map((entry) => `${entry.kind}:${entry.code}`))
       .size,
-    37,
+    46,
   );
   assert.ok(
     initialCatalogEntries.every((entry) => /^[a-f0-9]{24}$/.test(entry._id)),
+  );
+});
+
+test("кожний початковий запис проходить Mongoose-валидацію", async () => {
+  for (const entry of initialCatalogEntries) {
+    await assert.doesNotReject(new CatalogModel(entry).validate(), entry.code);
+  }
+});
+
+test("початкові тарифи, пільги та програма мають вимоги з консолідованих правил", () => {
+  const tuition = initialCatalogEntries.find(
+    (entry) => entry.kind === CATALOG_KIND.TUITION_RATE,
+  );
+  assert.equal(tuition.amountCents, 1_500_000);
+  const meals = initialCatalogEntries
+    .filter((entry) => entry.kind === CATALOG_KIND.MEAL_RATE)
+    .sort((a, b) => a.ageCategoryCode.localeCompare(b.ageCategoryCode));
+  assert.deepEqual(
+    meals.map((entry) => entry.amountCents),
+    [30_000, 40_000, 50_000, 60_000],
+  );
+  assert.deepEqual(
+    initialCatalogEntries
+      .filter((entry) => entry.kind === CATALOG_KIND.BENEFIT)
+      .map((entry) => entry.basisPoints)
+      .sort((a, b) => a - b),
+    [1_000, 2_000, 3_000],
+  );
+  const program = initialCatalogEntries.find(
+    (entry) => entry.kind === CATALOG_KIND.PROGRAM,
+  );
+  assert.equal(program.lessons.length, 5);
+  assert.ok(
+    program.lessons.every(
+      ({ sessionsPerWeek, durationMinutes }) =>
+        sessionsPerWeek === 2 && durationMinutes === 30,
+    ),
   );
 });

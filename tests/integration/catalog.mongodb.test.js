@@ -30,15 +30,15 @@ test(
       await model.init();
       const repository = new CatalogRepository({ catalogModel: model });
 
-      assert.deepEqual(await seedCatalog(model), { inserted: 37, existing: 0 });
-      assert.equal(await model.countDocuments(), 37);
+      assert.deepEqual(await seedCatalog(model), { inserted: 46, existing: 0 });
+      assert.equal(await model.countDocuments(), 46);
 
       const stableEntry = initialCatalogEntries[0];
       await model.updateOne(
         { _id: stableEntry._id },
         { $set: { name: "Ручна назва" } },
       );
-      assert.deepEqual(await seedCatalog(model), { inserted: 0, existing: 37 });
+      assert.deepEqual(await seedCatalog(model), { inserted: 0, existing: 46 });
       assert.equal(
         (await model.findById(stableEntry._id).lean()).name,
         "Ручна назва",

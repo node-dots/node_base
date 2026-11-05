@@ -18,6 +18,16 @@ const childSummary = zod.object({
   relatives: zod.array(zod.unknown()).optional(),
   food: zod.unknown().optional(),
   benefitCode: zod.string().optional(),
+  benefitAssignments: zod
+    .array(
+      zod.object({
+        benefitCode: zod.string(),
+        basisPoints: zod.number().int(),
+        startMonth: zod.string(),
+        endMonth: zod.string().optional(),
+      }),
+    )
+    .optional(),
 });
 const response = zod.object({ data: childSummary });
 const membershipTarget = zod.strictObject({
@@ -156,4 +166,36 @@ export function registerChildDocumentation(registry) {
       },
     });
   }
+  registry.registerPath({
+    method: "post",
+    path: "/api/v1/children/{id}/benefits",
+    operationId: "assignChildBenefit",
+    tags: ["Діти"],
+    security: [{ BearerAuth: [] }],
+    request: {
+      params: childId,
+      body: {
+        required: true,
+        content: {
+          "application/json": {
+            schema: zod.strictObject({
+              benefitCode: zod.string(),
+              startMonth: zod.string(),
+              endMonth: zod.string().optional(),
+            }),
+          },
+        },
+      },
+    },
+    responses: {
+      [HTTP_STATUS.OK]: jsonResponse(
+        response,
+        "Dated benefit assignment saved with a rate snapshot.",
+      ),
+      [HTTP_STATUS.CONFLICT]: {
+        description: "Benefit dates overlap or history limit was reached.",
+      },
+      [HTTP_STATUS.FORBIDDEN]: { description: "Insufficient permission." },
+    },
+  });
 }
