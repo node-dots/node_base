@@ -47,6 +47,7 @@
 
 - [Знайомство з проєктом](team/08_Team_Introduction.md).
 - [Git-процес команди](team/GIT_WORKFLOW.md).
+- [Початкові командні контракти — Proposed / Needs approval](team/14_Initial_Team_Contracts.md).
 
 ### Плани, задачі та строки — `planning/`
 
