@@ -47,6 +47,7 @@
 
 - [Знайомство з проєктом](team/08_Team_Introduction.md).
 - [Git-процес команди](team/GIT_WORKFLOW.md).
+- [Початкові командні контракти — Proposed / Needs approval](team/14_Initial_Team_Contracts.md).
 
 ### Плани, задачі та строки — `planning/`
 
@@ -71,6 +72,10 @@
 
 - [Інструкція панелі](tools/developer-panel/README.md).
 - [Демопанель](tools/developer-panel/index.html).
+
+### Фінансові контракти — `finance/`
+
+- [Контракт фінансових показників і контрольна арифметика](finance/financial-metrics-contract.md).
 
 ## Правила підтримки
 
