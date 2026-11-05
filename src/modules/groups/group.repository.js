@@ -21,6 +21,13 @@ function toGroup(document) {
       ? { assistantId: document.assistantId.toString() }
       : {}),
     occupiedSeats: document.occupiedSeats ?? 0,
+    ...(document.currentOccupied !== undefined
+      ? {
+          currentOccupied: document.currentOccupied,
+          freePlaces: document.freePlaces,
+          occupancyMismatch: document.occupancyMismatch,
+        }
+      : {}),
   };
 }
 
@@ -46,6 +53,71 @@ export class GroupRepository {
       groups: documents.map(toGroup),
       total,
     };
+  }
+
+  async findOccupancyPage({
+    page,
+    pageSize,
+    scope,
+    schoolYear,
+    status,
+    ageCategory,
+  }) {
+    const conditions = [groupScopeFilter(scope)];
+    if (schoolYear) conditions.push({ schoolYear });
+    if (status) conditions.push({ status });
+    if (ageCategory !== undefined) conditions.push({ ageCategory });
+    const filter = { $and: conditions };
+    const [result] = await this.groupModel.aggregate([
+      { $match: filter },
+      {
+        $facet: {
+          groups: [
+            { $sort: { _id: 1 } },
+            { $skip: (page - 1) * pageSize },
+            { $limit: pageSize },
+            {
+              $lookup: {
+                from: "children",
+                let: { groupId: "$_id" },
+                pipeline: [
+                  {
+                    $match: {
+                      $expr: { $eq: ["$groupId", "$$groupId"] },
+                      status: { $in: ["ACTIVE", "SUSPENDED"] },
+                    },
+                  },
+                  { $count: "count" },
+                ],
+                as: "actualOccupancy",
+              },
+            },
+            {
+              $addFields: {
+                currentOccupied: {
+                  $ifNull: [{ $arrayElemAt: ["$actualOccupancy.count", 0] }, 0],
+                },
+              },
+            },
+            {
+              $addFields: {
+                freePlaces: {
+                  $max: [0, { $subtract: ["$capacity", "$currentOccupied"] }],
+                },
+                occupancyMismatch: {
+                  $ne: [{ $ifNull: ["$occupiedSeats", 0] }, "$currentOccupied"],
+                },
+              },
+            },
+            { $project: { actualOccupancy: 0 } },
+          ],
+          metadata: [{ $count: "total" }],
+        },
+      },
+    ]);
+    const documents = result?.groups ?? [];
+    const total = result?.metadata?.[0]?.total ?? 0;
+    return { groups: documents.map(toGroup), total };
   }
 
   async findById(groupId, { scope } = {}) {
@@ -78,6 +150,71 @@ export class GroupRepository {
           ageCategory: "$_id",
           groupsCount: 1,
           totalCapacity: 1,
+        },
+      },
+      { $sort: { ageCategory: 1 } },
+    ]);
+  }
+
+  async summarizeOccupancyByAge({ scope, schoolYear, status } = {}) {
+    const conditions = [groupScopeFilter(scope)];
+    if (schoolYear) conditions.push({ schoolYear });
+    if (status) conditions.push({ status });
+    return this.groupModel.aggregate([
+      { $match: { $and: conditions } },
+      {
+        $lookup: {
+          from: "children",
+          let: { groupId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$groupId", "$$groupId"] },
+                status: { $in: ["ACTIVE", "SUSPENDED"] },
+              },
+            },
+            { $count: "count" },
+          ],
+          as: "actualOccupancy",
+        },
+      },
+      {
+        $addFields: {
+          currentOccupied: {
+            $ifNull: [{ $arrayElemAt: ["$actualOccupancy.count", 0] }, 0],
+          },
+          storedOccupied: { $ifNull: ["$occupiedSeats", 0] },
+        },
+      },
+      {
+        $group: {
+          _id: "$ageCategory",
+          groupsCount: { $sum: 1 },
+          totalCapacity: { $sum: "$capacity" },
+          currentOccupied: { $sum: "$currentOccupied" },
+          storedOccupied: { $sum: "$storedOccupied" },
+          freePlaces: {
+            $sum: {
+              $max: [0, { $subtract: ["$capacity", "$currentOccupied"] }],
+            },
+          },
+          mismatchGroups: {
+            $sum: {
+              $cond: [{ $ne: ["$currentOccupied", "$storedOccupied"] }, 1, 0],
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          ageCategory: "$_id",
+          groupsCount: 1,
+          totalCapacity: 1,
+          currentOccupied: 1,
+          storedOccupied: 1,
+          freePlaces: 1,
+          mismatchGroups: 1,
         },
       },
       { $sort: { ageCategory: 1 } },
