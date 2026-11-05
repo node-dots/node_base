@@ -1,5 +1,6 @@
 import {
   AppError,
+  AuthenticationError,
   BusinessError,
   ResourceNotFoundError,
 } from "../utils/errors.js";
@@ -24,6 +25,9 @@ export function errorHandler(error, req, res, next) {
   }
   if (error instanceof ResourceNotFoundError) {
     known = new AppError(HTTP_STATUS.NOT_FOUND, error.code, error.message);
+  }
+  if (error instanceof AuthenticationError) {
+    known = new AppError(HTTP_STATUS.UNAUTHORIZED, error.code, error.message);
   }
   if (error.type === BODY_PARSER_ERROR_TYPES.INVALID_JSON) {
     known = new AppError(

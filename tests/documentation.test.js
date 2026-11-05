@@ -36,7 +36,11 @@ test("OpenAPI та Swagger UI описують і обслуговують по�
     );
     const contract = await contractResponse.json();
     assert.equal(contract.openapi, "3.1.0");
-    assert.equal(contract.components.securitySchemes, undefined);
+    assert.deepEqual(contract.components.securitySchemes.BearerAuth, {
+      type: "http",
+      scheme: "bearer",
+      bearerFormat: "JWT",
+    });
     assert.equal(
       contract.components.schemas.CreateGroupInput.additionalProperties,
       false,
@@ -139,12 +143,16 @@ test("OpenAPI бере обмеження входу зі схем Zod і збе
     [
       "GET /api-docs/",
       "GET /api/v1",
+      "GET /api/v1/auth/me",
       "GET /api/v1/groups",
       "GET /api/v1/groups/summary",
       "GET /api/v1/groups/{id}",
       "GET /api/v1/openapi.json",
       "GET /health/live",
       "GET /health/ready",
+      "POST /api/v1/auth/login",
+      "POST /api/v1/auth/logout-all",
+      "POST /api/v1/auth/password",
       "POST /api/v1/groups",
     ].sort(),
   );

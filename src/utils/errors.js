@@ -16,6 +16,14 @@ export class ResourceNotFoundError extends Error {
   }
 }
 
+export class AuthenticationError extends Error {
+  constructor(code, message) {
+    super(message);
+    this.name = "AuthenticationError";
+    this.code = code;
+  }
+}
+
 export class AppError extends Error {
   constructor(status, code, message, details) {
     super(message);
