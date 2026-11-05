@@ -5,6 +5,20 @@ const childId = zod.object({ childId: zod.string().regex(/^[a-f\d]{24}$/i) });
 
 export function registerInvoiceDocumentation(registry) {
   registry.registerPath({
+    method: "get",
+    path: "/api/v1/invoices/current-balances",
+    operationId: "getCurrentInvoiceBalances",
+    tags: ["Invoices"],
+    security: [{ BearerAuth: [] }],
+    responses: {
+      [HTTP_STATUS.OK]: {
+        description:
+          "Current outstanding, overdue and refund due totals as of the current clock time. Parent results are guardian-scoped; these balances are not historical.",
+      },
+      [HTTP_STATUS.FORBIDDEN]: { description: "Insufficient permission." },
+    },
+  });
+  registry.registerPath({
     method: "post",
     path: "/api/v1/invoices/children/{childId}/annual-tuition",
     operationId: "createAnnualTuitionInvoice",
