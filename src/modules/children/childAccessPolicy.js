@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { ROLES } from "../../utils/access/roles.js";
 
 export class ChildAccessPolicy {
@@ -35,12 +36,14 @@ export function childScopeFilter(scope) {
     throw new TypeError("Невідома область доступу до дітей");
   }
   const alternatives = [];
-  if (scope.guardianId) {
+  if (mongoose.isObjectIdOrHexString(scope.guardianId)) {
     alternatives.push({
-      "guardians.personId": scope.guardianId,
+      "guardians.personId": new mongoose.Types.ObjectId(scope.guardianId),
     });
   }
-  const validIds = scope.groupIds.filter((id) => /^[a-f\d]{24}$/i.test(id));
+  const validIds = scope.groupIds
+    .filter((id) => /^[a-f\d]{24}$/i.test(id))
+    .map((id) => new mongoose.Types.ObjectId(id));
   if (validIds.length) alternatives.push({ groupId: { $in: validIds } });
   return alternatives.length ? { $or: alternatives } : { _id: { $in: [] } };
 }
