@@ -23,6 +23,9 @@ import { createPaymentRoutes } from "./payments/payment.routes.js";
 import { RefundModel } from "./payments/refund.model.js";
 import { RefundRepository } from "./payments/refund.repository.js";
 import { ExpenseModel } from "./expenses/expense.model.js";
+import { FinanceReportRepository } from "./reports/financeReport.repository.js";
+import { FinanceReportService } from "./reports/financeReport.service.js";
+import { createFinanceReportRoutes } from "./reports/financeReport.routes.js";
 import { ExpenseRepository } from "./expenses/expense.repository.js";
 import { ExpenseService } from "./expenses/expense.service.js";
 import { createExpenseRoutes } from "./expenses/expense.routes.js";
@@ -111,6 +114,25 @@ export function createApiRouter({
       }),
     );
     if (authModule.unitOfWork) {
+      const financeReportService = new FinanceReportService({
+        reportRepository: new FinanceReportRepository({
+          invoiceModel: InvoiceModel,
+          paymentModel: PaymentModel,
+          refundModel: RefundModel,
+          expenseModel: ExpenseModel,
+        }),
+        invoiceRepository: new InvoiceRepository({
+          invoiceModel: InvoiceModel,
+        }),
+        authorizer,
+      });
+      router.use(
+        "/reports/finance",
+        createFinanceReportRoutes({
+          service: financeReportService,
+          authService: authModule.authService,
+        }),
+      );
       const expenseService = new ExpenseService({
         expenseRepository: new ExpenseRepository({
           expenseModel: ExpenseModel,
