@@ -1,99 +1,46 @@
-# План реалізації та поточний стан
+# Implementation plan and current status
 
-Оновлено: 5 листопада 2026 року. Цей документ фіксує перевірений стан робочих
-гілок і GitHub PR. Відкритий draft PR означає, що зміни ще не прийняті в
-`develop`; наявність коду сама по собі не означає завершене завдання.
+Updated 2026-11-05. This plan records implementation and verification evidence from the current repository and GitHub pull requests. A task is not described as merged unless its code is on the integration branch.
 
-## Поточні задачі TASK-020–040
+## Project tasks and pull requests
 
-| Таска | Стан коду | Pull request | Примітка |
-|---|---|---|---|
-| TASK-020–031 | Реалізацію розміщено у послідовних гілках | [#75–86](https://github.com/node-dots/node_base/pulls?q=is%3Apr+is%3Aopen+TASK) | Draft PR; потрібна послідовна інтеграція та CI |
-| TASK-032 | Реалізацію розміщено у гілці | [#87](https://github.com/node-dots/node_base/pull/87) | Draft; залежить від TASK-029 |
-| TASK-033 | Реалізацію розміщено у гілці | [#88](https://github.com/node-dots/node_base/pull/88) | Draft; залежить від TASK-029 |
-| TASK-034 | Реалізацію розміщено у гілці | [#89](https://github.com/node-dots/node_base/pull/89) | Draft; базується на TASK-024 |
-| TASK-035 | Реалізацію розміщено у гілці | [#90](https://github.com/node-dots/node_base/pull/90) | Draft; залежить від TASK-029 |
-| TASK-036 | Реалізацію та unit-тести додано | [#91](https://github.com/node-dots/node_base/pull/91) | Draft; поєднує пошук сценаріїв із перевіркою розкладу |
-| TASK-037 | CORS для локальної панелі та негативні preflight-перевірки | [#92](https://github.com/node-dots/node_base/pull/92) | Draft; жива повна панель потребує інтеграції TASK-032/033 |
-| TASK-038 | Матриця й HTTP/service негативні тести | [#93](https://github.com/node-dots/node_base/pull/93) | Draft; MongoDB та звіти потребують фінального інтеграційного прогону |
-| TASK-039 | Частково: наявний seed груп/catalog задокументовано й перевірено | [#94](https://github.com/node-dots/node_base/pull/94) | Повний demo seed заблоковано відсутністю безпечного provisioning account батьків |
-| TASK-040 | Цей інтеграційний план і checklist | у роботі | Windows/macOS, MongoDB replica set та командне review ще потрібні |
+| Tasks | Pull requests | Current status |
+| --- | --- | --- |
+| TASK-011–012 | #73–74 | Merged. |
+| TASK-013–019 | #96–102 | Open stacked PRs; GitHub Code checks and MongoDB integration checks passed; independent review is pending. |
+| TASK-020–035 | #75–90 | Open stacked PRs; GitHub Code checks and MongoDB integration checks passed; independent review is pending. |
+| TASK-036–038 | #91–93 | Open stacked PRs; GitHub Code checks and MongoDB integration checks passed; independent review is pending. TASK-032 and TASK-033 report modules are integrated into the downstream stack. |
+| TASK-039 | #94 | Safe allowlisted insert-only seed for groups/catalog is verified. The full demo dataset required by the issue is not yet implemented. |
+| TASK-040 | #95 | Integrated code and automated checks are green. The full live browser demonstration, macOS checkout, and team walkthrough have not been recorded. |
 
-PR #75–94 відкриті як draft і розташовані у залежному ланцюжку. Не зливайте
-їх у довільному порядку: спершу прийміть залежності, потім оновлюйте базу
-наступної гілки. Перевірки GitHub для PR, що націлені на іншу feature-гілку,
-не замінюють CI для PR у `develop`.
+PRs #75–95 form a dependency chain; PRs #96–102 are a separate prerequisite chain. CI runs for stacked PRs. Do not merge around repository review requirements.
 
-## Повторювані локальні перевірки
+## Latest integrated verification
 
-Node.js 22+ потрібен за `package.json`; рекомендовано Node.js 24. Із кореня
-чистого checkout:
+On the Windows checkout with Node.js 24.22.1 and Docker MongoDB 8.0:
+
+- `npm.cmd run check` passed: Prettier, syntax check for 224 JavaScript files, and 170 unit/HTTP tests passed. The 26 MongoDB tests are intentionally skipped by this command.
+- `npm.cmd run test:mongodb` passed: 25 passed, 0 failed, 0 skipped.
+- GitHub CI Code checks and MongoDB integration checks passed on open PRs #75–102 at the latest check.
+- The allowlisted `kindergarten_seed_test` was seeded twice: first run inserted 8 groups and 46 catalog records; second inserted none; a synthetic manual edit survived.
+
+## Remaining acceptance evidence
+
+TASK-039 requires own/foreign users, empty/full groups, annual/monthly billing, refund, expenses, and a published schedule in a repeatable demo seed. The current seed only creates groups and catalog entries. This issue is not fully implemented.
+
+TASK-040 asks for a clean Windows and macOS checkout and a live end-to-end walkthrough, plus a team session where participants explain their implementations. The current evidence covers Windows automated tests and MongoDB integration; it does not include a macOS run or a recorded team/browser demonstration. These should not be claimed as passed. Independent review is also required before PRs can be accepted.
+
+## Reproduction commands
 
 ```powershell
 npm.cmd ci
 npm.cmd run check
-```
-
-```bash
-npm ci
-npm run check
-```
-
-`npm run check` запускає форматування, перевірку синтаксису та unit/HTTP тести.
-Для MongoDB replica-set інтеграції запустіть `npm run infra:up`, дочекайтесь
-готовності БД і виконайте `npm run test:mongodb`. На Windows використовуйте
-`npm.cmd`. Зупинка інфраструктури: `npm run infra:down` (без прапорців
-видалення volumes).
-
-Демо seed запускайте лише після перевірки `MONGO_URI`. Ізольований seed:
-
-```powershell
+npm.cmd run infra:up
+npm.cmd run test:mongodb
 $env:SEED_DATABASE = 'kindergarten_seed_test'
 npm.cmd run seed
 npm.cmd run seed
 Remove-Item Env:SEED_DATABASE
 ```
 
-Seed наразі наповнює групи та catalog; він не є повним навчальним набором.
-Деталі й відсутні сценарії: [стан demo seed](../../development/demo-seed-status.md).
-
-## Інтеграційна демонстрація
-
-Перед показом пройдіть та зафіксуйте результати в
-[інтеграційному checklist](../../development/integration-checklist.md):
-
-1. Новий checkout, встановлення залежностей, конфігурація `.env` без секретів у Git.
-2. Bootstrap ADMIN, readiness MongoDB, Swagger/OpenAPI.
-3. Group/resources → child/enrollment → invoice/payment → withdrawal/refund.
-4. Звіти й панель з ADMIN; перевірки чужого scope з іншим account.
-5. Generator/forecast/configuration search із явним бюджетом та assumptions.
-6. Перезапуск seed і звірка збережених ручних змін.
-
-Не позначати кроки завершеними без збереженого результату й середовища.
-У цій Windows-сесії `npm.cmd run check:syntax` успішно перевірив 209 файлів;
-`npm.cmd test` завершився з 165 успішними та 22 пропущеними MongoDB-тестами.
-`npm.cmd run check` зупинився на `format:check`: Prettier 3.9.10 повідомив про
-188 файлів, більшість з яких не змінювались у цих PR. Цей результат треба
-розглянути окремо, не форматуючи всю кодову базу в межах TASK-040. Docker CLI
-відсутній; MongoDB integration не запускалась. Немає також macOS checkout,
-живого demo з двома account чи командної сесії review. Ці перевірки мають
-виконати учасники команди й записати ім’я/дату та результат.
-
-## Відомі межі
-
-- Таски TASK-041–050 наразі не знайдені у backlog або GitHub Issues; для них
-  немає узгоджених критеріїв.
-- TASK-037 має точний development CORS лише для `http://127.0.0.1:8088`;
-  авторизація залишається обов’язковою. API sections мають бути перевірені
-  проти інтегрованих report endpoints.
-- TASK-039 не має дозволеного способу створювати синтетичні account батьків
-  і пов’язувати guardians без прямого обходу бізнес-команд.
-- TASK-040 не може бути прийнята лише за автоматичними тестами. Потрібні
-  чистий Windows та macOS запуск, MongoDB integration, два різні account і
-  командна демонстрація/review.
-
-## Recheck on 2026-11-05
-
-The earlier Windows note below is historical. Docker is now available in this checkout (Docker 29.9.2, MongoDB 8.0, Node.js 24.22.1). `npm run test:mongodb` passed all 22 tests. The allowlisted `kindergarten_seed_test` seed was run twice: 8 groups and 46 catalog entries were inserted on the first run, none on the second, and a synthetic manual edit was preserved. `npm test` passed 165 tests and skipped 22 MongoDB-only tests by design.
-
-This does not complete TASK-039 or TASK-040: the full demo seed, live cross-module/browser walkthrough, macOS check, and independent peer review remain outstanding. TASK-013 CI also exposed a scoped-aggregation ObjectId bug; the fix is on PR #96 and its rerun passed both CI jobs, but it still awaits reviewer approval.
+The seed permits only `kindergarten_dev` and `kindergarten_seed_test`; verify the configured MongoDB target before running it. Do not put credentials or real personal data in the repository or demo fixtures.

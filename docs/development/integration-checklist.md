@@ -1,19 +1,25 @@
-﻿# TASK-040 integration checklist
+# TASK-040 integration checklist
 
 Updated 2026-11-05. Record only steps actually run; do not include credentials, JWTs, or real personal data.
 
-| Check                                                          | Result on this Windows checkout                                                                                                                                            |
-| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Clean checkout, `npm ci`, `npm run check`                      | Not verified from a clean checkout. `npm run check` currently fails at repository-wide Prettier check: 188 files are reported, including files outside these task changes. |
-| MongoDB replica set and `npm run test:mongodb`                 | Passed with Docker Desktop, MongoDB 8.0, Node.js v24.22.1: 22 passed, 0 failed, 0 skipped.                                                                                 |
-| Seed twice in `kindergarten_seed_test`                         | Passed: first run inserted 8 groups and 46 catalog records; second inserted 0; a manual group-name edit survived the rerun.                                                |
-| Bootstrap ADMIN, live login, readiness, and Swagger            | Automated tests exist; a complete live-browser walkthrough is still pending.                                                                                               |
-| Group → child → enrollment → invoice → payment                 | Still needs a full demo dataset and end-to-end walkthrough.                                                                                                                |
-| Withdrawal → refund → financial reports                        | Module tests exist; a full cross-module walkthrough remains pending.                                                                                                       |
-| Schedule draft → validation → publication                      | Module tests exist; a full live workflow remains pending.                                                                                                                  |
-| Separate accounts and unauthorized record scope                | Automated authorization coverage exists; two-account live walkthrough remains pending.                                                                                     |
-| Developer panel: API errors, 401, 429, offline, foreign origin | CORS tests exist; browser walkthrough against the complete report API remains pending.                                                                                     |
-| Clean macOS checkout and startup                               | Not run in this environment.                                                                                                                                               |
-| Independent peer review and team demonstration                 | Pending.                                                                                                                                                                   |
+## Automated verification on the Windows checkout
 
-`npm test` is a separate unit/HTTP run and intentionally skips MongoDB tests. It is not evidence for the MongoDB row above. The full project is not accepted until the remaining walkthroughs, peer review, and repository checks are complete.
+| Check | Result |
+| --- | --- |
+| `npm run check` | Passed: Prettier, syntax check (224 JavaScript files), and unit/HTTP tests (170 passed, 0 failed; 26 MongoDB cases are skipped by design in this command). |
+| `npm run test:mongodb` | Passed against Docker MongoDB 8.0 replica set: 25 passed, 0 failed, 0 skipped. |
+| MongoDB seed repeatability | Previously verified in isolated `kindergarten_seed_test`: first run inserted 8 groups and 46 catalog records; second inserted none; a manual group-name edit survived. |
+| OpenAPI and route coverage | Documentation tests passed in `npm run check`; finance and operations report paths are registered in the integrated API. |
+| Access and transaction regressions | Unit/HTTP and replica-set suites passed, including authorization scoping, atomic transactions, refunds, schedules, invoices, and reports. |
+
+## Demonstration and portability evidence
+
+| Check | Result |
+| --- | --- |
+| Full browser walkthrough of group → child → enrollment → invoice → payment → schedule → withdrawal → refund → reports | Not run as one live demonstration. Individual module and MongoDB integration coverage passed. |
+| Complete demo seed containing own/foreign users, empty/full groups, monthly/annual billing, refund, expenses, and published schedule | Not implemented by the current seed. See `demo-seed-status.md`; the current seed only creates initial catalog entries and demo groups. |
+| Developer panel browser walkthrough | Not run. Automated CORS and API tests passed. |
+| Clean macOS checkout and startup | Not run in this Windows environment. |
+| Team demonstration and independent review | Awaiting the project team and independent reviewer. |
+
+`npm test` intentionally skips MongoDB integration tests; those tests were run separately with `npm run test:mongodb`. The automated checks are green, but the items listed as not run or not implemented remain unverified acceptance steps and must not be described as completed.
