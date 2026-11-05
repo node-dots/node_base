@@ -20,6 +20,7 @@
     "infra:up": "docker compose up -d",
     "infra:down": "docker compose down",
     "seed": "node scripts/seed.js",
+    "migrate:groups": "node scripts/migrate-groups.js",
     "bootstrap:admin": "node --env-file-if-exists=.env scripts/bootstrap-admin.js",
     "telemetry:up": "docker compose up -d jaeger",
     "telemetry:down": "docker compose stop jaeger",

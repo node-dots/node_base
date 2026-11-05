@@ -9,7 +9,15 @@ import { PERMISSIONS } from "../../utils/access/permissions.js";
 
 // Місце складання DI: залежності передаємо через конструктори.
 export class GroupModule {
-  constructor({ groupRepository, guardianGroupsReader, authService }) {
+  constructor({
+    groupRepository,
+    guardianGroupsReader,
+    authService,
+    catalogRepository,
+    personRepository,
+    childRepository,
+    unitOfWork,
+  }) {
     if (!authService) throw new TypeError("authService is required for groups");
     const accessPolicy = new GroupAccessPolicy({
       groupAssignmentsReader: groupRepository,
@@ -19,6 +27,10 @@ export class GroupModule {
       groupRepository,
       authorizer,
       groupAccessPolicy: accessPolicy,
+      catalogRepository,
+      personRepository,
+      childRepository,
+      unitOfWork,
     });
     const groupController = new GroupController({ groupService });
     this.router = createGroupRoutes({
@@ -31,6 +43,10 @@ export class GroupModule {
       requireCreate: createRequirePermission({
         authorizer,
         permission: PERMISSIONS.GROUPS_CREATE,
+      }),
+      requireUpdate: createRequirePermission({
+        authorizer,
+        permission: PERMISSIONS.GROUPS_UPDATE,
       }),
     });
   }

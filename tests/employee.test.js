@@ -128,5 +128,5 @@ test("active group assignment blocks employee termination and valid update is au
     "req",
   );
   assert.equal(setup.events[0].after.employeeProfileUpdated, true);
-  assert.equal(setup.events[0].safeFields[0], "employeeProfileUpdated");
+  assert.deepEqual(setup.events[0].after.changedFields, ["availability"]);
 });
