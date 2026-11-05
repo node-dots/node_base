@@ -126,6 +126,18 @@ function thisWeekMonday(date) {
   return result.toISOString().slice(0, 10);
 }
 
+function nextWeekMonday(weekStart) {
+  const result = new Date(`${weekStart}T00:00:00.000Z`);
+  result.setUTCDate(result.getUTCDate() + 7);
+  return result.toISOString().slice(0, 10);
+}
+
+function previousCalendarDay(date) {
+  const result = new Date(`${date}T00:00:00.000Z`);
+  result.setUTCDate(0);
+  return result.toISOString().slice(0, 10);
+}
+
 function createServices({ personRepository, unitOfWork, clock = systemClock }) {
   const catalogRepository = new CatalogRepository({
     catalogModel: CatalogModel,
@@ -503,6 +515,37 @@ async function ensureDemoSchedule({
   );
 }
 
+async function ensureDemoScheduleDraft({
+  services,
+  actor,
+  weekStart,
+  template,
+}) {
+  const current = await services.scheduleService.getDraft(weekStart, actor);
+  const slot = { ...template, id: "demo-draft-next-week" };
+  if (current.revision > 0 || current.slots.length > 0) {
+    if (
+      current.revision !== 1 ||
+      current.slots.length !== 1 ||
+      current.slots[0].id !== slot.id ||
+      current.slots[0].groupId !== slot.groupId ||
+      current.slots[0].roomId !== slot.roomId ||
+      current.slots[0].teacherId !== slot.teacherId ||
+      current.slots[0].subjectCode !== slot.subjectCode
+    ) {
+      throw new Error(
+        "An incompatible next-week schedule draft exists; it was not overwritten",
+      );
+    }
+    return current;
+  }
+  return services.scheduleService.updateDraft(
+    weekStart,
+    { expectedRevision: 0, slots: [slot] },
+    actor,
+  );
+}
+
 async function ensureDemoExpenses({ services, actor, month, today }) {
   const paidReason = "TASK-039 synthetic demo rent expense";
   let rent = await ExpenseModel.findOne({ reason: paidReason }).lean();
@@ -552,7 +595,24 @@ async function ensureDemoExpenses({ services, actor, month, today }) {
       actor,
       "task-039-cancel-demo-expense",
     );
-  return { rent, canceled };
+
+  const draftReason = "TASK-039 synthetic demo draft expense";
+  let draft = await ExpenseModel.findOne({ reason: draftReason }).lean();
+  if (!draft)
+    draft = await services.expenseService.create(
+      {
+        category: "FOOD",
+        amountCents: 35_000,
+        serviceMonth: month,
+        reason: draftReason,
+      },
+      actor,
+      "task-039-demo-draft-expense",
+    );
+  else draft = { ...draft, id: draft._id.toString() };
+  if (draft.status !== "DRAFT")
+    throw new Error("The demo draft expense was changed; it was not rewritten");
+  return { rent, canceled, draft };
 }
 
 export async function seedDemoScenario({
@@ -638,12 +698,23 @@ async function runDemoScenario({ password, databaseName }) {
     ),
   );
   const children = [];
+  const priorEnrollmentDate = previousCalendarDay(today);
+  const enrollmentClockDate =
+    getSchoolYear(priorEnrollmentDate) === schoolYear
+      ? priorEnrollmentDate
+      : today;
+  const enrollmentServices = createServices({
+    personRepository,
+    unitOfWork,
+    clock: createFixedClock(`${enrollmentClockDate}T12:00:00.000Z`),
+  });
   for (const fixture of demoChildren) {
     const child = await ensureDemoChild({
       fixture,
       parent: parents[fixture.parentIndex],
       group: groups[fixture.groupIndex],
-      services,
+      services:
+        fixture.key === "child-annual-refund" ? services : enrollmentServices,
       actor,
       schoolYear,
       category: categories[fixture.age === 2 ? 0 : 1],
@@ -651,15 +722,20 @@ async function runDemoScenario({ password, databaseName }) {
     children.push(child);
   }
 
-  const monthlyServices = createServices({
-    personRepository,
-    unitOfWork,
-    clock: createFixedClock(`${followingMonth}-10T12:00:00.000Z`),
-  });
   const monthlyInvoiceRows = [];
   for (const index of [0, demoChildren.length - 1]) {
+    const child = children[index];
+    const invoiceMonth =
+      child.billingStartMonth > currentMonth
+        ? child.billingStartMonth
+        : currentMonth;
+    const monthlyServices = createServices({
+      personRepository,
+      unitOfWork,
+      clock: createFixedClock(`${invoiceMonth}-10T12:00:00.000Z`),
+    });
     const result = await monthlyServices.invoiceService.generateForCurrentMonth(
-      children[index].id,
+      child.id,
       actor,
       `task-039-monthly-${index}`,
     );
@@ -698,15 +774,16 @@ async function runDemoScenario({ password, databaseName }) {
     now: systemClock.now(),
   });
 
+  const annualBillingChild = children[demoChildren.length - 2];
   let annualInvoice = await services.invoiceRepository.findByUnique({
-    childId: children[demoChildren.length - 2].id,
+    childId: annualBillingChild.id,
     service: "TUITION",
-    serviceMonth: children[1].billingStartMonth,
+    serviceMonth: annualBillingChild.billingStartMonth,
   });
   if (!annualInvoice)
     annualInvoice = await services.invoiceService.createAnnualTuition(
-      children[demoChildren.length - 2].id,
-      children[demoChildren.length - 2].billingStartMonth,
+      annualBillingChild.id,
+      annualBillingChild.billingStartMonth,
       actor,
       "task-039-annual-tuition",
     );
@@ -774,6 +851,13 @@ async function runDemoScenario({ password, databaseName }) {
     employees,
     weekStart,
   });
+  const draftWeek = nextWeekMonday(weekStart);
+  const scheduleDraft = await ensureDemoScheduleDraft({
+    services,
+    actor,
+    weekStart: draftWeek,
+    template: publishedSchedule.slots[0],
+  });
 
   const actualGroupOccupancy = await Promise.all(
     groups.map(async (group) => ({
@@ -804,6 +888,13 @@ async function runDemoScenario({ password, databaseName }) {
   const finance = await financeReportService.monthly(currentMonth, actor);
   assert.ok(Number.isSafeInteger(finance.accruedIncomeMinor));
   assert.ok(Number.isSafeInteger(finance.cashFlowMinor));
+  assert.ok(finance.receiptsNetMinor > 0);
+  assert.ok(finance.cashFlowMinor > 0);
+  const currentMonthInvoiceCount = [
+    fullChildTuition,
+    pendingChildTuition,
+  ].filter((invoice) => invoice.serviceMonth === currentMonth).length;
+  if (currentMonthInvoiceCount > 0) assert.ok(finance.accruedIncomeMinor > 0);
   const result = {
     database: databaseName,
     parents: parents.length,
@@ -820,16 +911,20 @@ async function runDemoScenario({ password, databaseName }) {
     annualPayment: annualPayment.status,
     refund: refund.status,
     finance: {
+      month: currentMonth,
       accruedIncomeMinor: finance.accruedIncomeMinor,
       receiptsNetMinor: finance.receiptsNetMinor,
       expensesMinor: finance.expensesMinor,
       cashFlowMinor: finance.cashFlowMinor,
     },
+    currentMonthInvoiceCount,
     expenses: {
       rent: expenses.rent.status,
       canceled: expenses.canceled.status,
+      draft: expenses.draft.status,
     },
     publishedWeek: publishedSchedule.weekStart,
+    draftWeek: scheduleDraft.weekStart,
     records: {
       groups: groups.map(({ id }) => id),
       children: Object.fromEntries(
@@ -846,7 +941,12 @@ async function runDemoScenario({ password, databaseName }) {
         annualTuition: annualPayment.id,
       },
       refund: refund.id,
-      expenses: { rent: expenses.rent.id, canceled: expenses.canceled.id },
+      expenses: {
+        rent: expenses.rent.id,
+        canceled: expenses.canceled.id,
+        draft: expenses.draft.id,
+      },
+      scheduleDraftWeek: scheduleDraft.weekStart,
     },
     groupOccupancy: actualGroupOccupancy,
   };
@@ -865,6 +965,8 @@ async function runDemoScenario({ password, databaseName }) {
   assert.equal(result.annualPayment, "CONFIRMED");
   assert.equal(result.refund, "CONFIRMED");
   assert.equal(result.expenses.canceled, "CANCELLED");
+  assert.equal(result.expenses.draft, "DRAFT");
+  assert.equal(scheduleDraft.slots.length, 1);
   assert.equal(
     publishedSchedule.slots.length,
     30,

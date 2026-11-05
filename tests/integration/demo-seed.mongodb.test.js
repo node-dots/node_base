@@ -82,15 +82,33 @@ test(
       assert.equal(first.children, 22);
       assert.equal(second.children, 22);
       assert.equal(second.invoices, 5);
+      assert.ok(first.finance.receiptsNetMinor > 0);
+      assert.ok(first.finance.cashFlowMinor > 0);
+      assert.equal(second.finance.month, first.finance.month);
+      assert.equal(
+        second.finance.accruedIncomeMinor,
+        first.finance.accruedIncomeMinor,
+      );
+      if (first.currentMonthInvoiceCount > 0)
+        assert.ok(first.finance.accruedIncomeMinor > 0);
       assert.equal(await PersonModel.countDocuments(), 14);
       assert.equal(await ChildModel.countDocuments(), 22);
       assert.equal(await InvoiceModel.countDocuments(), 5);
       assert.equal(await PaymentModel.countDocuments(), 3);
       assert.equal(await RefundModel.countDocuments(), 1);
-      assert.equal(await ExpenseModel.countDocuments(), 2);
+      assert.equal(await ExpenseModel.countDocuments(), 3);
       assert.equal(
         await ScheduleModel.countDocuments({
           "published.revision": { $gte: 1 },
+        }),
+        1,
+      );
+      assert.equal(await ScheduleModel.countDocuments(), 2);
+      assert.equal(
+        await ScheduleModel.countDocuments({
+          weekStart: second.records.scheduleDraftWeek,
+          published: { $exists: false },
+          revision: 1,
         }),
         1,
       );
@@ -113,6 +131,14 @@ test(
           }).lean()
         ).status,
         "CANCELLED",
+      );
+      assert.equal(
+        (
+          await ExpenseModel.findOne({
+            reason: "TASK-039 synthetic demo draft expense",
+          }).lean()
+        ).status,
+        "DRAFT",
       );
     } finally {
       await mongoose.connection.dropDatabase();
