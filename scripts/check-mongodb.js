@@ -5,6 +5,7 @@ const result = spawnSync(
   process.execPath,
   [
     "--test",
+    "tests/integration/children.mongodb.test.js",
     "tests/integration/groups.mongodb.test.js",
     "tests/integration/people.mongodb.test.js",
     "tests/integration/readiness.mongodb.test.js",
