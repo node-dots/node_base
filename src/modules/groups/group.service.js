@@ -203,8 +203,10 @@ export class GroupService {
     this.authorizer.assertPermission(actor, PERMISSIONS.GROUPS_UPDATE);
     this.assertMutationDependencies();
     await this.catalogRepository.ensureEmployeeResourceGuard();
+    await this.catalogRepository.ensureScheduleResourceGuard();
     return this.unitOfWork.execute(async ({ session, recordAudit }) => {
       await this.catalogRepository.incrementEmployeeResourceGuard({ session });
+      await this.catalogRepository.incrementScheduleResourceGuard({ session });
       const current = await this.groupRepository.findByIdForUpdate(groupId, {
         session,
       });
@@ -284,8 +286,10 @@ export class GroupService {
     this.authorizer.assertPermission(actor, PERMISSIONS.GROUPS_UPDATE);
     this.assertMutationDependencies();
     await this.catalogRepository.ensureEmployeeResourceGuard();
+    await this.catalogRepository.ensureScheduleResourceGuard();
     return this.unitOfWork.execute(async ({ session, recordAudit }) => {
       await this.catalogRepository.incrementEmployeeResourceGuard({ session });
+      await this.catalogRepository.incrementScheduleResourceGuard({ session });
       const current = await this.groupRepository.findByIdForUpdate(groupId, {
         session,
       });
@@ -336,8 +340,10 @@ export class GroupService {
     this.authorizer.assertPermission(actor, PERMISSIONS.GROUPS_UPDATE);
     this.assertMutationDependencies();
     await this.catalogRepository.ensureEmployeeResourceGuard();
+    await this.catalogRepository.ensureScheduleResourceGuard();
     return this.unitOfWork.execute(async ({ session, recordAudit }) => {
       await this.catalogRepository.incrementEmployeeResourceGuard({ session });
+      await this.catalogRepository.incrementScheduleResourceGuard({ session });
       const current = await this.groupRepository.findByIdForUpdate(groupId, {
         session,
       });
@@ -379,8 +385,10 @@ export class GroupService {
     this.authorizer.assertPermission(actor, PERMISSIONS.GROUPS_UPDATE);
     this.assertMutationDependencies();
     await this.catalogRepository.ensureEmployeeResourceGuard();
+    await this.catalogRepository.ensureScheduleResourceGuard();
     return this.unitOfWork.execute(async ({ session, recordAudit }) => {
       await this.catalogRepository.incrementEmployeeResourceGuard({ session });
+      await this.catalogRepository.incrementScheduleResourceGuard({ session });
       const current = await this.groupRepository.findByIdForUpdate(groupId, {
         session,
       });

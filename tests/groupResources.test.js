@@ -41,6 +41,8 @@ function makeService({ conflicts = [], occupiedSeats = 0 } = {}) {
       catalogRepository: {
         ensureEmployeeResourceGuard: async () => {},
         incrementEmployeeResourceGuard: async () => {},
+        ensureScheduleResourceGuard: async () => {},
+        incrementScheduleResourceGuard: async () => {},
         findById: async (id) =>
           id === categoryId
             ? { id, kind: "AGE_CATEGORY", age: 3, active: true }

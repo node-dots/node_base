@@ -2,6 +2,8 @@ import { AppError } from "../../utils/errors.js";
 import { PERMISSIONS } from "../../utils/access/permissions.js";
 import { ROLES } from "../../utils/access/roles.js";
 import { systemClock } from "../../utils/calendar.js";
+import { validateSchedule } from "./schedule.validator.js";
+import { publishScheduleSchema } from "./schedule.schema.js";
 import {
   scheduleWeekSchema,
   updateScheduleDraftSchema,
@@ -21,10 +23,26 @@ function sameAssignment(left, right) {
 }
 
 export class ScheduleService {
-  constructor({ scheduleRepository, authorizer, clock = systemClock }) {
+  constructor({
+    scheduleRepository,
+    authorizer,
+    clock = systemClock,
+    unitOfWork,
+    catalogRepository,
+    snapshotProvider,
+    guardianGroupsReader,
+    groupRepository,
+  }) {
     this.scheduleRepository = scheduleRepository;
     this.authorizer = authorizer;
     this.clock = clock;
+    Object.assign(this, {
+      unitOfWork,
+      catalogRepository,
+      snapshotProvider,
+      guardianGroupsReader,
+      groupRepository,
+    });
     authorizer.assertKnown(PERMISSIONS.SCHEDULES_READ);
     authorizer.assertKnown(PERMISSIONS.SCHEDULES_UPDATE);
   }
@@ -130,5 +148,152 @@ export class ScheduleService {
         );
       throw error;
     }
+  }
+
+  async publish(weekStart, input, actor, requestId) {
+    this.authorizer.assertPermission(actor, PERMISSIONS.SCHEDULES_PUBLISH);
+    const week = scheduleWeekSchema.safeParse(weekStart);
+    const parsed = publishScheduleSchema.safeParse(input);
+    if (!week.success || !parsed.success)
+      throw new AppError(
+        400,
+        "INVALID_SCHEDULE_PUBLICATION",
+        "Schedule publication is invalid",
+      );
+    const startDate = new Date(`${week.data}T00:00:00.000Z`);
+    if (
+      Number.isNaN(startDate.getTime()) ||
+      startDate.toISOString().slice(0, 10) !== week.data ||
+      startDate.getUTCDay() !== 1
+    )
+      throw new AppError(
+        400,
+        "INVALID_SCHEDULE_WEEK",
+        "Schedule week is invalid",
+      );
+    const today = this.clock.now();
+    const currentMonday = new Date(today);
+    currentMonday.setUTCHours(0, 0, 0, 0);
+    currentMonday.setUTCDate(
+      currentMonday.getUTCDate() - ((currentMonday.getUTCDay() + 6) % 7),
+    );
+    const limit = new Date(currentMonday);
+    limit.setUTCDate(limit.getUTCDate() + 28);
+    if (startDate < currentMonday || startDate >= limit)
+      throw new AppError(
+        400,
+        "SCHEDULE_PUBLICATION_OUT_OF_RANGE",
+        "Only the current and next three weeks may be published",
+      );
+    await this.catalogRepository.ensureScheduleResourceGuard();
+    return this.unitOfWork.execute(async ({ session, recordAudit }) => {
+      const resource =
+        await this.catalogRepository.incrementScheduleResourceGuard({
+          session,
+        });
+      const draft = await this.scheduleRepository.findDraft(week.data, {
+        session,
+      });
+      if (!draft || draft.revision !== parsed.data.expectedRevision)
+        throw new AppError(
+          409,
+          "SCHEDULE_REVISION_CONFLICT",
+          "Schedule draft has changed; reload it before publishing",
+        );
+      const snapshot = await this.snapshotProvider.read(week.data, { session });
+      const validation = validateSchedule({
+        weekStart: week.data,
+        schoolYear: snapshot.schoolYear,
+        slots: draft.slots,
+        groups: snapshot.groups,
+        rooms: snapshot.rooms,
+        teachers: snapshot.teachers,
+        program: snapshot.program,
+      });
+      if (!validation.valid)
+        throw new AppError(
+          422,
+          "SCHEDULE_NOT_PUBLISHABLE",
+          "Schedule contains validation violations",
+          validation.violations,
+        );
+      const publishedAt = this.clock.now();
+      const result = await this.scheduleRepository.publish({
+        weekStart: week.data,
+        expectedRevision: draft.revision,
+        session,
+        published: {
+          revision: draft.revision,
+          publishedAt,
+          publishedById: actor.id,
+          resourceRevision: resource.revision,
+          slots: draft.slots,
+        },
+      });
+      if (!result)
+        throw new AppError(
+          409,
+          "SCHEDULE_REVISION_CONFLICT",
+          "Schedule draft changed while publishing",
+        );
+      await recordAudit({
+        actorId: actor.id,
+        requestId,
+        action: "schedule.publish",
+        entityType: "SCHEDULE",
+        entityId: week.data,
+        after: {
+          weekStart: week.data,
+          revision: draft.revision,
+          resourceRevision: resource.revision,
+        },
+        safeFields: ["weekStart", "revision", "resourceRevision"],
+      });
+      return result.published;
+    });
+  }
+
+  async getPublished(weekStart, actor) {
+    this.authorizer.assertPermission(actor, PERMISSIONS.SCHEDULES_READ);
+    const week = scheduleWeekSchema.safeParse(weekStart);
+    if (!week.success)
+      throw new AppError(
+        400,
+        "INVALID_SCHEDULE_WEEK",
+        "Schedule week is invalid",
+      );
+    const schedule = await this.scheduleRepository.findPublished(week.data);
+    if (!schedule)
+      throw new AppError(
+        404,
+        "PUBLISHED_SCHEDULE_NOT_FOUND",
+        "Published schedule not found",
+      );
+    let allowedGroupIds = null;
+    if (actor.roles.includes(ROLES.PARENT)) {
+      allowedGroupIds = new Set(
+        await this.guardianGroupsReader.findActiveGroupIds(actor.id),
+      );
+    } else if (
+      actor.roles.includes(ROLES.EDUCATOR) ||
+      actor.roles.includes(ROLES.ASSISTANT)
+    ) {
+      const positions = [];
+      if (actor.roles.includes(ROLES.EDUCATOR)) positions.push("educator");
+      if (actor.roles.includes(ROLES.ASSISTANT)) positions.push("assistant");
+      allowedGroupIds = new Set(
+        await this.groupRepository.findActiveGroupIds({
+          personId: actor.id,
+          positions,
+        }),
+      );
+    }
+    const slots = schedule.published.slots.filter((slot) => {
+      if (allowedGroupIds) return allowedGroupIds.has(slot.groupId);
+      if (actor.roles.includes(ROLES.TEACHER))
+        return slot.teacherId === actor.id;
+      return true;
+    });
+    return { ...schedule.published, weekStart: schedule.weekStart, slots };
   }
 }
