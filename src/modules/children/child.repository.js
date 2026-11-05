@@ -137,6 +137,22 @@ export class ChildRepository {
     return document ? toChild(document) : null;
   }
 
+  async decrementWithdrawalRefundDue(childId, amountCents, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(childId)) return null;
+    const document = await this.childModel
+      .findOneAndUpdate(
+        {
+          _id: childId,
+          status: "LEFT",
+          "withdrawalSummary.refundDueCents": { $gte: amountCents },
+        },
+        { $inc: { "withdrawalSummary.refundDueCents": -amountCents } },
+        { new: true, runValidators: true, session },
+      )
+      .lean();
+    return document ? toChild(document) : null;
+  }
+
   async findByIdInScope(childId, scope) {
     if (!mongoose.isObjectIdOrHexString(childId)) return null;
     const document = await this.childModel

@@ -100,6 +100,20 @@ const invoiceSchema = new mongoose.Schema(
       default: 0,
       validate: Number.isSafeInteger,
     },
+    refundableAmountCents: {
+      type: Number,
+      required: true,
+      min: 0,
+      default: 0,
+      validate: Number.isSafeInteger,
+    },
+    refundedAmountCents: {
+      type: Number,
+      required: true,
+      min: 0,
+      default: 0,
+      validate: Number.isSafeInteger,
+    },
   },
   {
     collection: "invoices",

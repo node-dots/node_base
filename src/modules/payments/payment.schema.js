@@ -21,3 +21,14 @@ export const confirmPaymentSchema = zod.strictObject({
 });
 
 export const rejectPaymentSchema = zod.strictObject({});
+
+export const refundPaymentSchema = zod.strictObject({
+  amountCents: zod.number().int().safe().min(1),
+  reason: zod.string().trim().min(3).max(500),
+  idempotencyKey: zod
+    .string()
+    .trim()
+    .min(8)
+    .max(120)
+    .regex(/^[A-Za-z0-9._:-]+$/),
+});

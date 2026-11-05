@@ -2,12 +2,14 @@ import { HTTP_STATUS } from "../../utils/httpConstants.js";
 import {
   confirmPaymentSchema,
   createPendingPaymentSchema,
+  refundPaymentSchema,
 } from "./payment.schema.js";
 import { z as zod } from "../../openapi/zod.js";
 
 export function registerPaymentDocumentation(registry) {
   registry.register("CreatePendingPaymentInput", createPendingPaymentSchema);
   registry.register("ConfirmPaymentInput", confirmPaymentSchema);
+  registry.register("RefundPaymentInput", refundPaymentSchema);
   registry.registerPath({
     method: "post",
     path: "/api/v1/payments",
@@ -90,4 +92,50 @@ export function registerPaymentDocumentation(registry) {
       },
     });
   }
+  registry.registerPath({
+    method: "post",
+    path: "/api/v1/payments/{paymentId}/refund",
+    operationId: "recordPaymentRefund",
+    tags: ["Payments"],
+    security: [{ BearerAuth: [] }],
+    request: {
+      params: zod.object({ paymentId: zod.string().regex(/^[a-f\d]{24}$/i) }),
+      body: {
+        required: true,
+        content: { "application/json": { schema: refundPaymentSchema } },
+      },
+    },
+    responses: {
+      [HTTP_STATUS.CREATED]: {
+        description:
+          "Records an admin-confirmed refund atomically against a confirmed receipt, invoice refund due, child refund due, and audit log.",
+      },
+      [HTTP_STATUS.CONFLICT]: {
+        description:
+          "Refund exceeds the refund due or receipt balance, the receipt is not confirmed, or the idempotency key conflicts.",
+      },
+      [HTTP_STATUS.FORBIDDEN]: {
+        description: "Only ADMIN may record a refund.",
+      },
+      [HTTP_STATUS.NOT_FOUND]: { $ref: "#/components/responses/NotFound" },
+    },
+  });
+  registry.registerPath({
+    method: "get",
+    path: "/api/v1/payments/{paymentId}/refunds",
+    operationId: "listPaymentRefunds",
+    tags: ["Payments"],
+    security: [{ BearerAuth: [] }],
+    request: {
+      params: zod.object({ paymentId: zod.string().regex(/^[a-f\d]{24}$/i) }),
+    },
+    responses: {
+      [HTTP_STATUS.OK]: {
+        description:
+          "Lists refund records linked to this receipt without returning payer identity data.",
+      },
+      [HTTP_STATUS.NOT_FOUND]: { $ref: "#/components/responses/NotFound" },
+      [HTTP_STATUS.FORBIDDEN]: { description: "Insufficient permission." },
+    },
+  });
 }
