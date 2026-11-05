@@ -4,6 +4,7 @@ import { createRequirePermission } from "../../middleware/requirePermission.js";
 import { authorizer } from "../people/access/authorizer.js";
 import { PERMISSIONS } from "../../utils/access/permissions.js";
 import {
+  generateScheduleSchema,
   publishScheduleSchema,
   updateScheduleDraftSchema,
 } from "./schedule.schema.js";
@@ -20,6 +21,29 @@ export function createScheduleRoutes({ service, authService }) {
     authorizer,
     permission: PERMISSIONS.SCHEDULES_UPDATE,
   });
+  router.post(
+    "/:weekStart/generate",
+    authenticate,
+    createRequirePermission({
+      authorizer,
+      permission: PERMISSIONS.SCHEDULES_GENERATE,
+    }),
+    scheduleJsonParser,
+    validateBody(generateScheduleSchema),
+    async (req, res, next) => {
+      try {
+        res.json({
+          data: await service.generateDraft(
+            req.params.weekStart,
+            req.validatedBody,
+            req.actor,
+          ),
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
   router.get(
     "/:weekStart/draft",
     authenticate,
