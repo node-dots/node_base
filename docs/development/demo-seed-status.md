@@ -1,40 +1,17 @@
-# Поточний стан демонстраційного seed
+﻿# Demo seed status
 
-## Ізольований запуск
+Updated 2026-11-05.
 
-`npm run seed` запускає початковий seed груп і catalog. Він дозволений лише для
-`kindergarten_dev` та `kindergarten_seed_test`, обирає базу через
-`SEED_DATABASE`, використовує сталі ID і `$setOnInsert`. Повторний запуск не
-переписує вже наявні поля. Для тесту задайте `SEED_DATABASE` у середовищі
-термінала, щоб уникнути запуску на робочій базі.
+## Verified seed behavior
 
-```powershell
-$env:SEED_DATABASE = 'kindergarten_seed_test'
-npm.cmd run seed
-npm.cmd run seed
-Remove-Item Env:SEED_DATABASE
-```
+`npm run seed` is allowlisted to `kindergarten_dev` and `kindergarten_seed_test`. The test database was seeded twice using the Docker MongoDB replica set. The first run inserted 8 demo groups and 46 catalog records. The second inserted no duplicates. A manual edit to a seeded group remained after the rerun. The test used synthetic data only.
 
-```bash
-SEED_DATABASE=kindergarten_seed_test npm run seed
-SEED_DATABASE=kindergarten_seed_test npm run seed
-```
+The seed remains idempotent and insert-only: it creates the initial catalog and demo groups and does not overwrite existing fields.
 
-Fixture груп має сталі унікальні ObjectId-сумісні ключі й валідні draft-поля;
-це перевіряє `tests/demo-groups.test.js`. Сам запуск MongoDB seed потребує
-Docker Compose та фактичної MongoDB replica set.
+## TASK-039 still incomplete
 
-## Відсутні частини повного сценарію TASK-039
+The seed does not create people with parent accounts, children and enrollments, invoices, payments/refunds, expenses, or a published schedule. The full end-to-end dataset is not complete.
 
-Наявний seed створює лише групи та початковий catalog. Він не створює людей,
-акаунти батьків, дітей/зарахування, рахунки, pending/confirmed payments,
-refunds, витрати або опублікований розклад. Наразі немає команди чи HTTP
-endpoint для безпечного створення account батька; seed цих залежних записів
-прямим `insert` обійшов би транзакції, авторизацію та бізнес-правила. Тому
-повний наскрізний demo seed не оголошений готовим.
+Do not add raw database inserts for dependent business records. A safe full seed needs supported domain provisioning for synthetic people/accounts and then must run the same group, child, enrollment, invoice, payment, expense, and schedule commands as the application. It also needs an allowlisted test database, repeatability checks, and proof that manual changes survive reruns.
 
-Перед продовженням потрібен узгоджений provisioning flow для синтетичних
-account/guardian fixtures. Після цього seed має виконувати доменні команди з
-Clock, працювати лише в allowlist database, бути ідемпотентним і зберігати
-ручні зміни. Не використовуйте пароль із документації; bootstrap ADMIN
-credentials задаються тільки через локальний `.env`.
+Bootstrap ADMIN is configured separately through local environment variables. Never commit its password or other credentials.
