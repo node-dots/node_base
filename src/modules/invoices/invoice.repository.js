@@ -6,6 +6,7 @@ function toInvoice(document) {
     childId: document.childId.toString(),
     service: document.service,
     serviceMonth: document.serviceMonth,
+    billingType: document.billingType ?? "MONTHLY",
     status: document.status,
     origAmountCents: document.origAmountCents,
     remainingAmountCents: document.remainingAmountCents,
@@ -38,6 +39,50 @@ export class InvoiceRepository {
     return document ? toInvoice(document) : null;
   }
 
+  async findTuitionCoveringMonth(childId, serviceMonth, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(childId)) return null;
+    let query = this.invoiceModel.findOne({
+      childId,
+      service: "TUITION",
+      status: { $ne: "CANCELLED" },
+      $or: [
+        { reservedMonths: serviceMonth },
+        { reservedMonths: { $exists: false }, "parts.month": serviceMonth },
+      ],
+    });
+    if (session) query = query.session(session);
+    const document = await query.lean();
+    return document ? toInvoice(document) : null;
+  }
+
+  async cancelExpiredAnnual(childId, currentMonth, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(childId)) return null;
+    const document = await this.invoiceModel
+      .findOneAndUpdate(
+        {
+          childId,
+          service: "TUITION",
+          billingType: "ANNUAL",
+          serviceMonth: { $lt: currentMonth },
+          status: "OPEN",
+          paidAmountCents: 0,
+          $expr: { $eq: ["$remainingAmountCents", "$origAmountCents"] },
+        },
+        {
+          $set: {
+            status: "CANCELLED",
+            remainingAmountCents: 0,
+            "parts.$[].remainingCents": 0,
+            "parts.$[].cancelled": true,
+            reservedMonths: [],
+          },
+        },
+        { new: true, runValidators: true, session },
+      )
+      .lean();
+    return document ? toInvoice(document) : null;
+  }
+
   async findById(invoiceId, { session } = {}) {
     if (!mongoose.isObjectIdOrHexString(invoiceId)) return null;
     let query = this.invoiceModel.findById(invoiceId);
@@ -48,22 +93,30 @@ export class InvoiceRepository {
 
   async applyReceipt(invoiceId, amountCents, { session } = {}) {
     if (!mongoose.isObjectIdOrHexString(invoiceId)) return null;
+    const current = await this.findById(invoiceId, { session });
+    if (!current) return null;
+    const isAnnual = current.billingType === "ANNUAL";
     const document = await this.invoiceModel
       .findOneAndUpdate(
         {
           _id: invoiceId,
           status: { $in: ["OPEN", "PARTIAL"] },
-          remainingAmountCents: { $gte: amountCents },
-          "parts.0.remainingCents": { $gte: amountCents },
+          ...(isAnnual
+            ? { remainingAmountCents: amountCents }
+            : {
+                remainingAmountCents: { $gte: amountCents },
+                "parts.0.remainingCents": { $gte: amountCents },
+              }),
         },
         {
           $inc: {
             paidAmountCents: amountCents,
             remainingAmountCents: -amountCents,
-            "parts.0.remainingCents": -amountCents,
+            ...(isAnnual ? {} : { "parts.0.remainingCents": -amountCents }),
           },
           $set: {
             status: "PARTIAL",
+            ...(isAnnual ? { "parts.$[].remainingCents": 0 } : {}),
           },
         },
         { new: true, runValidators: true, session },

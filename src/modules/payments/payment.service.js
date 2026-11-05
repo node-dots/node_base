@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { AppError, ResourceNotFoundError } from "../../utils/errors.js";
 import { PERMISSIONS } from "../../utils/access/permissions.js";
 import { systemClock } from "../../utils/calendar.js";
+import { annualPaymentDeadline } from "../invoices/invoice.calculations.js";
 import {
   confirmPaymentSchema,
   createPendingPaymentSchema,
@@ -99,6 +100,15 @@ export class PaymentService {
       return toPublicPayment(this.assertSamePayload(existing, payloadHash));
     if (invoice.status === "CANCELLED")
       throw new ResourceNotFoundError("INVOICE_NOT_FOUND", "Invoice not found");
+    if (
+      invoice.billingType === "ANNUAL" &&
+      input.amountCents !== invoice.remainingAmountCents
+    )
+      throw new AppError(
+        409,
+        "ANNUAL_PAYMENT_MUST_BE_FULL",
+        "Annual tuition must be paid in one full payment",
+      );
     if (input.amountCents > invoice.remainingAmountCents)
       throw new AppError(
         409,
@@ -194,6 +204,34 @@ export class PaymentService {
           "PAYMENT_STATE_CONFLICT",
           "Only pending payments can be confirmed",
         );
+
+      const invoiceBefore = await this.invoiceRepository.findById(
+        payment.invoiceId,
+        { session },
+      );
+      if (!invoiceBefore)
+        throw new ResourceNotFoundError(
+          "INVOICE_NOT_FOUND",
+          "Invoice not found",
+        );
+      if (invoiceBefore.billingType === "ANNUAL") {
+        const deadline = annualPaymentDeadline(invoiceBefore.serviceMonth);
+        if (occurredAt > deadline || now > deadline)
+          throw new AppError(
+            409,
+            "ANNUAL_PAYMENT_DEADLINE_PASSED",
+            "Annual tuition payment must be received and confirmed before its first month",
+          );
+        if (
+          payment.amountCents !== invoiceBefore.remainingAmountCents ||
+          payment.amountCents !== invoiceBefore.origAmountCents
+        )
+          throw new AppError(
+            409,
+            "ANNUAL_PAYMENT_MUST_BE_FULL",
+            "Annual tuition must be paid in one full payment",
+          );
+      }
 
       const invoice = await this.invoiceRepository.applyReceipt(
         payment.invoiceId,
