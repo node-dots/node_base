@@ -40,6 +40,8 @@ import { PersonModel } from "./people/person.model.js";
 import { authorizer } from "./people/access/authorizer.js";
 import { FinancialScenarioService } from "./finance/scenario.service.js";
 import { createScenarioRoutes } from "./finance/scenario.routes.js";
+import { ConfigurationSearchService } from "./finance/configurationSearch.service.js";
+import { createConfigurationSearchRoutes } from "./finance/configurationSearch.routes.js";
 
 export function createApiRouter({
   groupRepository = new GroupRepository({ groupModel: GroupModel }),
@@ -86,6 +88,13 @@ export function createApiRouter({
       "/finance/scenarios",
       createScenarioRoutes({
         service: new FinancialScenarioService({ authorizer }),
+        authService: authModule.authService,
+      }),
+    );
+    router.use(
+      "/finance/scenarios",
+      createConfigurationSearchRoutes({
+        service: new ConfigurationSearchService({ authorizer }),
         authService: authModule.authService,
       }),
     );

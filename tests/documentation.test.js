@@ -182,6 +182,7 @@ test("OpenAPI бере обмеження входу зі схем Zod і збе
       "POST /api/v1/expenses/open-current-month",
       "POST /api/v1/finance/scenarios/forecast",
       "POST /api/v1/finance/scenarios/breakeven",
+      "POST /api/v1/finance/scenarios/compare-configurations",
       "POST /api/v1/expenses/{expenseId}/approve",
       "POST /api/v1/expenses/{expenseId}/cancel",
       "POST /api/v1/expenses/{expenseId}/corrections",
