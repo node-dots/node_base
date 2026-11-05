@@ -9,6 +9,7 @@ const result = spawnSync(
     "tests/integration/children.membership.mongodb.test.js",
     "tests/integration/groups.mongodb.test.js",
     "tests/integration/groups.resources.mongodb.test.js",
+    "tests/integration/groups.occupancy.mongodb.test.js",
     "tests/integration/people.mongodb.test.js",
     "tests/integration/audit.mongodb.test.js",
     "tests/integration/auth.mongodb.test.js",
@@ -20,6 +21,9 @@ const result = spawnSync(
     "tests/integration/refunds.mongodb.test.js",
     "tests/integration/expenses.mongodb.test.js",
     "tests/integration/open-month.mongodb.test.js",
+    "tests/integration/schedules.mongodb.test.js",
+    "tests/integration/schedule-publish.mongodb.test.js",
+    "tests/integration/operations-reports.mongodb.test.js",
     "tests/integration/access-control.mongodb.test.js",
   ],
   {

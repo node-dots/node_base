@@ -27,10 +27,19 @@ import { ExpenseRepository } from "./expenses/expense.repository.js";
 import { ExpenseService } from "./expenses/expense.service.js";
 import { createExpenseRoutes } from "./expenses/expense.routes.js";
 import { OpenMonthService } from "./expenses/openMonth.service.js";
+import { ScheduleModel } from "./schedules/schedule.model.js";
+import { OperationsReportRepository } from "./reports/operationsReport.repository.js";
+import { OperationsReportService } from "./reports/operationsReport.service.js";
+import { createOperationsReportRoutes } from "./reports/operationsReport.routes.js";
 import { AccountRolesService } from "./people/accountRoles.service.js";
 import { createAccountRolesRoutes } from "./people/accountRoles.routes.js";
 import { EmployeeService } from "./people/employee.service.js";
 import { createEmployeeRoutes } from "./people/employee.routes.js";
+import { ScheduleRepository } from "./schedules/schedule.repository.js";
+import { ScheduleService } from "./schedules/schedule.service.js";
+import { createScheduleRoutes } from "./schedules/schedule.routes.js";
+import { ScheduleSnapshotProvider } from "./schedules/schedule.snapshot.js";
+import { PersonModel } from "./people/person.model.js";
 import { authorizer } from "./people/access/authorizer.js";
 
 export function createApiRouter({
@@ -53,6 +62,27 @@ export function createApiRouter({
   router.use("/groups", groupModule.router);
   if (authModule) {
     router.use("/auth", authModule.router ?? authModule);
+    router.use(
+      "/schedules",
+      createScheduleRoutes({
+        service: new ScheduleService({
+          scheduleRepository: new ScheduleRepository({
+            scheduleModel: ScheduleModel,
+          }),
+          authorizer,
+          unitOfWork: authModule.unitOfWork,
+          catalogRepository: settingsRepository,
+          snapshotProvider: new ScheduleSnapshotProvider({
+            groupModel: GroupModel,
+            catalogModel: CatalogModel,
+            personModel: PersonModel,
+          }),
+          guardianGroupsReader,
+          groupRepository,
+        }),
+        authService: authModule.authService,
+      }),
+    );
     const financialCatalogService = new FinancialCatalogService({
       catalogRepository: settingsRepository,
       authorizer,
@@ -66,6 +96,21 @@ export function createApiRouter({
       }),
     );
     if (authModule.unitOfWork) {
+      const operationsReportService = new OperationsReportService({
+        reportRepository: new OperationsReportRepository({
+          childModel: ChildModel,
+          scheduleModel: ScheduleModel,
+          expenseModel: ExpenseModel,
+        }),
+        authorizer,
+      });
+      router.use(
+        "/reports",
+        createOperationsReportRoutes({
+          service: operationsReportService,
+          authService: authModule.authService,
+        }),
+      );
       const expenseService = new ExpenseService({
         expenseRepository: new ExpenseRepository({
           expenseModel: ExpenseModel,

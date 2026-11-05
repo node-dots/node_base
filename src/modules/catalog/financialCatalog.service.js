@@ -48,6 +48,8 @@ export class FinancialCatalogService {
         "Only financial and program rules are versioned here",
       );
     }
+    if (entry.kind === CATALOG_KIND.PROGRAM)
+      await this.catalogRepository.ensureScheduleResourceGuard();
     const today = getCurrentCalendarDate(this.clock);
     assertEffectiveDate(entry.effectiveFrom);
     if (FINANCIAL_KINDS.has(entry.kind))
@@ -67,6 +69,10 @@ export class FinancialCatalogService {
     }
     return this.unitOfWork.execute(async ({ session, recordAudit }) => {
       try {
+        if (entry.kind === CATALOG_KIND.PROGRAM)
+          await this.catalogRepository.incrementScheduleResourceGuard({
+            session,
+          });
         const created = await this.catalogRepository.insertVersion(entry, {
           session,
         });

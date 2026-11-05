@@ -141,9 +141,13 @@ export class EmployeeService {
     }
     await this.assertReferences(next);
     await this.catalogRepository.ensureEmployeeResourceGuard();
+    await this.catalogRepository.ensureScheduleResourceGuard();
     const updated = await this.unitOfWork.execute(
       async ({ session, recordAudit }) => {
         await this.catalogRepository.incrementEmployeeResourceGuard({
+          session,
+        });
+        await this.catalogRepository.incrementScheduleResourceGuard({
           session,
         });
         if (
