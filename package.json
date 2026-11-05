@@ -16,7 +16,7 @@
     "check:syntax": "node scripts/check-syntax.js",
     "check": "npm run format:check && npm run check:syntax && npm test",
     "format": "prettier --write \"src/**/*.js\" \"scripts/**/*.js\" \"tests/**/*.js\"",
-    "format:check": "prettier --check \"src/**/*.js\" \"scripts/**/*.js\" \"tests/**/*.js\"",
+    "format:check": "prettier --check --end-of-line auto \"src/**/*.js\" \"scripts/**/*.js\" \"tests/**/*.js\"",
     "infra:up": "docker compose up -d",
     "infra:down": "docker compose down",
     "seed": "node scripts/seed.js",

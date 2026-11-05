@@ -9,6 +9,7 @@ export class GroupController {
   async list(request, response) {
     const { groups, pagination } = await this.groupService.listGroups(
       request.validatedQuery,
+      request.actor,
     );
 
     response.json({
@@ -18,12 +19,18 @@ export class GroupController {
   }
 
   async get(request, response) {
-    const group = await this.groupService.getGroup(request.params.id);
+    const group = await this.groupService.getGroup(
+      request.params.id,
+      request.actor,
+    );
     response.json({ data: toGroupDto(group) });
   }
 
   async create(request, response) {
-    const group = await this.groupService.createGroup(request.validatedBody);
+    const group = await this.groupService.createGroup(
+      request.validatedBody,
+      request.actor,
+    );
     response
       .location(`/api/v1/groups/${group.id}`)
       .status(HTTP_STATUS.CREATED)
@@ -31,7 +38,7 @@ export class GroupController {
   }
 
   async summary(request, response) {
-    const summaries = await this.groupService.getAgeSummary();
+    const summaries = await this.groupService.getAgeSummary(request.actor);
     response.json({ data: summaries.map(toAgeSummaryDto) });
   }
 }

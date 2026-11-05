@@ -5,7 +5,10 @@ import { SpanKind } from "@opentelemetry/api";
 import { startTelemetry } from "../src/telemetry/telemetry.js";
 import { readTelemetryConfig } from "../src/config/telemetry.js";
 import { readSecurityConfig } from "../src/config/security.js";
-import { createTestApp as createApp } from "./helpers/app.js";
+import {
+  createTestApp as createApp,
+  createTestAuthModule,
+} from "./helpers/app.js";
 import { HTTP_STATUS } from "../src/utils/httpConstants.js";
 
 test("Телеметрія вимкнена без налаштування та відхиляє нелокальний endpoint", () => {
@@ -44,10 +47,15 @@ test("HTTP-трейси зберігають контекст і приватн�
     }),
     exporter,
   });
-  const server = createApp({ securityConfig: readSecurityConfig({}) }).listen(
-    0,
-    "127.0.0.1",
-  );
+  const authModule = createTestAuthModule();
+  authModule.authService.authenticate = async () => ({
+    id: "000000000000000000000001",
+    roles: ["ADMIN"],
+  });
+  const server = createApp({
+    securityConfig: readSecurityConfig({}),
+    authModule,
+  }).listen(0, "127.0.0.1");
   await new Promise((resolve, reject) => {
     server.once("listening", resolve);
     server.once("error", reject);
@@ -73,8 +81,12 @@ test("HTTP-трейси зберігають контекст і приватн�
     const group = (await created.json()).data;
 
     const [read, missing] = await Promise.all([
-      fetch(`${baseUrl}/api/v1/groups/${group.id}`),
-      fetch(`${baseUrl}/api/v1/groups/${secret}`),
+      fetch(`${baseUrl}/api/v1/groups/${group.id}`, {
+        headers: { Authorization: `Bearer ${secret}` },
+      }),
+      fetch(`${baseUrl}/api/v1/groups/${secret}`, {
+        headers: { Authorization: `Bearer ${secret}` },
+      }),
     ]);
     assert.equal(read.status, HTTP_STATUS.OK);
     assert.deepEqual((await read.json()).data, group);
@@ -87,7 +99,10 @@ test("HTTP-трейси зберігають контекст і приватн�
 
     const invalid = await fetch(`${baseUrl}/api/v1/groups`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${secret}`,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ name: secret, ageCategory: 4, capacity: 21 }),
     });
     assert.equal(invalid.status, HTTP_STATUS.BAD_REQUEST);

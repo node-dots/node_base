@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { childScopeFilter } from "./childAccessPolicy.js";
 
 function cloneNested(value) {
   return value === undefined ? undefined : structuredClone(value);
@@ -69,6 +70,62 @@ export class ChildRepository {
     if (!mongoose.isObjectIdOrHexString(childId)) return null;
     const document = await this.childModel.findById(childId).lean();
     return document ? toChild(document) : null;
+  }
+
+  async findByIdInScope(childId, scope) {
+    if (!mongoose.isObjectIdOrHexString(childId)) return null;
+    const document = await this.childModel
+      .findOne({
+        $and: [
+          { _id: new mongoose.Types.ObjectId(childId) },
+          childScopeFilter(scope),
+        ],
+      })
+      .lean();
+    return document ? toChild(document) : null;
+  }
+
+  async findPageInScope({ scope, page, pageSize, filter = {} }) {
+    const accessFilter = childScopeFilter(scope);
+    const combinedFilter = { $and: [accessFilter, filter] };
+    const skip = (page - 1) * pageSize;
+    const [documents, total] = await Promise.all([
+      this.childModel
+        .find(combinedFilter)
+        .sort({ _id: 1 })
+        .skip(skip)
+        .limit(pageSize)
+        .lean(),
+      this.childModel.countDocuments(combinedFilter),
+    ]);
+    return { children: documents.map(toChild), total };
+  }
+
+  async aggregateInScope(scope, pipeline = []) {
+    if (!Array.isArray(pipeline) || pipeline.some((stage) => stage.$match)) {
+      throw new TypeError("Потрібен pipeline без клієнтського $match");
+    }
+    return this.childModel.aggregate([
+      { $match: childScopeFilter(scope) },
+      ...pipeline,
+    ]);
+  }
+
+  async findActiveGroupIdsForGuardian(personId) {
+    if (!mongoose.isObjectIdOrHexString(personId)) return [];
+    const documents = await this.childModel
+      .find({
+        "guardians.personId": new mongoose.Types.ObjectId(personId),
+        groupId: { $exists: true },
+        status: "ACTIVE",
+      })
+      .select({ groupId: 1 })
+      .lean();
+    return [...new Set(documents.map(({ groupId }) => groupId.toString()))];
+  }
+
+  async findActiveGroupIds(personId) {
+    return this.findActiveGroupIdsForGuardian(personId);
   }
 
   async updateProfileById(childId, profileUpdate) {

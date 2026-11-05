@@ -6,6 +6,7 @@ import packageInfo from "../../package.json" with { type: "json" };
 import { registerCommonDocumentation } from "./common.js";
 import { registerGroupDocumentation } from "../modules/groups/group.openapi.js";
 import { registerAuthDocumentation } from "../modules/auth/auth.openapi.js";
+import { registerAccountRolesDocumentation } from "../modules/people/accountRoles.openapi.js";
 
 export function createOpenApiDocument() {
   const registry = new OpenAPIRegistry();
@@ -13,6 +14,7 @@ export function createOpenApiDocument() {
   // Тут додаємо документацію нових модулів, коли вони реалізовані.
   registerGroupDocumentation(registry);
   registerAuthDocumentation(registry);
+  registerAccountRolesDocumentation(registry);
 
   return new OpenApiGeneratorV31(registry.definitions).generateDocument({
     openapi: "3.1.0",
@@ -27,6 +29,7 @@ export function createOpenApiDocument() {
       { name: "Стан" },
       { name: "Групи" },
       { name: "Автентифікація" },
+      { name: "Облікові записи" },
       { name: "Документація" },
     ],
   });
