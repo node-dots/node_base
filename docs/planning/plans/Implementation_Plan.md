@@ -91,3 +91,9 @@ Seed наразі наповнює групи та catalog; він не є по�
 - TASK-040 не може бути прийнята лише за автоматичними тестами. Потрібні
   чистий Windows та macOS запуск, MongoDB integration, два різні account і
   командна демонстрація/review.
+
+## Recheck on 2026-11-05
+
+The earlier Windows note below is historical. Docker is now available in this checkout (Docker 29.9.2, MongoDB 8.0, Node.js 24.22.1). `npm run test:mongodb` passed all 22 tests. The allowlisted `kindergarten_seed_test` seed was run twice: 8 groups and 46 catalog entries were inserted on the first run, none on the second, and a synthetic manual edit was preserved. `npm test` passed 165 tests and skipped 22 MongoDB-only tests by design.
+
+This does not complete TASK-039 or TASK-040: the full demo seed, live cross-module/browser walkthrough, macOS check, and independent peer review remain outstanding. TASK-013 CI also exposed a scoped-aggregation ObjectId bug; the fix is on PR #96 and its rerun passed both CI jobs, but it still awaits reviewer approval.

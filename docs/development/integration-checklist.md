@@ -1,22 +1,19 @@
-# Інтеграційний checklist TASK-040
+﻿# TASK-040 integration checklist
 
-Заповнюйте лише після фактичного проходження кроку. Додайте дату, ОС, Node.js
-версію та відповідального. Не записуйте паролі, JWT або реальні персональні дані.
+Updated 2026-11-05. Record only steps actually run; do not include credentials, JWTs, or real personal data.
 
-| Крок                                                     | Очікуваний доказ                                | Результат                                                    |
-| -------------------------------------------------------- | ----------------------------------------------- | ------------------------------------------------------------ |
-| Чистий checkout → `npm ci` → `npm run check`             | Exit code 0, версія Node.js                     | Не виконано                                                  |
-| MongoDB replica set → readiness → `npm run test:mongodb` | Усі MongoDB тести пройшли                       | Не виконано у цьому середовищі: Docker відсутній             |
-| Seed двічі в `kindergarten_seed_test`                    | Немає дублів; ручні зміни лишились              | Не виконано: потрібна MongoDB                                |
-| ADMIN login та Swagger/OpenAPI                           | Захищений endpoint читається; без токена 401    | Unit/HTTP покриття є; живий demo не виконано                 |
-| Група → дитина → зарахування → рахунок → платіж          | Ідентифікатори й totals узгоджені               | Потребує повного demo seed/API walkthrough                   |
-| Вибуття → refund → фінансові звіти                       | Cancelled expense/refund і totals правильні     | Потребує інтегрованого сценарію й MongoDB                    |
-| Розклад draft → validation → publish                     | Ресурсні конфлікти відсутні, snapshot читається | Потребує інтегрованого сценарію й MongoDB                    |
-| Два різні account та чужий ID/scope                      | PARENT не бачить чужих даних; роль діє негайно  | Часткове автоматизоване покриття; живу перевірку не виконано |
-| Панель: API, 401, 429, offline, сторонній origin         | Помилка видима; немає demo fallback у API mode  | CORS-тести є; живий браузерний walkthrough потрібен          |
-| macOS checkout та запуск                                 | Команди й результат від колеги                  | Не виконано                                                  |
-| Командне пояснення DI/schema/service/repository/DTO      | Учасники, дата й нотатки review                 | Не виконано                                                  |
+| Check                                                          | Result on this Windows checkout                                                                                                                                            |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Clean checkout, `npm ci`, `npm run check`                      | Not verified from a clean checkout. `npm run check` currently fails at repository-wide Prettier check: 188 files are reported, including files outside these task changes. |
+| MongoDB replica set and `npm run test:mongodb`                 | Passed with Docker Desktop, MongoDB 8.0, Node.js v24.22.1: 22 passed, 0 failed, 0 skipped.                                                                                 |
+| Seed twice in `kindergarten_seed_test`                         | Passed: first run inserted 8 groups and 46 catalog records; second inserted 0; a manual group-name edit survived the rerun.                                                |
+| Bootstrap ADMIN, live login, readiness, and Swagger            | Automated tests exist; a complete live-browser walkthrough is still pending.                                                                                               |
+| Group → child → enrollment → invoice → payment                 | Still needs a full demo dataset and end-to-end walkthrough.                                                                                                                |
+| Withdrawal → refund → financial reports                        | Module tests exist; a full cross-module walkthrough remains pending.                                                                                                       |
+| Schedule draft → validation → publication                      | Module tests exist; a full live workflow remains pending.                                                                                                                  |
+| Separate accounts and unauthorized record scope                | Automated authorization coverage exists; two-account live walkthrough remains pending.                                                                                     |
+| Developer panel: API errors, 401, 429, offline, foreign origin | CORS tests exist; browser walkthrough against the complete report API remains pending.                                                                                     |
+| Clean macOS checkout and startup                               | Not run in this environment.                                                                                                                                               |
+| Independent peer review and team demonstration                 | Pending.                                                                                                                                                                   |
 
-Команди запуску див. у [локальному старті](06_Local_Startup.md) і
-[Implementation Plan](../planning/plans/Implementation_Plan.md). Тести,
-які пропускають MongoDB, не є доказом успішного MongoDB integration run.
+`npm test` is a separate unit/HTTP run and intentionally skips MongoDB tests. It is not evidence for the MongoDB row above. The full project is not accepted until the remaining walkthroughs, peer review, and repository checks are complete.
