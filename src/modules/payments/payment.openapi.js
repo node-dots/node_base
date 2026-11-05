@@ -1,9 +1,13 @@
 import { HTTP_STATUS } from "../../utils/httpConstants.js";
-import { createPendingPaymentSchema } from "./payment.schema.js";
+import {
+  confirmPaymentSchema,
+  createPendingPaymentSchema,
+} from "./payment.schema.js";
 import { z as zod } from "../../openapi/zod.js";
 
 export function registerPaymentDocumentation(registry) {
   registry.register("CreatePendingPaymentInput", createPendingPaymentSchema);
+  registry.register("ConfirmPaymentInput", confirmPaymentSchema);
   registry.registerPath({
     method: "post",
     path: "/api/v1/payments",
@@ -45,4 +49,45 @@ export function registerPaymentDocumentation(registry) {
       [HTTP_STATUS.NOT_FOUND]: { $ref: "#/components/responses/NotFound" },
     },
   });
+  for (const [action, operationId, permission, description] of [
+    [
+      "confirm",
+      "confirmPayment",
+      "payments:confirm",
+      "Confirm a pending payment and atomically update the invoice and audit log.",
+    ],
+    [
+      "reject",
+      "rejectPayment",
+      "payments:reject",
+      "Reject a pending payment without changing invoice totals.",
+    ],
+  ]) {
+    registry.registerPath({
+      method: "post",
+      path: `/api/v1/payments/{paymentId}/${action}`,
+      operationId,
+      tags: ["Payments"],
+      security: [{ BearerAuth: [] }],
+      ...(action === "confirm"
+        ? {
+            request: {
+              body: {
+                required: true,
+                content: {
+                  "application/json": { schema: confirmPaymentSchema },
+                },
+              },
+            },
+          }
+        : {}),
+      responses: {
+        [HTTP_STATUS.OK]: { description },
+        [HTTP_STATUS.CONFLICT]: {
+          description: "Payment is no longer pending or exceeds the balance.",
+        },
+        [HTTP_STATUS.NOT_FOUND]: { $ref: "#/components/responses/NotFound" },
+      },
+    });
+  }
 }
