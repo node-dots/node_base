@@ -57,10 +57,9 @@ const invoiceSchema = new mongoose.Schema(
       },
     },
     benefitSnapshot: {
-      code: { type: String, required: true },
+      code: { type: String },
       basisPoints: {
         type: Number,
-        required: true,
         min: 0,
         max: 10_000,
         validate: Number.isSafeInteger,

@@ -1,0 +1,36 @@
+{
+  "month": "2026-10",
+  "asOf": "2026-10-22T12:00:00.000Z",
+  "invoiceParts": [
+    { "invoiceId": "monthly-oct", "serviceMonth": "2026-10", "amountMinor": 1500000, "active": true },
+    { "invoiceId": "annual-paid", "serviceMonth": "2026-10", "amountMinor": 1188000, "active": true },
+    { "invoiceId": "monthly-sep", "serviceMonth": "2026-09", "amountMinor": 700000, "active": true }
+  ],
+  "moneyEvents": [
+    { "invoiceId": "monthly-oct", "kind": "RECEIPT", "status": "CONFIRMED", "amountMinor": 1000000, "occurredAt": "2026-10-05T09:00:00.000Z" },
+    { "invoiceId": "monthly-sep", "kind": "RECEIPT", "status": "CONFIRMED", "amountMinor": 1000000, "occurredAt": "2026-10-02T09:00:00.000Z" },
+    { "invoiceId": "monthly-sep", "kind": "REFUND", "status": "CONFIRMED", "amountMinor": 300000, "occurredAt": "2026-10-08T09:00:00.000Z" },
+    { "invoiceId": "monthly-oct", "kind": "RECEIPT", "status": "PENDING", "amountMinor": 500000, "occurredAt": "2026-10-09T09:00:00.000Z" },
+    { "invoiceId": "annual-paid", "kind": "RECEIPT", "status": "CONFIRMED", "amountMinor": 14256000, "occurredAt": "2026-09-01T09:00:00.000Z" }
+  ],
+  "expenses": [
+    { "id": "oct-rent", "category": "RENT", "serviceMonth": "2026-10", "status": "APPROVED", "amountMinor": 700000, "paidAt": null },
+    { "id": "sep-other", "category": "OTHER", "serviceMonth": "2026-09", "status": "APPROVED", "amountMinor": 200000, "paidAt": "2026-10-12T09:00:00.000Z" }
+  ],
+  "currentInvoices": [
+    { "invoiceId": "monthly-oct", "obligationMinor": 1500000, "confirmedNetPaidMinor": 1000000, "dueAt": "2026-10-10T21:00:00.000Z" },
+    { "invoiceId": "monthly-sep", "obligationMinor": 700000, "confirmedNetPaidMinor": 700000, "dueAt": "2026-09-10T21:00:00.000Z" },
+    { "invoiceId": "annual-paid", "obligationMinor": 14256000, "confirmedNetPaidMinor": 14256000, "dueAt": "2026-09-10T21:00:00.000Z" }
+  ],
+  "expected": {
+    "accruedIncomeMinor": 2688000,
+    "receiptsNetMinor": 1700000,
+    "expensesMinor": 700000,
+    "resultMinor": 1988000,
+    "paidExpensesMinor": 200000,
+    "cashFlowMinor": 1500000,
+    "currentOutstandingMinor": 500000,
+    "currentOverdueMinor": 500000,
+    "currentRefundDueMinor": 0
+  }
+}
