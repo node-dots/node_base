@@ -43,8 +43,8 @@ export class CatalogRepository {
     this.catalogModel = catalogModel;
   }
 
-  async insert(entry) {
-    const document = await this.catalogModel.create(entry);
+  async insert(entry, { session } = {}) {
+    const [document] = await this.catalogModel.create([entry], { session });
     return toCatalogEntry(document);
   }
 
@@ -66,11 +66,11 @@ export class CatalogRepository {
     return documents.map(toCatalogEntry);
   }
 
-  async findActiveByCode(kind, code) {
+  async findActiveByCode(kind, code, { session } = {}) {
     assertKnownKind(kind);
-    const document = await this.catalogModel
-      .findOne({ kind, code, active: true })
-      .lean();
+    let query = this.catalogModel.findOne({ kind, code, active: true });
+    if (session) query = query.session(session);
+    const document = await query.lean();
     return document ? toCatalogEntry(document) : null;
   }
 
@@ -167,6 +167,40 @@ export class CatalogRepository {
       .lean();
     if (!document)
       throw new Error("EMPLOYEE_RESOURCE_GUARD is not initialized");
+    return toCatalogEntry(document);
+  }
+
+  async ensureScheduleResourceGuard() {
+    await this.catalogModel.init();
+    try {
+      await this.catalogModel.updateOne(
+        { kind: CATALOG_KIND.SETTINGS, code: "SCHEDULE_RESOURCE_GUARD" },
+        {
+          $setOnInsert: {
+            kind: CATALOG_KIND.SETTINGS,
+            code: "SCHEDULE_RESOURCE_GUARD",
+            name: "Schedule resource guard",
+            active: true,
+            revision: 0,
+          },
+        },
+        { upsert: true },
+      );
+    } catch (error) {
+      if (error?.code !== 11000) throw error;
+    }
+  }
+
+  async incrementScheduleResourceGuard({ session } = {}) {
+    const document = await this.catalogModel
+      .findOneAndUpdate(
+        { kind: CATALOG_KIND.SETTINGS, code: "SCHEDULE_RESOURCE_GUARD" },
+        { $inc: { revision: 1 } },
+        { new: true, runValidators: true, session },
+      )
+      .lean();
+    if (!document)
+      throw new Error("SCHEDULE_RESOURCE_GUARD is not initialized");
     return toCatalogEntry(document);
   }
 }

@@ -82,6 +82,26 @@ const membershipSchema = new mongoose.Schema(
   { _id: false, strict: "throw" },
 );
 
+const withdrawalSummarySchema = new mongoose.Schema(
+  {
+    withdrawnAt: { type: Date, required: true },
+    billingEndMonth: { type: String, required: true, match: /^\d{4}-\d{2}$/ },
+    obligationCents: {
+      type: Number,
+      required: true,
+      min: 0,
+      validate: Number.isSafeInteger,
+    },
+    refundDueCents: {
+      type: Number,
+      required: true,
+      min: 0,
+      validate: Number.isSafeInteger,
+    },
+  },
+  { _id: false, strict: "throw" },
+);
+
 const benefitAssignmentSchema = new mongoose.Schema(
   {
     benefitCode: { type: String, required: true, trim: true, maxlength: 64 },
@@ -150,6 +170,8 @@ const childSchema = new mongoose.Schema(
     enrolledAt: { type: Date },
     leftAt: { type: Date },
     billingStartMonth: { type: String, match: /^\d{4}-\d{2}$/ },
+    billingEndMonth: { type: String, match: /^\d{4}-\d{2}$/ },
+    withdrawalSummary: { type: withdrawalSummarySchema },
     firstUnbilledMonth: { type: String, match: /^\d{4}-\d{2}$/ },
     membershipHistory: {
       type: [membershipSchema],

@@ -42,6 +42,7 @@ function toChild(document) {
     "schoolYear",
     "benefitCode",
     "billingStartMonth",
+    "billingEndMonth",
     "firstUnbilledMonth",
   ]) {
     if (document[field] !== undefined) child[field] = document[field];
@@ -52,6 +53,14 @@ function toChild(document) {
   }
   for (const field of ["enrolledAt", "leftAt"]) {
     if (document[field]) child[field] = new Date(document[field]);
+  }
+  if (document.withdrawalSummary) {
+    child.withdrawalSummary = {
+      withdrawnAt: new Date(document.withdrawalSummary.withdrawnAt),
+      billingEndMonth: document.withdrawalSummary.billingEndMonth,
+      obligationCents: document.withdrawalSummary.obligationCents,
+      refundDueCents: document.withdrawalSummary.refundDueCents,
+    };
   }
   return child;
 }
@@ -90,8 +99,10 @@ export class ChildRepository {
       "enrolledAt",
       "leftAt",
       "billingStartMonth",
+      "billingEndMonth",
       "firstUnbilledMonth",
       "membershipHistory",
+      "withdrawalSummary",
     ]);
     if (
       !membershipUpdate ||
@@ -120,6 +131,22 @@ export class ChildRepository {
       .findByIdAndUpdate(
         childId,
         { $set: { benefitAssignments } },
+        { new: true, runValidators: true, session },
+      )
+      .lean();
+    return document ? toChild(document) : null;
+  }
+
+  async decrementWithdrawalRefundDue(childId, amountCents, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(childId)) return null;
+    const document = await this.childModel
+      .findOneAndUpdate(
+        {
+          _id: childId,
+          status: "LEFT",
+          "withdrawalSummary.refundDueCents": { $gte: amountCents },
+        },
+        { $inc: { "withdrawalSummary.refundDueCents": -amountCents } },
         { new: true, runValidators: true, session },
       )
       .lean();
@@ -190,6 +217,26 @@ export class ChildRepository {
     });
     if (session) query = query.session(session);
     return query;
+  }
+
+  async countOccupiedByGroups(groupIds, { session } = {}) {
+    const ids = groupIds
+      .filter(mongoose.isObjectIdOrHexString)
+      .map((id) => new mongoose.Types.ObjectId(id));
+    if (!ids.length) return new Map();
+    let query = this.childModel.aggregate([
+      {
+        $match: {
+          groupId: { $in: ids },
+          status: { $in: ["ACTIVE", "SUSPENDED"] },
+        },
+      },
+      { $group: { _id: "$groupId", count: { $sum: 1 } } },
+    ]);
+    if (session) query = query.session(session);
+    return new Map(
+      (await query).map(({ _id, count }) => [_id.toString(), count]),
+    );
   }
 
   async updateProfileById(childId, profileUpdate, { session } = {}) {

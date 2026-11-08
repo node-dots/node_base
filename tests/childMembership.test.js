@@ -46,6 +46,7 @@ function setup({ secondCapacity = 1 } = {}) {
     ],
   ]);
   const audits = [];
+  const invoices = [];
   const service = new ChildMembershipService({
     childRepository: {
       findByIdForUpdate: async () => structuredClone(child),
@@ -80,12 +81,48 @@ function setup({ secondCapacity = 1 } = {}) {
         active: true,
       }),
     },
+    invoiceRepository: {
+      async cancelAfterBillingEnd(_childId, billingEndMonth, withdrawnAt) {
+        let obligationCents = 0;
+        let paidAmountCents = 0;
+        for (const invoice of invoices) {
+          paidAmountCents += invoice.paidAmountCents;
+          invoice.parts = invoice.parts.map((part) => {
+            if (part.month < billingEndMonth && !part.cancelled)
+              obligationCents += part.amountCents;
+            if (part.month >= billingEndMonth && !part.cancelled)
+              return {
+                ...part,
+                remainingCents: 0,
+                cancelled: true,
+                cancelledAt: withdrawnAt,
+              };
+            return part;
+          });
+          invoice.remainingAmountCents = invoice.parts.reduce(
+            (sum, part) => sum + part.remainingCents,
+            0,
+          );
+          if (invoice.parts.every((part) => part.cancelled))
+            invoice.status = "CANCELLED";
+        }
+        return {
+          billingEndMonth,
+          obligationCents,
+          paidAmountCents,
+          refundDueCents: Math.max(0, paidAmountCents - obligationCents),
+          cancelledInvoiceIds: [],
+          cancelledParts: 0,
+        };
+      },
+    },
     authorizer,
     unitOfWork: {
       execute: async (operation) => {
         const originalChild = structuredClone(child);
         const originalGroups = structuredClone([...groups]);
         const originalAuditCount = audits.length;
+        const originalInvoices = structuredClone(invoices);
         try {
           return await operation({
             session: {},
@@ -96,13 +133,14 @@ function setup({ secondCapacity = 1 } = {}) {
           groups.clear();
           for (const [id, group] of originalGroups) groups.set(id, group);
           audits.length = originalAuditCount;
+          invoices.splice(0, invoices.length, ...originalInvoices);
           throw error;
         }
       },
     },
     clock: createFixedClock("2026-10-12T21:30:00Z"),
   });
-  return { service, child, groups, audits };
+  return { service, child, groups, audits, invoices };
 }
 
 test("enrollment is repeat-safe and billing starts the month after the server's Kyiv date", async () => {
@@ -141,6 +179,109 @@ test("suspension and resumption retain the seat and do not restart billing", asy
   await state.service.resume(childId, actor, "resume");
   assert.equal(state.groups.get(groupA).occupiedSeats, 1);
   assert.equal(state.child.billingStartMonth, billing);
+});
+
+test("withdrawal releases one seat, cancels future annual parts and returns the exact refund due", async () => {
+  const state = setup();
+  const actor = { id: "507f1f77bcf86cd799439016", roles: ["ADMIN"] };
+  await state.service.enroll(childId, groupA, actor, "enroll");
+  state.service.clock = createFixedClock("2027-01-12T12:00:00.000Z");
+  state.invoices.push({
+    id: "annual-1",
+    status: "PAID",
+    paidAmountCents: 14_256_000,
+    origAmountCents: 14_256_000,
+    remainingAmountCents: 0,
+    parts: Array.from({ length: 12 }, (_, index) => {
+      const month = new Date(Date.UTC(2026, 10 + index, 1))
+        .toISOString()
+        .slice(0, 7);
+      return { month, amountCents: 1_188_000, remainingCents: 0 };
+    }),
+  });
+
+  const result = await state.service.withdraw(childId, actor, "withdraw");
+  assert.equal(result.child.status, "LEFT");
+  assert.equal(result.child.groupId, null);
+  assert.equal(result.billing.billingEndMonth, "2027-02");
+  assert.equal(result.billing.obligationCents, 3_564_000);
+  assert.equal(result.billing.refundDueCents, 10_692_000);
+  assert.equal(state.invoices[0].origAmountCents, 14_256_000);
+  assert.equal(state.invoices[0].parts[3].cancelled, true);
+  assert.equal(state.invoices[0].parts[3].amountCents, 1_188_000);
+  assert.equal(state.groups.get(groupA).occupiedSeats, 0);
+  const repeat = await state.service.withdraw(
+    childId,
+    actor,
+    "withdraw-repeat",
+  );
+  assert.equal(repeat.repeated, true);
+  assert.equal(state.groups.get(groupA).occupiedSeats, 0);
+  assert.equal(
+    state.audits.filter(({ action }) => action === "child.withdraw").length,
+    1,
+  );
+});
+
+test("withdrawal before first billed month has no obligation", async () => {
+  const state = setup();
+  const actor = { id: "507f1f77bcf86cd799439016", roles: ["ADMIN"] };
+  await state.service.enroll(childId, groupA, actor, "enroll");
+  state.invoices.push({
+    id: "future-month",
+    status: "OPEN",
+    paidAmountCents: 0,
+    origAmountCents: 1_500_000,
+    remainingAmountCents: 1_500_000,
+    parts: [
+      { month: "2026-11", amountCents: 1_500_000, remainingCents: 1_500_000 },
+    ],
+  });
+  const result = await state.service.withdraw(childId, actor, "withdraw");
+  assert.equal(result.billing.billingEndMonth, "2026-11");
+  assert.equal(result.billing.obligationCents, 0);
+  assert.equal(result.billing.refundDueCents, 0);
+  assert.equal(state.invoices[0].status, "CANCELLED");
+  assert.equal(state.groups.get(groupA).occupiedSeats, 0);
+});
+
+test("withdrawal rolls back membership, seat and billing cancellation if audit fails", async () => {
+  const state = setup();
+  const actor = { id: "507f1f77bcf86cd799439016", roles: ["ADMIN"] };
+  await state.service.enroll(childId, groupA, actor, "enroll");
+  state.invoices.push({
+    id: "future-month",
+    status: "OPEN",
+    paidAmountCents: 0,
+    origAmountCents: 1_500_000,
+    remainingAmountCents: 1_500_000,
+    parts: [
+      { month: "2026-11", amountCents: 1_500_000, remainingCents: 1_500_000 },
+    ],
+  });
+  const originalAudit = state.service.unitOfWork.execute;
+  state.service.unitOfWork.execute = async (operation) => {
+    const originalRecordAudit = state.audits.push.bind(state.audits);
+    try {
+      return await originalAudit(async (context) =>
+        operation({
+          ...context,
+          recordAudit: async () => {
+            throw new Error("audit unavailable");
+          },
+        }),
+      );
+    } finally {
+      state.audits.push = originalRecordAudit;
+    }
+  };
+  await assert.rejects(
+    state.service.withdraw(childId, actor, "withdraw"),
+    /audit unavailable/,
+  );
+  assert.equal(state.child.status, "ACTIVE");
+  assert.equal(state.groups.get(groupA).occupiedSeats, 1);
+  assert.equal(state.invoices[0].status, "OPEN");
 });
 
 test("age, guardian, active-year, capacity, and history boundaries reject membership changes", async () => {
