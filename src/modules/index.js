@@ -35,6 +35,8 @@ import { ScheduleModel } from "./schedules/schedule.model.js";
 import { ScheduleRepository } from "./schedules/schedule.repository.js";
 import { ScheduleService } from "./schedules/schedule.service.js";
 import { createScheduleRoutes } from "./schedules/schedule.routes.js";
+import { ScheduleSnapshotProvider } from "./schedules/schedule.snapshot.js";
+import { PersonModel } from "./people/person.model.js";
 import { authorizer } from "./people/access/authorizer.js";
 
 export function createApiRouter({
@@ -65,6 +67,15 @@ export function createApiRouter({
             scheduleModel: ScheduleModel,
           }),
           authorizer,
+          unitOfWork: authModule.unitOfWork,
+          catalogRepository: settingsRepository,
+          snapshotProvider: new ScheduleSnapshotProvider({
+            groupModel: GroupModel,
+            catalogModel: CatalogModel,
+            personModel: PersonModel,
+          }),
+          guardianGroupsReader,
+          groupRepository,
         }),
         authService: authModule.authService,
       }),

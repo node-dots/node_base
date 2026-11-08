@@ -32,3 +32,7 @@ export const updateScheduleDraftSchema = zod
       ids.add(slot.id);
     }
   });
+
+export const publishScheduleSchema = zod.strictObject({
+  expectedRevision: zod.number().int().safe().min(1),
+});

@@ -160,3 +160,181 @@ test("draft schema rejects unknown fields, duplicate slot IDs and 2001 slots", a
     { code: "INVALID_SCHEDULE_DRAFT" },
   );
 });
+
+test("publishes only a valid revision in range and returns an immutable snapshot", async () => {
+  const publishedEvents = [];
+  const draft = {
+    weekStart,
+    revision: 3,
+    slots: [slot],
+    updatedById: manager.id,
+    updatedAt: new Date("2026-11-01T12:00:00.000Z"),
+  };
+  const service = new ScheduleService({
+    scheduleRepository: {
+      async findDraft() {
+        return structuredClone(draft);
+      },
+      async publish(input) {
+        publishedEvents.push(input);
+        return {
+          weekStart,
+          revision: 3,
+          slots: [slot],
+          updatedById: manager.id,
+          updatedAt: draft.updatedAt,
+          published: input.published,
+        };
+      },
+    },
+    authorizer,
+    clock: { now: () => new Date("2026-10-26T08:00:00.000Z") },
+    unitOfWork: {
+      async execute(operation) {
+        return operation({
+          session: {},
+          recordAudit: async (event) => publishedEvents.push(event),
+        });
+      },
+    },
+    catalogRepository: {
+      async ensureScheduleResourceGuard() {},
+      async incrementScheduleResourceGuard() {
+        return { revision: 9 };
+      },
+    },
+    snapshotProvider: {
+      async read() {
+        return {
+          schoolYear: "2026-2027",
+          groups: [
+            {
+              id: slot.groupId,
+              status: "ACTIVE",
+              schoolYear: "2026-2027",
+              roomId: slot.roomId,
+              capacity: 10,
+            },
+          ],
+          rooms: [
+            { id: slot.roomId, active: true, roomType: "GROUP", capacity: 15 },
+          ],
+          teachers: [
+            {
+              id: slot.teacherId,
+              status: "ACTIVE",
+              positionCode: "TEACHER",
+              subjectCode: "ENGLISH",
+              availability: [
+                { weekday: 1, startTime: "09:00", endTime: "17:00" },
+              ],
+            },
+          ],
+          program: [
+            { subjectCode: "ENGLISH", sessionsPerWeek: 1, durationMinutes: 30 },
+          ],
+        };
+      },
+    },
+  });
+  const result = await service.publish(
+    weekStart,
+    { expectedRevision: 3 },
+    manager,
+    "publish-request",
+  );
+  assert.equal(result.revision, 3);
+  assert.equal(result.resourceRevision, 9);
+  assert.deepEqual(result.slots, [slot]);
+  assert.equal(publishedEvents[0].published.resourceRevision, 9);
+  assert.equal(publishedEvents[1].action, "schedule.publish");
+  await assert.rejects(
+    service.publish("2026-12-07", { expectedRevision: 3 }, manager, "late"),
+    { code: "SCHEDULE_PUBLICATION_OUT_OF_RANGE" },
+  );
+});
+
+test("failed publication validation does not save a published snapshot", async () => {
+  let saved = false;
+  const service = new ScheduleService({
+    scheduleRepository: {
+      async findDraft() {
+        return {
+          weekStart,
+          revision: 1,
+          slots: [slot],
+          updatedById: manager.id,
+        };
+      },
+      async publish() {
+        saved = true;
+      },
+    },
+    authorizer,
+    clock: { now: () => new Date("2026-10-26T08:00:00.000Z") },
+    unitOfWork: {
+      async execute(operation) {
+        return operation({ session: {}, recordAudit: async () => {} });
+      },
+    },
+    catalogRepository: {
+      async ensureScheduleResourceGuard() {},
+      async incrementScheduleResourceGuard() {
+        return { revision: 1 };
+      },
+    },
+    snapshotProvider: {
+      async read() {
+        return {
+          schoolYear: "2026-2027",
+          groups: [],
+          rooms: [],
+          teachers: [],
+          program: [],
+        };
+      },
+    },
+  });
+  await assert.rejects(
+    service.publish(weekStart, { expectedRevision: 1 }, manager, "bad-publish"),
+    { code: "SCHEDULE_NOT_PUBLISHABLE" },
+  );
+  assert.equal(saved, false);
+});
+
+test("published schedule reads are filtered to guardian groups and teacher slots", async () => {
+  const published = {
+    revision: 3,
+    publishedAt: new Date("2026-10-26T08:00:00.000Z"),
+    publishedById: manager.id,
+    resourceRevision: 9,
+    slots: [
+      slot,
+      {
+        ...slot,
+        id: "other",
+        teacherId: "other-teacher",
+        groupId: "other-group",
+      },
+    ],
+  };
+  const service = new ScheduleService({
+    scheduleRepository: {
+      async findPublished() {
+        return { weekStart, published };
+      },
+    },
+    authorizer,
+    guardianGroupsReader: {
+      async findActiveGroupIds() {
+        return [slot.groupId];
+      },
+    },
+  });
+  assert.deepEqual((await service.getPublished(weekStart, parent)).slots, [
+    slot,
+  ]);
+  assert.deepEqual((await service.getPublished(weekStart, teacher)).slots, [
+    slot,
+  ]);
+});
