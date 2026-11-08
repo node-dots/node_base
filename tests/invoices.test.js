@@ -5,7 +5,10 @@ import { InvoiceService } from "../src/modules/invoices/invoice.service.js";
 import {
   countWeekdaysInServiceMonth,
   calculateMealCents,
+  calculateAnnualTuitionParts,
   calculateTuitionCents,
+  addServiceMonths,
+  annualPaymentDeadline,
   invoiceDueAt,
 } from "../src/modules/invoices/invoice.calculations.js";
 
@@ -16,6 +19,24 @@ test("monthly invoice calculations use exact cents and Kyiv due-day boundary", (
   assert.equal(
     invoiceDueAt("2026-11").toISOString(),
     "2026-11-10T21:59:59.999Z",
+  );
+});
+
+test("annual tuition uses sequential discounts and allocates exact cents", () => {
+  const parts = calculateAnnualTuitionParts(1_500_000, 1_000);
+  assert.equal(parts.length, 12);
+  assert.equal(
+    parts.reduce((sum, part) => sum + part.amountCents, 0),
+    14_256_000,
+  );
+  assert.deepEqual(
+    parts.map((part) => part.amountCents),
+    Array(12).fill(1_188_000),
+  );
+  assert.equal(addServiceMonths("2026-12", 2), "2027-02");
+  assert.equal(
+    annualPaymentDeadline("2026-12").toISOString(),
+    "2026-11-30T21:59:59.999Z",
   );
 });
 
@@ -158,4 +179,144 @@ test("applicants are skipped and guardians can read only their own children's in
   });
   assert.deepEqual(ownInvoices, []);
   assert.equal(called, true);
+});
+
+test("annual tuition snapshots first-month terms, reserves 12 months and allocates 14,256,000 cents", async () => {
+  const state = { invoices: [], audits: [] };
+  const childId = "000000000000000000000001";
+  const service = new InvoiceService({
+    invoiceRepository: {
+      async findTuitionCoveringMonth(_childId, month) {
+        return (
+          state.invoices.find((invoice) =>
+            invoice.parts.some((part) => part.month === month),
+          ) ?? null
+        );
+      },
+      async insert(invoice) {
+        const saved = { ...structuredClone(invoice), id: "annual-1" };
+        state.invoices.push(saved);
+        return saved;
+      },
+    },
+    childRepository: {
+      async findById() {
+        return {
+          id: childId,
+          status: "ACTIVE",
+          billingStartMonth: "2026-10",
+          benefitAssignments: [
+            {
+              benefitCode: "BENEFIT_10",
+              basisPoints: 1_000,
+              startMonth: "2026-12",
+            },
+          ],
+        };
+      },
+    },
+    catalogRepository: {
+      async findLatestValid() {
+        return {
+          code: "TUITION_MONTHLY",
+          effectiveFrom: "2026-01-01",
+          amountCents: 1_500_000,
+        };
+      },
+    },
+    authorizer,
+    unitOfWork: {
+      async execute(operation) {
+        return operation({
+          session: {},
+          async recordAudit(event) {
+            state.audits.push(event);
+          },
+        });
+      },
+    },
+    clock: { now: () => new Date("2026-11-04T12:00:00.000Z") },
+  });
+  const invoice = await service.createAnnualTuition(
+    childId,
+    "2026-12",
+    { id: "000000000000000000000003", roles: ["ADMIN"] },
+    "req-annual",
+  );
+  assert.equal(invoice.billingType, "ANNUAL");
+  assert.equal(invoice.origAmountCents, 14_256_000);
+  assert.equal(invoice.parts.length, 12);
+  assert.equal(invoice.parts[0].month, "2026-12");
+  assert.equal(invoice.parts[11].month, "2027-11");
+  assert.equal(invoice.benefitSnapshot.basisPoints, 1_000);
+  assert.equal(state.audits.length, 1);
+});
+
+test("expired unpaid annual fallback is atomic in one transaction and repeat-safe", async () => {
+  const childId = "000000000000000000000001";
+  const annual = {
+    id: "annual-1",
+    billingType: "ANNUAL",
+    serviceMonth: "2026-10",
+    status: "OPEN",
+    origAmountCents: 14_256_000,
+  };
+  const state = { annual, monthly: null, audits: [] };
+  const service = new InvoiceService({
+    invoiceRepository: {
+      async findByUnique() {
+        return state.monthly;
+      },
+      async cancelExpiredAnnual() {
+        if (state.annual.status !== "OPEN") return null;
+        state.annual = { ...state.annual, status: "CANCELLED" };
+        return state.annual;
+      },
+      async insert(draft) {
+        state.monthly = { ...structuredClone(draft), id: "monthly-1" };
+        return state.monthly;
+      },
+    },
+    childRepository: {
+      async findById() {
+        return {
+          id: childId,
+          status: "ACTIVE",
+          billingStartMonth: "2026-10",
+          benefitAssignments: [],
+        };
+      },
+    },
+    catalogRepository: {
+      async findLatestValid() {
+        return {
+          code: "TUITION_MONTHLY",
+          effectiveFrom: "2026-01-01",
+          amountCents: 1_500_000,
+        };
+      },
+    },
+    authorizer,
+    unitOfWork: {
+      async execute(operation) {
+        return operation({
+          session: {},
+          async recordAudit(event) {
+            state.audits.push(event);
+          },
+        });
+      },
+    },
+    clock: { now: () => new Date("2026-11-04T12:00:00.000Z") },
+  });
+  const actor = { id: "000000000000000000000003", roles: ["ADMIN"] };
+  const first = await service.fallbackExpiredAnnual(childId, actor, "req-1");
+  const repeated = await service.fallbackExpiredAnnual(childId, actor, "req-2");
+  assert.equal(first.annual.status, "CANCELLED");
+  assert.equal(first.annual.origAmountCents, 14_256_000);
+  assert.equal(first.monthly.serviceMonth, "2026-11");
+  assert.equal(first.monthly.origAmountCents, 1_500_000);
+  assert.equal(repeated.monthly.id, first.monthly.id);
+  assert.equal(repeated.skipped, "ALREADY_FALLBACK");
+  assert.equal(state.audits.length, 1);
 });
