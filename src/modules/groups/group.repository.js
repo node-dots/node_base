@@ -87,4 +87,17 @@ export class GroupRepository {
       .lean();
     return documents.map(({ _id }) => _id.toString());
   }
+
+  async findActiveEmployeeAssignments(personId, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(personId)) return [];
+    let query = this.groupModel
+      .find({
+        status: "ACTIVE",
+        $or: [{ educatorId: personId }, { assistantId: personId }],
+      })
+      .select({ _id: 1 })
+      .lean();
+    if (session) query = query.session(session);
+    return query;
+  }
 }

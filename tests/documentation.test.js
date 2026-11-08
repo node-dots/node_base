@@ -154,6 +154,7 @@ test("OpenAPI бере обмеження входу зі схем Zod і збе
       "GET /api-docs/",
       "GET /api/v1",
       "GET /api/v1/auth/me",
+      "GET /api/v1/people/{id}/employee",
       "GET /api/v1/groups",
       "GET /api/v1/groups/summary",
       "GET /api/v1/groups/{id}",
@@ -164,6 +165,7 @@ test("OpenAPI бере обмеження входу зі схем Zod і збе
       "POST /api/v1/auth/logout-all",
       "POST /api/v1/auth/password",
       "POST /api/v1/groups",
+      "PUT /api/v1/people/{id}/employee",
       "PUT /api/v1/people/{id}/account/roles",
     ].sort(),
   );

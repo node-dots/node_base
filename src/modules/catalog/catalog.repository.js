@@ -109,4 +109,38 @@ export class CatalogRepository {
     if (!document) throw new Error("ACCOUNT_ADMIN_GUARD is not initialized");
     return toCatalogEntry(document);
   }
+
+  async ensureEmployeeResourceGuard() {
+    await this.catalogModel.init();
+    try {
+      await this.catalogModel.updateOne(
+        { kind: CATALOG_KIND.SETTINGS, code: "EMPLOYEE_RESOURCE_GUARD" },
+        {
+          $setOnInsert: {
+            kind: CATALOG_KIND.SETTINGS,
+            code: "EMPLOYEE_RESOURCE_GUARD",
+            name: "Employee resource guard",
+            active: true,
+            revision: 0,
+          },
+        },
+        { upsert: true },
+      );
+    } catch (error) {
+      if (error?.code !== 11000) throw error;
+    }
+  }
+
+  async incrementEmployeeResourceGuard({ session } = {}) {
+    const document = await this.catalogModel
+      .findOneAndUpdate(
+        { kind: CATALOG_KIND.SETTINGS, code: "EMPLOYEE_RESOURCE_GUARD" },
+        { $inc: { revision: 1 } },
+        { new: true, runValidators: true, session },
+      )
+      .lean();
+    if (!document)
+      throw new Error("EMPLOYEE_RESOURCE_GUARD is not initialized");
+    return toCatalogEntry(document);
+  }
 }

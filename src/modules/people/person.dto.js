@@ -26,3 +26,20 @@ export function toEmployeePersonDto(person) {
     },
   };
 }
+
+export function toEmployeeProfileDto(person, includeSalary = false) {
+  const dto = toPersonDto(person);
+  if (!person.employee) return dto;
+  return {
+    ...dto,
+    employee: {
+      positionCode: person.employee.positionCode,
+      status: person.employee.status,
+      startedAt: person.employee.startedAt,
+      endedAt: person.employee.endedAt,
+      subjectCode: person.employee.subjectCode,
+      availability: structuredClone(person.employee.availability ?? []),
+      ...(includeSalary ? { salaryMinor: person.employee.salaryMinor } : {}),
+    },
+  };
+}
