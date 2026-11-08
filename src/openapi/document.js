@@ -11,6 +11,7 @@ import { registerEmployeeDocumentation } from "../modules/people/employee.openap
 import { registerChildDocumentation } from "../modules/children/child.openapi.js";
 import { registerFinancialCatalogDocumentation } from "../modules/catalog/financialCatalog.openapi.js";
 import { registerInvoiceDocumentation } from "../modules/invoices/invoice.openapi.js";
+import { registerPaymentDocumentation } from "../modules/payments/payment.openapi.js";
 
 export function createOpenApiDocument() {
   const registry = new OpenAPIRegistry();
@@ -23,6 +24,7 @@ export function createOpenApiDocument() {
   registerChildDocumentation(registry);
   registerFinancialCatalogDocumentation(registry);
   registerInvoiceDocumentation(registry);
+  registerPaymentDocumentation(registry);
 
   return new OpenApiGeneratorV31(registry.definitions).generateDocument({
     openapi: "3.1.0",
@@ -39,6 +41,7 @@ export function createOpenApiDocument() {
       { name: "Діти" },
       { name: "Catalog" },
       { name: "Invoices" },
+      { name: "Payments" },
       { name: "Автентифікація" },
       { name: "Облікові записи" },
       { name: "Документація" },
