@@ -18,6 +18,7 @@ const result = spawnSync(
     "tests/integration/schedules.mongodb.test.js",
     "tests/integration/schedule-publish.mongodb.test.js",
     "tests/integration/invoices.mongodb.test.js",
+    "tests/integration/invoice-balances.mongodb.test.js",
     "tests/integration/annual-invoices.mongodb.test.js",
     "tests/integration/payments.mongodb.test.js",
     "tests/integration/refunds.mongodb.test.js",
