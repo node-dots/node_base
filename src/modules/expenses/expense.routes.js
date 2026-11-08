@@ -18,7 +18,11 @@ const idParams = zod.strictObject({
 const monthQuery = zod.strictObject({
   month: zod.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/),
 });
-export function createExpenseRoutes({ service, authService }) {
+export function createExpenseRoutes({
+  service,
+  openMonthService,
+  authService,
+}) {
   const router = Router();
   const auth = createAuthenticationMiddleware({ authService });
   const permission = (p) =>
@@ -96,5 +100,15 @@ export function createExpenseRoutes({ service, authService }) {
     validateQuery(monthQuery),
     handler((r) => service.readTotals(r.validatedQuery.month, r.actor)),
   );
+  if (openMonthService)
+    router.post(
+      "/open-current-month",
+      auth,
+      permission(PERMISSIONS.EXPENSES_APPROVE),
+      handler(
+        (r) => openMonthService.openCurrentMonth(r.actor, r.requestId),
+        201,
+      ),
+    );
   return router;
 }
