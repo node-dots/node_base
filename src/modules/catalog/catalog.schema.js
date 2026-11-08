@@ -70,9 +70,50 @@ export const subjectCatalogSchema = zod.strictObject({
   ...common,
 });
 
+const effectiveDate = zod.string().regex(/^\d{4}-\d{2}-\d{2}$/);
+const monthlyVersion = {
+  ...common,
+  effectiveFrom: effectiveDate,
+};
+export const tuitionRateSchema = zod.strictObject({
+  kind: zod.literal(CATALOG_KIND.TUITION_RATE),
+  ...monthlyVersion,
+  amountCents: zod.number().int().safe().min(0),
+});
+export const mealRateSchema = zod.strictObject({
+  kind: zod.literal(CATALOG_KIND.MEAL_RATE),
+  ...monthlyVersion,
+  ageCategoryCode: codeSchema,
+  amountCents: zod.number().int().safe().min(0),
+});
+export const benefitCatalogSchema = zod.strictObject({
+  kind: zod.literal(CATALOG_KIND.BENEFIT),
+  ...monthlyVersion,
+  basisPoints: zod.number().int().min(0).max(10_000),
+});
+export const programCatalogSchema = zod.strictObject({
+  kind: zod.literal(CATALOG_KIND.PROGRAM),
+  ...common,
+  effectiveFrom: effectiveDate,
+  lessons: zod
+    .array(
+      zod.strictObject({
+        subjectCode: codeSchema,
+        sessionsPerWeek: zod.number().int().min(1).max(20),
+        durationMinutes: zod.number().int().min(1).max(240),
+      }),
+    )
+    .min(1)
+    .max(100),
+});
+
 export const catalogEntrySchema = zod.union([
   ageCategoryCatalogSchema,
   roomCatalogSchema,
   positionCatalogSchema,
   subjectCatalogSchema,
+  tuitionRateSchema,
+  mealRateSchema,
+  benefitCatalogSchema,
+  programCatalogSchema,
 ]);

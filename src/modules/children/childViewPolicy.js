@@ -39,6 +39,9 @@ export class ChildViewPolicy {
         relatives: structuredClone(child.relatives ?? []),
         food: structuredClone(child.food ?? {}),
         ...(child.benefitCode ? { benefitCode: child.benefitCode } : {}),
+        ...(child.benefitAssignments
+          ? { benefitAssignments: structuredClone(child.benefitAssignments) }
+          : {}),
         ...(child.membershipHistory
           ? { membershipHistory: structuredClone(child.membershipHistory) }
           : {}),

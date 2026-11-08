@@ -82,6 +82,22 @@ const membershipSchema = new mongoose.Schema(
   { _id: false, strict: "throw" },
 );
 
+const benefitAssignmentSchema = new mongoose.Schema(
+  {
+    benefitCode: { type: String, required: true, trim: true, maxlength: 64 },
+    basisPoints: {
+      type: Number,
+      required: true,
+      min: 0,
+      max: 10_000,
+      validate: Number.isSafeInteger,
+    },
+    startMonth: { type: String, required: true, match: /^\d{4}-\d{2}$/ },
+    endMonth: { type: String, match: /^\d{4}-\d{2}$/ },
+  },
+  { _id: false, strict: "throw" },
+);
+
 const childSchema = new mongoose.Schema(
   {
     firstName: {
@@ -126,6 +142,11 @@ const childSchema = new mongoose.Schema(
     },
     food: { type: foodDataSchema, required: true, default: () => ({}) },
     benefitCode: { type: String, trim: true, minlength: 1, maxlength: 64 },
+    benefitAssignments: {
+      type: [benefitAssignmentSchema],
+      default: [],
+      validate: (items) => items.length <= 100,
+    },
     enrolledAt: { type: Date },
     leftAt: { type: Date },
     billingStartMonth: { type: String, match: /^\d{4}-\d{2}$/ },

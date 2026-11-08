@@ -13,7 +13,6 @@ const PROFILE_FIELDS = new Set([
   "guardians",
   "relatives",
   "food",
-  "benefitCode",
 ]);
 
 function toChild(document) {
@@ -47,6 +46,7 @@ function toChild(document) {
   ]) {
     if (document[field] !== undefined) child[field] = document[field];
   }
+  child.benefitAssignments = cloneNested(document.benefitAssignments) ?? [];
   for (const field of ["ageCategoryId", "groupId"]) {
     if (document[field]) child[field] = document[field].toString();
   }
@@ -104,6 +104,22 @@ export class ChildRepository {
       .findByIdAndUpdate(
         childId,
         { $set: membershipUpdate },
+        { new: true, runValidators: true, session },
+      )
+      .lean();
+    return document ? toChild(document) : null;
+  }
+
+  async updateBenefitAssignmentsById(
+    childId,
+    benefitAssignments,
+    { session } = {},
+  ) {
+    if (!mongoose.isObjectIdOrHexString(childId)) return null;
+    const document = await this.childModel
+      .findByIdAndUpdate(
+        childId,
+        { $set: { benefitAssignments } },
         { new: true, runValidators: true, session },
       )
       .lean();
