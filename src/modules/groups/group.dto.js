@@ -12,6 +12,13 @@ export function toGroupDto(group) {
     ...(group.educatorId ? { educatorId: group.educatorId } : {}),
     ...(group.assistantId ? { assistantId: group.assistantId } : {}),
     occupiedSeats: group.occupiedSeats ?? 0,
+    ...(group.currentOccupied !== undefined
+      ? {
+          currentOccupied: group.currentOccupied,
+          freePlaces: group.freePlaces,
+          occupancyMismatch: group.occupancyMismatch,
+        }
+      : {}),
   };
 }
 
@@ -20,5 +27,13 @@ export function toAgeSummaryDto(summary) {
     ageCategory: summary.ageCategory,
     groupsCount: summary.groupsCount,
     totalCapacity: summary.totalCapacity,
+    ...(summary.currentOccupied !== undefined
+      ? {
+          currentOccupied: summary.currentOccupied,
+          storedOccupied: summary.storedOccupied,
+          freePlaces: summary.freePlaces,
+          mismatchGroups: summary.mismatchGroups,
+        }
+      : {}),
   };
 }
