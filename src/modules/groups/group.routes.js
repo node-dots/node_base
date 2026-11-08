@@ -11,11 +11,14 @@ import {
 
 export function createGroupRoutes({
   groupController,
+  groupService,
   authenticate,
   requireRead,
   requireCreate,
   requireUpdate,
 }) {
+  if (!groupService)
+    throw new TypeError("groupService is required for group routes");
   const router = Router();
 
   router.get(
