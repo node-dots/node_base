@@ -4,6 +4,7 @@ import { createApiRouter } from "./modules/index.js";
 import { readServerConfig } from "./config/server.js";
 import { readTelemetryConfig } from "./config/telemetry.js";
 import { readSecurityConfig } from "./config/security.js";
+import { SECURITY_DEFAULTS } from "./config/securityDefaults.js";
 import { createHttpServer } from "./utils/createHttpServer.js";
 import { readAuthenticationConfig } from "./config/authentication.js";
 import { createAuthModule } from "./modules/auth/auth.module.js";
