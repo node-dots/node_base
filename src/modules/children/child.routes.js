@@ -64,6 +64,10 @@ export function createChildRoutes({
     authorizer,
     permission: PERMISSIONS.CHILDREN_UPDATE,
   });
+  const withdraw = createRequirePermission({
+    authorizer,
+    permission: PERMISSIONS.CHILDREN_WITHDRAW,
+  });
   const update = (request, response, next) => {
     try {
       if (request.actor.roles.includes("PARENT"))
@@ -221,6 +225,33 @@ export function createChildRoutes({
         );
         response.json({
           data: childService.viewPolicy.toReadDto(child, request.actor),
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+  router.post(
+    "/:id/withdraw",
+    authenticate,
+    withdraw,
+    validateParams(childIdParamsSchema),
+    async (request, response, next) => {
+      try {
+        const result = await membershipService.withdraw(
+          request.validatedParams.id,
+          request.actor,
+          request.requestId,
+        );
+        response.json({
+          data: {
+            child: childService.viewPolicy.toReadDto(
+              result.child,
+              request.actor,
+            ),
+            billing: result.billing,
+            repeated: result.repeated,
+          },
         });
       } catch (error) {
         next(error);
