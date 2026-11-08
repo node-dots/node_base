@@ -7,6 +7,7 @@ import { registerCommonDocumentation } from "./common.js";
 import { registerGroupDocumentation } from "../modules/groups/group.openapi.js";
 import { registerAuthDocumentation } from "../modules/auth/auth.openapi.js";
 import { registerAccountRolesDocumentation } from "../modules/people/accountRoles.openapi.js";
+import { registerChildDocumentation } from "../modules/children/child.openapi.js";
 import { registerEmployeeDocumentation } from "../modules/people/employee.openapi.js";
 
 export function createOpenApiDocument() {
@@ -16,6 +17,7 @@ export function createOpenApiDocument() {
   registerGroupDocumentation(registry);
   registerAuthDocumentation(registry);
   registerAccountRolesDocumentation(registry);
+  registerChildDocumentation(registry);
   registerEmployeeDocumentation(registry);
 
   return new OpenApiGeneratorV31(registry.definitions).generateDocument({
@@ -30,6 +32,7 @@ export function createOpenApiDocument() {
     tags: [
       { name: "Стан" },
       { name: "Групи" },
+      { name: "Діти" },
       { name: "Автентифікація" },
       { name: "Облікові записи" },
       { name: "Документація" },
