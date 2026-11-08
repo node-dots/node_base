@@ -22,6 +22,12 @@ export const EMPLOYEE_STATUS = Object.freeze({
   TERMINATED: "TERMINATED",
 });
 
+export const EMPLOYEE_WEEKDAYS = Object.freeze([1, 2, 3, 4, 5]);
+export const EMPLOYEE_LIMITS = Object.freeze({
+  MAX_AVAILABILITY_WINDOWS: 20,
+  MAX_SALARY_MINOR: Number.MAX_SAFE_INTEGER,
+});
+
 // Обмеження базових полів людини.
 export const PERSON_LIMITS = Object.freeze({
   MIN_NAME_LENGTH: 1,

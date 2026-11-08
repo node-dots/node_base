@@ -13,6 +13,8 @@ import { ChildService } from "./children/child.service.js";
 import { createChildRoutes } from "./children/child.routes.js";
 import { PersonModel } from "./people/person.model.js";
 import { PersonRepository } from "./people/person.repository.js";
+import { EmployeeService } from "./people/employee.service.js";
+import { createEmployeeRoutes } from "./people/employee.routes.js";
 
 // Єдине місце реєстрації бізнес-модулів і складання їхніх залежностей.
 export function createApiRouter({
@@ -46,6 +48,20 @@ export function createApiRouter({
         "/children",
         createChildRoutes({
           childService,
+          authService: authModule.authService,
+        }),
+      );
+      const employeeService = new EmployeeService({
+        personRepository: authModule.personRepository,
+        catalogRepository: settingsRepository,
+        groupRepository,
+        unitOfWork: authModule.unitOfWork,
+        authorizer,
+      });
+      router.use(
+        "/people",
+        createEmployeeRoutes({
+          employeeService,
           authService: authModule.authService,
         }),
       );
