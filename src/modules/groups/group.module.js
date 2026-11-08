@@ -35,6 +35,7 @@ export class GroupModule {
     const groupController = new GroupController({ groupService });
     this.router = createGroupRoutes({
       groupController,
+      groupService,
       authenticate: createAuthenticationMiddleware({ authService }),
       requireRead: createRequirePermission({
         authorizer,
