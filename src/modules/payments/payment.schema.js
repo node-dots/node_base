@@ -15,3 +15,9 @@ export const createPendingPaymentSchema = zod.strictObject({
     .regex(/^[a-f\d]{24}$/i)
     .optional(),
 });
+
+export const confirmPaymentSchema = zod.strictObject({
+  occurredAt: zod.iso.datetime({ offset: true }),
+});
+
+export const rejectPaymentSchema = zod.strictObject({});

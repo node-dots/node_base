@@ -46,6 +46,43 @@ export class InvoiceRepository {
     return document ? toInvoice(document) : null;
   }
 
+  async applyReceipt(invoiceId, amountCents, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(invoiceId)) return null;
+    const document = await this.invoiceModel
+      .findOneAndUpdate(
+        {
+          _id: invoiceId,
+          status: { $in: ["OPEN", "PARTIAL"] },
+          remainingAmountCents: { $gte: amountCents },
+          "parts.0.remainingCents": { $gte: amountCents },
+        },
+        {
+          $inc: {
+            paidAmountCents: amountCents,
+            remainingAmountCents: -amountCents,
+            "parts.0.remainingCents": -amountCents,
+          },
+          $set: {
+            status: "PARTIAL",
+          },
+        },
+        { new: true, runValidators: true, session },
+      )
+      .lean();
+    if (!document) return null;
+    if (document.remainingAmountCents === 0) {
+      const paid = await this.invoiceModel
+        .findOneAndUpdate(
+          { _id: invoiceId, status: "PARTIAL", remainingAmountCents: 0 },
+          { $set: { status: "PAID" } },
+          { new: true, runValidators: true, session },
+        )
+        .lean();
+      return paid ? toInvoice(paid) : toInvoice(document);
+    }
+    return toInvoice(document);
+  }
+
   async listByChild(childId) {
     if (!mongoose.isObjectIdOrHexString(childId)) return [];
     return (

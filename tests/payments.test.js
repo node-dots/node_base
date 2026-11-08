@@ -19,6 +19,10 @@ function buildFixture() {
   const records = [];
   const audits = [];
   const paymentRepository = {
+    async findById(paymentId) {
+      const item = records.find(({ id }) => id === paymentId);
+      return item ? structuredClone(item) : null;
+    },
     async findByIdempotency({ actorId, idempotencyKey }) {
       return (
         records.find(
@@ -35,11 +39,30 @@ function buildFixture() {
       records.push(record);
       return record;
     },
+    async confirmPending(paymentId, updates) {
+      const record = records.find(({ id }) => id === paymentId);
+      if (!record || record.status !== "PENDING") return null;
+      Object.assign(record, updates, { status: "CONFIRMED" });
+      return structuredClone(record);
+    },
+    async rejectPending(paymentId, updates) {
+      const record = records.find(({ id }) => id === paymentId);
+      if (!record || record.status !== "PENDING") return null;
+      Object.assign(record, updates, { status: "REJECTED" });
+      return structuredClone(record);
+    },
   };
   const service = new PaymentService({
     paymentRepository,
     invoiceRepository: {
       async findById() {
+        return invoice;
+      },
+      async applyReceipt(_invoiceId, amountCents) {
+        if (invoice.remainingAmountCents < amountCents) return null;
+        invoice.paidAmountCents += amountCents;
+        invoice.remainingAmountCents -= amountCents;
+        invoice.status = invoice.remainingAmountCents ? "PARTIAL" : "PAID";
         return invoice;
       },
     },
@@ -184,4 +207,142 @@ test("pending payment schema rejects card data and invalid methods or amounts", 
     createPendingPaymentSchema.safeParse({ ...valid, method: "CARD" }).success,
     false,
   );
+});
+
+test("manager confirmation atomically changes payment, invoice and audit and is repeatable", async () => {
+  const { service, invoice, records, audits } = buildFixture();
+  const parent = { id: "000000000000000000000030", roles: ["PARENT"] };
+  const manager = { id: "000000000000000000000040", roles: ["MANAGER"] };
+  const payment = await service.reportPending(
+    {
+      invoiceId: invoice.id,
+      amountCents: 50_000,
+      method: "CASH",
+      idempotencyKey: "confirm-test-0001",
+    },
+    parent,
+    "req-report",
+  );
+  await assert.rejects(
+    service.confirm(
+      payment.id,
+      { occurredAt: "2026-11-05T12:00:00Z" },
+      parent,
+      "req-parent-confirm",
+    ),
+    { code: "FORBIDDEN" },
+  );
+  const input = { occurredAt: "2026-11-04T12:00:00Z" };
+  const confirmed = await service.confirm(payment.id, input, manager, "req-c1");
+  const repeated = await service.confirm(
+    payment.id,
+    { occurredAt: "2026-11-05T11:00:00Z" },
+    manager,
+    "req-c2",
+  );
+  assert.deepEqual(repeated, confirmed);
+  assert.equal(confirmed.status, "CONFIRMED");
+  assert.equal(
+    records[0].occurredAt.toISOString(),
+    new Date(input.occurredAt).toISOString(),
+  );
+  assert.equal(
+    records[0].confirmedAt.toISOString(),
+    "2026-11-05T12:00:00.000Z",
+  );
+  assert.equal(invoice.paidAmountCents, 50_000);
+  assert.equal(invoice.remainingAmountCents, 0);
+  assert.equal(invoice.status, "PAID");
+  assert.equal(
+    audits.filter(({ action }) => action === "payment.confirm").length,
+    1,
+  );
+});
+
+test("rejected payment is repeatable and never changes invoice totals", async () => {
+  const { service, invoice, records, audits } = buildFixture();
+  const parent = { id: "000000000000000000000030", roles: ["PARENT"] };
+  const manager = { id: "000000000000000000000040", roles: ["MANAGER"] };
+  const payment = await service.reportPending(
+    {
+      invoiceId: invoice.id,
+      amountCents: 10_000,
+      method: "CASH",
+      idempotencyKey: "reject-test-0001",
+    },
+    parent,
+    "req-report",
+  );
+  const first = await service.reject(payment.id, manager, "req-r1");
+  const repeated = await service.reject(payment.id, manager, "req-r2");
+  assert.deepEqual(repeated, first);
+  assert.equal(records[0].status, "REJECTED");
+  assert.equal(invoice.paidAmountCents, 0);
+  assert.equal(invoice.remainingAmountCents, 50_000);
+  assert.equal(
+    audits.filter(({ action }) => action === "payment.reject").length,
+    1,
+  );
+});
+
+test("confirmation rejects future occurrence times", async () => {
+  const { service } = buildFixture();
+  await assert.rejects(
+    service.confirm(
+      "000000000000000000000001",
+      { occurredAt: "2026-11-06T00:00:00Z" },
+      { id: "000000000000000000000040", roles: ["MANAGER"] },
+      "req-future",
+    ),
+    { code: "PAYMENT_OCCURRED_IN_FUTURE" },
+  );
+});
+
+test("audit failure rolls confirmation and invoice balance back together", async () => {
+  const { service, invoice, records, audits } = buildFixture();
+  const parent = { id: "000000000000000000000030", roles: ["PARENT"] };
+  const manager = { id: "000000000000000000000040", roles: ["MANAGER"] };
+  const payment = await service.reportPending(
+    {
+      invoiceId: invoice.id,
+      amountCents: 15_000,
+      method: "CASH",
+      idempotencyKey: "audit-failure-0001",
+    },
+    parent,
+    "req-report",
+  );
+  service.unitOfWork = {
+    async execute(operation) {
+      const invoiceBefore = structuredClone(invoice);
+      const paymentBefore = structuredClone(records[0]);
+      const auditCount = audits.length;
+      try {
+        return await operation({
+          session: {},
+          recordAudit: async () => {
+            throw new Error("audit storage unavailable");
+          },
+        });
+      } catch (error) {
+        Object.assign(invoice, invoiceBefore);
+        Object.assign(records[0], paymentBefore);
+        audits.length = auditCount;
+        throw error;
+      }
+    },
+  };
+  await assert.rejects(
+    service.confirm(
+      payment.id,
+      { occurredAt: "2026-11-05T11:00:00Z" },
+      manager,
+      "req-confirm",
+    ),
+    /audit storage unavailable/,
+  );
+  assert.equal(records[0].status, "PENDING");
+  assert.equal(invoice.paidAmountCents, 0);
+  assert.equal(invoice.remainingAmountCents, 50_000);
+  assert.equal(audits.length, 1);
 });
