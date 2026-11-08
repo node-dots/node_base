@@ -3,6 +3,7 @@ export const CATALOG_KIND = Object.freeze({
   ROOM: "ROOM",
   POSITION: "POSITION",
   SUBJECT: "SUBJECT",
+  SETTINGS: "SETTINGS",
 });
 
 export const ROOM_TYPE = Object.freeze({

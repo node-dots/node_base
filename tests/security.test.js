@@ -6,6 +6,7 @@ import { InMemoryGroupRepository } from "./helpers/groupRepository.js";
 import { readSecurityConfig } from "../src/config/security.js";
 import { readServerConfig } from "../src/config/server.js";
 import { HTTP_STATUS, HTTP_ERROR_CODES } from "../src/utils/httpConstants.js";
+import { testAuthHeaders } from "./helpers/app.js";
 
 // Кожен тест отримує окремий застосунок і сховище, без спільних лічильників.
 async function withServer(
@@ -41,10 +42,16 @@ test("Загальний ліміт повертає 429, requestId і час п
         HTTP_STATUS.OK,
       );
       assert.equal(
-        (await fetch(`${baseUrl}/api/v1/groups`)).status,
+        (
+          await fetch(`${baseUrl}/api/v1/groups`, {
+            headers: testAuthHeaders(),
+          })
+        ).status,
         HTTP_STATUS.OK,
       );
-      const response = await fetch(`${baseUrl}/api/v1/groups`);
+      const response = await fetch(`${baseUrl}/api/v1/groups`, {
+        headers: testAuthHeaders(),
+      });
       const result = await response.json();
       assert.equal(response.status, HTTP_STATUS.TOO_MANY_REQUESTS);
       assert.equal(result.error.code, HTTP_ERROR_CODES.RATE_LIMIT_EXCEEDED);
@@ -64,7 +71,7 @@ test("Ліміт запису не створює зайву групу та н�
     async ({ baseUrl, repository }) => {
       const options = {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { ...testAuthHeaders(), "Content-Type": "application/json" },
         body: JSON.stringify({ name: "Сонечка", ageCategory: 2, capacity: 20 }),
       };
       assert.equal(
@@ -84,7 +91,11 @@ test("Ліміт запису не створює зайву групу та н�
 
       assert.equal(result.total, 1);
       assert.equal(
-        (await fetch(`${baseUrl}/api/v1/groups`)).status,
+        (
+          await fetch(`${baseUrl}/api/v1/groups`, {
+            headers: testAuthHeaders(),
+          })
+        ).status,
         HTTP_STATUS.OK,
       );
     },
@@ -118,7 +129,7 @@ test("Rate limit працює до JSON-парсера; Helmet встановл�
       assert.equal(first.headers.get("strict-transport-security"), null);
       const blocked = await fetch(`${baseUrl}/api/v1/groups`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { ...testAuthHeaders(), "Content-Type": "application/json" },
         body: "{",
       });
       assert.equal(blocked.status, HTTP_STATUS.TOO_MANY_REQUESTS);

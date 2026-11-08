@@ -8,6 +8,7 @@ import { createApp } from "../../src/app.js";
 import { createApiRouter } from "../../src/modules/index.js";
 import { demoGroups } from "../../scripts/demo-groups.js";
 import { isMongoReady } from "../../src/config/database.js";
+import { createTestAuthModule, testAuthHeaders } from "../helpers/app.js";
 
 test(
   "MongoDB: API, DTO, aggregation і збереження після повторного підключення",
@@ -38,24 +39,36 @@ test(
         }),
       );
       const repository = new GroupRepository({ groupModel: model });
-      assert.equal(await repository.findById("missing"), null);
-      assert.equal(await repository.findById("ffffffffffffffffffffffff"), null);
+      const allScope = { scope: { kind: "ALL" } };
+      assert.equal(await repository.findById("missing", allScope), null);
+      assert.equal(
+        await repository.findById("ffffffffffffffffffffffff", allScope),
+        null,
+      );
       const expectedSummary = [
         { ageCategory: 2, groupsCount: 2, totalCapacity: 36 },
         { ageCategory: 3, groupsCount: 2, totalCapacity: 38 },
         { ageCategory: 4, groupsCount: 2, totalCapacity: 38 },
         { ageCategory: 5, groupsCount: 2, totalCapacity: 36 },
       ];
-      assert.deepEqual(await repository.summarizeByAge(), expectedSummary);
+      assert.deepEqual(
+        await repository.summarizeByAge(allScope),
+        expectedSummary,
+      );
       server = createApp({
-        apiRouter: createApiRouter({ groupRepository: repository }),
+        apiRouter: createApiRouter({
+          groupRepository: repository,
+          authModule: createTestAuthModule(),
+        }),
         isStorageReady: () => isMongoReady(connection),
       }).listen(0, "127.0.0.1");
       await new Promise((resolve) => server.once("listening", resolve));
       const baseUrl = `http://127.0.0.1:${server.address().port}/api/v1/groups`;
       const healthUrl = `http://127.0.0.1:${server.address().port}/health`;
       assert.equal((await fetch(`${healthUrl}/ready`)).status, 200);
-      const summary = await fetch(`${baseUrl}/summary`);
+      const summary = await fetch(`${baseUrl}/summary`, {
+        headers: testAuthHeaders(),
+      });
       assert.equal(summary.status, 200);
       assert.deepEqual((await summary.json()).data, expectedSummary);
 
@@ -65,7 +78,9 @@ test(
         .sort();
 
       for (const page of [1, 2, 3]) {
-        const response = await fetch(`${baseUrl}?page=${page}&pageSize=5`);
+        const response = await fetch(`${baseUrl}?page=${page}&pageSize=5`, {
+          headers: testAuthHeaders(),
+        });
 
         assert.equal(response.status, 200);
 
@@ -86,7 +101,9 @@ test(
       }
 
       // Пагінація списку не повинна обмежувати aggregation-звіт.
-      const summaryAfterPagination = await fetch(`${baseUrl}/summary`);
+      const summaryAfterPagination = await fetch(`${baseUrl}/summary`, {
+        headers: testAuthHeaders(),
+      });
 
       assert.deepEqual(
         (await summaryAfterPagination.json()).data,
@@ -95,7 +112,7 @@ test(
 
       const created = await fetch(baseUrl, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { ...testAuthHeaders(), "Content-Type": "application/json" },
         body: JSON.stringify({
           name: "Перевірка збереження",
           ageCategory: 3,
@@ -112,9 +129,15 @@ test(
         "name",
         "status",
       ]);
-      const read = await fetch(baseUrl + "/" + group.id);
+      const read = await fetch(baseUrl + "/" + group.id, {
+        headers: testAuthHeaders(),
+      });
       assert.deepEqual((await read.json()).data, group);
-      assert.equal((await fetch(`${baseUrl}/invalid-id`)).status, 404);
+      assert.equal(
+        (await fetch(`${baseUrl}/invalid-id`, { headers: testAuthHeaders() }))
+          .status,
+        404,
+      );
       // Втрачаємо тільки тестове з’єднання, не зупиняємо спільну MongoDB команди.
       await connection.close();
       assert.equal((await fetch(`${healthUrl}/ready`)).status, 503);
@@ -129,10 +152,14 @@ test(
       const reconnectedRepository = new GroupRepository({
         groupModel: reconnectedModel,
       });
-      assert.deepEqual(await reconnectedRepository.findById(group.id), group);
+      assert.deepEqual(
+        await reconnectedRepository.findById(group.id, allScope),
+        group,
+      );
       const result = await reconnectedRepository.findAll({
         page: 1,
         pageSize: 20,
+        scope: { kind: "ALL" },
       });
 
       assert.equal(result.total, 9);

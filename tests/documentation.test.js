@@ -60,7 +60,10 @@ test("OpenAPI та Swagger UI описують і обслуговують по�
 
     const created = await fetch(`${baseUrl}/api/v1/groups`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        Authorization: "Bearer test-admin",
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         name: "Мандрівники",
         ageCategory: 4,
@@ -80,11 +83,18 @@ test("OpenAPI та Swagger UI описують і обслуговують по�
       ),
     );
 
-    const list = await fetch(`${baseUrl}/api/v1/groups`);
+    const authHeaders = { Authorization: "Bearer test-admin" };
+    const list = await fetch(`${baseUrl}/api/v1/groups`, {
+      headers: authHeaders,
+    });
     groupListResponseSchema.parse(await list.json());
-    const summary = await fetch(`${baseUrl}/api/v1/groups/summary`);
+    const summary = await fetch(`${baseUrl}/api/v1/groups/summary`, {
+      headers: authHeaders,
+    });
     ageSummaryResponseSchema.parse(await summary.json());
-    const missing = await fetch(`${baseUrl}/api/v1/groups/missing`);
+    const missing = await fetch(`${baseUrl}/api/v1/groups/missing`, {
+      headers: authHeaders,
+    });
     assert.equal(missing.status, HTTP_STATUS.NOT_FOUND);
     errorResponseSchema.parse(await missing.json());
 
@@ -154,6 +164,7 @@ test("OpenAPI бере обмеження входу зі схем Zod і збе
       "POST /api/v1/auth/logout-all",
       "POST /api/v1/auth/password",
       "POST /api/v1/groups",
+      "PUT /api/v1/people/{id}/account/roles",
     ].sort(),
   );
 });

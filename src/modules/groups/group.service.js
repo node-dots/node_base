@@ -4,6 +4,7 @@ import {
   GROUP_ERROR_CODES,
   GROUP_LIMITS,
 } from "./group.constants.js";
+import { PERMISSIONS } from "../../utils/access/permissions.js";
 
 // Чисті правила можна викликати з service або seed без HTTP та MongoDB.
 export function buildGroupDraft({ name, ageCategory, capacity }) {
@@ -47,18 +48,26 @@ export function buildGroupDraft({ name, ageCategory, capacity }) {
 
 // DI: service отримує репозиторій і не імпортує модель Mongoose.
 export class GroupService {
-  constructor({ groupRepository }) {
+  constructor({ groupRepository, authorizer, groupAccessPolicy }) {
     this.groupRepository = groupRepository;
+    this.authorizer = authorizer;
+    this.groupAccessPolicy = groupAccessPolicy;
+    this.authorizer.assertKnown(PERMISSIONS.GROUPS_READ);
+    this.authorizer.assertKnown(PERMISSIONS.GROUPS_CREATE);
   }
 
-  async createGroup(input) {
+  async createGroup(input, actor) {
+    this.authorizer.assertPermission(actor, PERMISSIONS.GROUPS_CREATE);
     return this.groupRepository.insert(buildGroupDraft(input));
   }
 
-  async listGroups({ page, pageSize }) {
+  async listGroups({ page, pageSize }, actor) {
+    this.authorizer.assertPermission(actor, PERMISSIONS.GROUPS_READ);
+    const scope = await this.groupAccessPolicy.readScope(actor);
     const { groups, total } = await this.groupRepository.findAll({
       page,
       pageSize,
+      scope,
     });
 
     return {
@@ -72,8 +81,10 @@ export class GroupService {
     };
   }
 
-  async getGroup(groupId) {
-    const group = await this.groupRepository.findById(groupId);
+  async getGroup(groupId, actor) {
+    this.authorizer.assertPermission(actor, PERMISSIONS.GROUPS_READ);
+    const scope = await this.groupAccessPolicy.readScope(actor);
+    const group = await this.groupRepository.findById(groupId, { scope });
     if (!group)
       throw new ResourceNotFoundError(
         GROUP_ERROR_CODES.NOT_FOUND,
@@ -82,7 +93,9 @@ export class GroupService {
     return group;
   }
 
-  async getAgeSummary() {
-    return this.groupRepository.summarizeByAge();
+  async getAgeSummary(actor) {
+    this.authorizer.assertPermission(actor, PERMISSIONS.GROUPS_READ);
+    const scope = await this.groupAccessPolicy.readScope(actor);
+    return this.groupRepository.summarizeByAge({ scope });
   }
 }
