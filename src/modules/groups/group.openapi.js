@@ -10,9 +10,15 @@ import {
 } from "./group.schema.js";
 import { jsonResponse } from "../../openapi/common.js";
 import { HTTP_STATUS } from "../../utils/httpConstants.js";
+import {
+  groupResourcesSchema,
+  updateGroupCapacitySchema,
+} from "./groupResources.schema.js";
 
 // Схеми й обмеження беруться з Zod; призначення операцій описуємо явно.
 export function registerGroupDocumentation(registry) {
+  registry.register("GroupResourcesInput", groupResourcesSchema);
+  registry.register("UpdateGroupCapacityInput", updateGroupCapacitySchema);
   for (const schema of [
     createGroupSchema,
     groupSchema,
@@ -60,6 +66,83 @@ export function registerGroupDocumentation(registry) {
       ...commonErrors,
     },
   });
+  for (const [path, method, operationId, summary, bodySchema] of [
+    [
+      "/api/v1/groups/{id}/resources",
+      "put",
+      "updateGroupResources",
+      "Активувати групу або змінити її ресурси",
+      groupResourcesSchema,
+    ],
+    [
+      "/api/v1/groups/{id}/capacity",
+      "patch",
+      "updateGroupCapacity",
+      "Змінити місткість групи",
+      updateGroupCapacitySchema,
+    ],
+  ]) {
+    registry.registerPath({
+      method,
+      path,
+      operationId,
+      tags: ["Групи"],
+      summary,
+      security: [{ BearerAuth: [] }],
+      request: {
+        params: groupIdParamsSchema,
+        body: {
+          required: true,
+          content: { "application/json": { schema: bodySchema } },
+        },
+      },
+      responses: {
+        [HTTP_STATUS.OK]: jsonResponse(
+          groupResponseSchema,
+          "Зміни групи збережено.",
+        ),
+        [HTTP_STATUS.BAD_REQUEST]: {
+          $ref: "#/components/responses/BadRequest",
+        },
+        [HTTP_STATUS.CONFLICT]: {
+          description: "Конфлікт стану, місткості або спільного ресурсу.",
+        },
+        [HTTP_STATUS.UNPROCESSABLE_ENTITY]: {
+          $ref: "#/components/responses/DomainRuleViolation",
+        },
+        ...commonErrors,
+      },
+    });
+  }
+  for (const [path, operationId, summary] of [
+    [
+      "/api/v1/groups/{id}/deactivate",
+      "deactivateGroup",
+      "Деактивувати порожню групу",
+    ],
+    [
+      "/api/v1/groups/{id}/transfer-next-year",
+      "transferGroupToNextSchoolYear",
+      "Підготувати групу для наступного навчального року",
+    ],
+  ]) {
+    registry.registerPath({
+      method: "post",
+      path,
+      operationId,
+      tags: ["Групи"],
+      summary,
+      security: [{ BearerAuth: [] }],
+      request: { params: groupIdParamsSchema },
+      responses: {
+        [HTTP_STATUS.OK]: { description: "Команду виконано атомарно." },
+        [HTTP_STATUS.CONFLICT]: {
+          description: "Група має зайняті місця або не готова до переходу.",
+        },
+        ...commonErrors,
+      },
+    });
+  }
   registry.registerPath({
     method: "post",
     path: "/api/v1/groups",
