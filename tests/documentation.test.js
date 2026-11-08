@@ -48,8 +48,11 @@ test("OpenAPI та Swagger UI описують і обслуговують по�
     const parameters = contract.paths["/api/v1/groups"].get.parameters;
 
     assert.deepEqual(parameters.map((parameter) => parameter.name).sort(), [
+      "ageCategory",
       "page",
       "pageSize",
+      "schoolYear",
+      "status",
     ]);
     const info = (await (await fetch(`${baseUrl}/api/v1`)).json()).data;
     assert.equal(info.version, packageInfo.version);
@@ -189,6 +192,11 @@ test("OpenAPI бере обмеження входу зі схем Zod і збе
       "POST /api/v1/groups",
       "POST /api/v1/groups/{id}/deactivate",
       "POST /api/v1/groups/{id}/transfer-next-year",
+      "GET /api/v1/schedules/{weekStart}/draft",
+      "PUT /api/v1/schedules/{weekStart}/draft",
+      "POST /api/v1/schedules/{weekStart}/publish",
+      "POST /api/v1/schedules/{weekStart}/generate",
+      "GET /api/v1/schedules/{weekStart}/published",
       "POST /api/v1/invoices/children/{childId}/annual-tuition",
       "POST /api/v1/invoices/children/{childId}/fallback-expired-annual",
       "POST /api/v1/invoices/children/{childId}/generate-current-month",
