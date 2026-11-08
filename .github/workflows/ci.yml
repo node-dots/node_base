@@ -73,3 +73,84 @@ jobs:
       - name: Показати журнал MongoDB після помилки
         if: failure()
         run: docker logs task-mongodb
+
+  macos-integration:
+    name: macOS checks and MongoDB integration
+    runs-on: macos-15
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run formatting, syntax, and unit/HTTP checks
+        run: npm run check
+
+      - name: Install MongoDB Community 8.0
+        run: |
+          brew tap mongodb/brew
+          brew trust mongodb/brew
+          brew install mongodb-community@8.0
+
+      - name: Start MongoDB replica set
+        run: |
+          mkdir -p "$RUNNER_TEMP/mongodb-data"
+          mongod --dbpath "$RUNNER_TEMP/mongodb-data" \
+            --replSet rs0 --bind_ip 127.0.0.1 --fork \
+            --logpath "$RUNNER_TEMP/mongodb.log"
+          mongosh --quiet --eval 'rs.initiate({ _id: "rs0", members: [{ _id: 0, host: "127.0.0.1:27017" }] })'
+          for attempt in {1..30}; do
+            if mongosh --quiet --eval 'rs.status().myState' | grep -qx 1; then
+              exit 0
+            fi
+            sleep 2
+          done
+          cat "$RUNNER_TEMP/mongodb.log"
+          exit 1
+
+      - name: Run MongoDB integration tests
+        run: npm run test:mongodb
+
+      - name: Start the service and verify login and documentation
+        run: |
+          export MONGO_URI='mongodb://127.0.0.1:27017/kindergarten_macos_ci?replicaSet=rs0&directConnection=true'
+          export JWT_SECRET="$(openssl rand -hex 32)"
+          export JWT_ISSUER='https://ci.example.invalid'
+          export JWT_AUDIENCE='kindergarten-ci'
+          export BOOTSTRAP_ADMIN_EMAIL='ci-admin@example.invalid'
+          export BOOTSTRAP_ADMIN_PASSWORD="$(openssl rand -hex 24)"
+          export BOOTSTRAP_ADMIN_FIRST_NAME='CI'
+          export BOOTSTRAP_ADMIN_LAST_NAME='Admin'
+          export HOST='127.0.0.1'
+          export PORT='3317'
+
+          npm run bootstrap:admin
+          npm start > "$RUNNER_TEMP/server.log" 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:3317/health/ready >/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+          curl --fail --silent http://127.0.0.1:3317/health/ready >/dev/null
+          curl --fail --silent http://127.0.0.1:3317/api/v1/openapi.json >/dev/null
+          curl --fail --silent http://127.0.0.1:3317/api-docs/ >/dev/null
+          curl --fail --silent \
+            --header 'Content-Type: application/json' \
+            --data "{\"email\":\"$BOOTSTRAP_ADMIN_EMAIL\",\"password\":\"$BOOTSTRAP_ADMIN_PASSWORD\"}" \
+            http://127.0.0.1:3317/api/v1/auth/login \
+            | jq --exit-status '.data.accessToken | type == "string" and length > 10' >/dev/null
