@@ -30,6 +30,18 @@ const childSummary = zod.object({
     .optional(),
 });
 const response = zod.object({ data: childSummary });
+const withdrawalResponse = zod.object({
+  data: zod.object({
+    child: childSummary,
+    billing: zod.object({
+      withdrawnAt: zod.string(),
+      billingEndMonth: zod.string(),
+      obligationCents: zod.number().int(),
+      refundDueCents: zod.number().int(),
+    }),
+    repeated: zod.boolean(),
+  }),
+});
 const membershipTarget = zod.strictObject({
   groupId: zod.string().regex(/^[a-f\d]{24}$/i),
 });
@@ -166,6 +178,26 @@ export function registerChildDocumentation(registry) {
       },
     });
   }
+  registry.registerPath({
+    method: "post",
+    path: "/api/v1/children/{id}/withdraw",
+    operationId: "withdrawChild",
+    tags: ["Діти"],
+    security: [{ BearerAuth: [] }],
+    request: { params: childId },
+    responses: {
+      [HTTP_STATUS.OK]: jsonResponse(
+        withdrawalResponse,
+        "Child membership, seat and future invoice parts are withdrawn atomically; refund is computed but not paid.",
+      ),
+      [HTTP_STATUS.CONFLICT]: {
+        description:
+          "Invalid membership state or billing cancellation conflict.",
+      },
+      [HTTP_STATUS.NOT_FOUND]: { $ref: "#/components/responses/NotFound" },
+      [HTTP_STATUS.FORBIDDEN]: { description: "Insufficient permission." },
+    },
+  });
   registry.registerPath({
     method: "post",
     path: "/api/v1/children/{id}/benefits",
