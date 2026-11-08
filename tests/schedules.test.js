@@ -62,6 +62,64 @@ test("draft starts at revision zero and update increments revision", async () =>
   assert.deepEqual(saved.slots, [slot]);
 });
 
+test("generation requires its dedicated permission and saves a draft without publishing", async () => {
+  let published = false;
+  const { service, repository } = fixture();
+  service.snapshotProvider = {
+    async read() {
+      return {
+        schoolYear: "2026-2027",
+        groups: [
+          {
+            id: slot.groupId,
+            status: "ACTIVE",
+            schoolYear: "2026-2027",
+            roomId: slot.roomId,
+            capacity: 10,
+          },
+        ],
+        rooms: [
+          { id: slot.roomId, active: true, roomType: "GROUP", capacity: 10 },
+        ],
+        teachers: [
+          {
+            id: slot.teacherId,
+            status: "ACTIVE",
+            positionCode: "TEACHER",
+            subjectCode: "ENGLISH",
+            availability: [
+              { weekday: 1, startTime: "09:00", endTime: "17:00" },
+            ],
+          },
+        ],
+        program: [
+          { subjectCode: "ENGLISH", sessionsPerWeek: 1, durationMinutes: 30 },
+        ],
+      };
+    },
+  };
+  repository.publish = async () => {
+    published = true;
+  };
+  const result = await service.generateDraft(
+    weekStart,
+    { expectedRevision: 0, fixedSlots: [] },
+    manager,
+  );
+  assert.equal(result.complete, true);
+  assert.equal(result.draft.revision, 1);
+  assert.equal(result.draft.slots.length, 1);
+  assert.equal(published, false);
+  await assert.rejects(
+    service.generateDraft(
+      weekStart,
+      { expectedRevision: 1, fixedSlots: [] },
+      teacher,
+    ),
+    { status: 403 },
+  );
+});
+
 test("stale revision is rejected and leaves the saved draft unchanged", async () => {
   const initial = {
     weekStart,
