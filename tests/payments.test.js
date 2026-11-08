@@ -9,14 +9,21 @@ function buildFixture() {
     id: "000000000000000000000010",
     childId: "000000000000000000000020",
     status: "OPEN",
+    serviceMonth: "2026-11",
+    billingType: "MONTHLY",
+    origAmountCents: 50_000,
     remainingAmountCents: 50_000,
     paidAmountCents: 0,
+    refundableAmountCents: 0,
+    refundedAmountCents: 0,
   };
   const child = {
     id: invoice.childId,
+    status: "ACTIVE",
     guardians: [{ personId: "000000000000000000000030" }],
   };
   const records = [];
+  const refundRecords = [];
   const audits = [];
   const paymentRepository = {
     async findById(paymentId) {
@@ -34,6 +41,7 @@ function buildFixture() {
     async insert(payment) {
       const record = {
         ...structuredClone(payment),
+        refundedAmountCents: 0,
         id: `payment-${records.length + 1}`,
       };
       records.push(record);
@@ -51,40 +59,126 @@ function buildFixture() {
       Object.assign(record, updates, { status: "REJECTED" });
       return structuredClone(record);
     },
+    async reserveRefund(paymentId, amountCents) {
+      const record = records.find(({ id }) => id === paymentId);
+      if (
+        !record ||
+        record.status !== "CONFIRMED" ||
+        amountCents > record.amountCents - record.refundedAmountCents
+      )
+        return null;
+      record.refundedAmountCents += amountCents;
+      return structuredClone(record);
+    },
   };
+  const refundRepository = {
+    async findByIdempotency({ actorId, idempotencyKey }) {
+      return (
+        refundRecords.find(
+          (item) =>
+            item.actorId === actorId && item.idempotencyKey === idempotencyKey,
+        ) ?? null
+      );
+    },
+    async insert(refund) {
+      const record = {
+        ...structuredClone(refund),
+        id: `refund-${refundRecords.length + 1}`,
+      };
+      refundRecords.push(record);
+      const {
+        actorId: _actorId,
+        payloadHash: _payloadHash,
+        ...publicRecord
+      } = record;
+      return publicRecord;
+    },
+    async listByPayment(paymentId) {
+      return refundRecords
+        .filter((refund) => refund.paymentId === paymentId)
+        .map(
+          ({ actorId: _actorId, payloadHash: _payloadHash, ...refund }) =>
+            refund,
+        );
+    },
+  };
+  const invoiceRepository = {
+    async findById() {
+      return invoice;
+    },
+    async applyReceipt(_invoiceId, amountCents) {
+      if (invoice.remainingAmountCents < amountCents) return null;
+      invoice.paidAmountCents += amountCents;
+      invoice.remainingAmountCents -= amountCents;
+      invoice.status = invoice.remainingAmountCents ? "PARTIAL" : "PAID";
+      return invoice;
+    },
+    async reserveRefund(_invoiceId, amountCents) {
+      if (amountCents > invoice.refundableAmountCents) return null;
+      invoice.refundableAmountCents -= amountCents;
+      invoice.refundedAmountCents += amountCents;
+      return invoice;
+    },
+  };
+  const childRepository = {
+    async findById() {
+      return child;
+    },
+    async findByIdForUpdate() {
+      return child;
+    },
+    async decrementWithdrawalRefundDue(_childId, amountCents) {
+      if (
+        !child.withdrawalSummary ||
+        amountCents > child.withdrawalSummary.refundDueCents
+      )
+        return null;
+      child.withdrawalSummary.refundDueCents -= amountCents;
+      return child;
+    },
+  };
+  let transactionTail = Promise.resolve();
   const service = new PaymentService({
     paymentRepository,
-    invoiceRepository: {
-      async findById() {
-        return invoice;
-      },
-      async applyReceipt(_invoiceId, amountCents) {
-        if (invoice.remainingAmountCents < amountCents) return null;
-        invoice.paidAmountCents += amountCents;
-        invoice.remainingAmountCents -= amountCents;
-        invoice.status = invoice.remainingAmountCents ? "PARTIAL" : "PAID";
-        return invoice;
-      },
-    },
-    childRepository: {
-      async findById() {
-        return child;
-      },
-    },
+    invoiceRepository,
+    childRepository,
+    refundRepository,
     authorizer,
     unitOfWork: {
       async execute(operation) {
-        return operation({
-          session: {},
-          async recordAudit(event) {
-            audits.push(event);
-          },
+        const previous = transactionTail;
+        let release;
+        transactionTail = new Promise((resolve) => {
+          release = resolve;
         });
+        await previous;
+        const invoiceBefore = structuredClone(invoice);
+        const childBefore = structuredClone(child);
+        const recordsBefore = structuredClone(records);
+        const refundsBefore = structuredClone(refundRecords);
+        const auditCount = audits.length;
+        try {
+          return await operation({
+            session: {},
+            async recordAudit(event) {
+              audits.push(event);
+            },
+          });
+        } catch (error) {
+          Object.assign(invoice, invoiceBefore);
+          Object.assign(child, childBefore);
+          records.splice(0, records.length, ...recordsBefore);
+          refundRecords.splice(0, refundRecords.length, ...refundsBefore);
+          audits.length = auditCount;
+          throw error;
+        } finally {
+          release();
+        }
       },
     },
     clock: { now: () => new Date("2026-11-05T12:00:00.000Z") },
   });
-  return { service, invoice, child, records, audits };
+  return { service, invoice, child, records, refundRecords, audits };
 }
 
 test("payment report stays PENDING, derives parent payer and is idempotent", async () => {
@@ -377,6 +471,136 @@ test("annual tuition confirms only the complete payment before the Kyiv deadline
     audits.filter(({ action }) => action === "payment.confirm").length,
     1,
   );
+});
+
+test("ADMIN records a refund once against a confirmed receipt and preserves original totals", async () => {
+  const { service, invoice, child, records, refundRecords, audits } =
+    buildFixture();
+  invoice.billingType = "ANNUAL";
+  invoice.serviceMonth = "2026-12";
+  invoice.origAmountCents = 14_256_000;
+  invoice.remainingAmountCents = 14_256_000;
+  const parent = { id: "000000000000000000000030", roles: ["PARENT"] };
+  const manager = { id: "000000000000000000000040", roles: ["MANAGER"] };
+  const admin = { id: "000000000000000000000050", roles: ["ADMIN"] };
+  const payment = await service.reportPending(
+    {
+      invoiceId: invoice.id,
+      amountCents: invoice.remainingAmountCents,
+      method: "BANK_TRANSFER",
+      idempotencyKey: "refund-receipt-0001",
+    },
+    parent,
+    "req-report",
+  );
+  await service.confirm(
+    payment.id,
+    { occurredAt: "2026-11-04T12:00:00Z" },
+    manager,
+    "req-confirm",
+  );
+  child.status = "LEFT";
+  child.withdrawalSummary = {
+    withdrawnAt: new Date("2026-11-05T12:00:00Z"),
+    billingEndMonth: "2026-12",
+    obligationCents: 3_564_000,
+    refundDueCents: 10_692_000,
+  };
+  invoice.refundableAmountCents = 10_692_000;
+  const input = {
+    amountCents: 10_692_000,
+    reason: "Overpayment after withdrawal",
+    idempotencyKey: "refund-2026-0001",
+  };
+  const refund = await service.refund(payment.id, input, admin, "req-refund");
+  const repeated = await service.refund(
+    payment.id,
+    input,
+    admin,
+    "req-refund-repeat",
+  );
+  assert.deepEqual(repeated, refund);
+  assert.equal(refund.status, "CONFIRMED");
+  assert.equal(refund.paymentId, payment.id);
+  assert.equal(refund.invoiceId, invoice.id);
+  assert.equal(refund.amountCents, 10_692_000);
+  assert.equal(Object.hasOwn(refund, "payerPersonId"), false);
+  assert.equal(records[0].refundedAmountCents, 10_692_000);
+  assert.equal(invoice.origAmountCents, 14_256_000);
+  assert.equal(invoice.paidAmountCents, 14_256_000);
+  assert.equal(invoice.refundableAmountCents, 0);
+  assert.equal(invoice.refundedAmountCents, 10_692_000);
+  assert.equal(child.withdrawalSummary.refundDueCents, 0);
+  assert.equal(refundRecords.length, 1);
+  await assert.rejects(
+    service.refund(
+      payment.id,
+      { ...input, amountCents: 10_691_000 },
+      admin,
+      "req-key-conflict",
+    ),
+    { code: "REFUND_IDEMPOTENCY_KEY_CONFLICT" },
+  );
+  assert.deepEqual(await service.listRefunds(payment.id, parent), [refund]);
+  assert.equal(
+    audits.filter(({ action }) => action === "payment.refund.record").length,
+    1,
+  );
+  await assert.rejects(
+    service.refund(
+      payment.id,
+      { ...input, idempotencyKey: "manager-refund-1" },
+      manager,
+      "req-manager",
+    ),
+    { code: "FORBIDDEN" },
+  );
+});
+
+test("concurrent refunds cannot exceed the confirmed receipt balance", async () => {
+  const { service, invoice, child, records } = buildFixture();
+  const parent = { id: "000000000000000000000030", roles: ["PARENT"] };
+  const manager = { id: "000000000000000000000040", roles: ["MANAGER"] };
+  const admin = { id: "000000000000000000000050", roles: ["ADMIN"] };
+  const payment = await service.reportPending(
+    {
+      invoiceId: invoice.id,
+      amountCents: 50_000,
+      method: "CASH",
+      idempotencyKey: "concurrent-refund-receipt",
+    },
+    parent,
+    "req-report",
+  );
+  await service.confirm(
+    payment.id,
+    { occurredAt: "2026-11-04T12:00:00Z" },
+    manager,
+    "req-confirm",
+  );
+  child.status = "LEFT";
+  child.withdrawalSummary = { refundDueCents: 60_000 };
+  invoice.refundableAmountCents = 60_000;
+  const results = await Promise.allSettled(
+    ["one", "two"].map((key) =>
+      service.refund(
+        payment.id,
+        {
+          amountCents: 30_000,
+          reason: "Refund after withdrawal",
+          idempotencyKey: `concurrent-refund-${key}`,
+        },
+        admin,
+        key,
+      ),
+    ),
+  );
+  assert.equal(
+    results.filter(({ status }) => status === "fulfilled").length,
+    1,
+  );
+  assert.equal(results.filter(({ status }) => status === "rejected").length, 1);
+  assert.equal(records[0].refundedAmountCents, 30_000);
 });
 
 test("audit failure rolls confirmation and invoice balance back together", async () => {

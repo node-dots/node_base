@@ -11,6 +11,8 @@ function toInvoice(document) {
     origAmountCents: document.origAmountCents,
     remainingAmountCents: document.remainingAmountCents,
     paidAmountCents: document.paidAmountCents ?? 0,
+    refundableAmountCents: document.refundableAmountCents ?? 0,
+    refundedAmountCents: document.refundedAmountCents ?? 0,
     tariffSnapshot: structuredClone(document.tariffSnapshot),
     ...(document.benefitSnapshot
       ? { benefitSnapshot: structuredClone(document.benefitSnapshot) }
@@ -102,9 +104,12 @@ export class InvoiceRepository {
     for (const document of documents) {
       const invoice = toInvoice(document);
       paidAmountCents += invoice.paidAmountCents;
+      let invoiceObligationCents = 0;
       const parts = invoice.parts.map((part) => {
-        if (part.month < billingEndMonth && !part.cancelled)
+        if (part.month < billingEndMonth && !part.cancelled) {
           obligationCents += part.amountCents;
+          invoiceObligationCents += part.amountCents;
+        }
         if (part.month >= billingEndMonth && !part.cancelled) {
           cancelledParts += 1;
           return {
@@ -119,7 +124,15 @@ export class InvoiceRepository {
       const changed = parts.some(
         (part, index) => part !== invoice.parts[index],
       );
-      if (!changed) continue;
+      const refundableAmountCents = Math.max(
+        0,
+        invoice.paidAmountCents - invoiceObligationCents,
+      );
+      if (
+        !changed &&
+        (document.refundableAmountCents ?? 0) === refundableAmountCents
+      )
+        continue;
       const allCancelled = parts.every(({ cancelled }) => cancelled);
       const remainingAmountCents = parts.reduce(
         (sum, part) => sum + part.remainingCents,
@@ -134,6 +147,7 @@ export class InvoiceRepository {
               .filter(({ cancelled }) => !cancelled)
               .map(({ month }) => month),
             remainingAmountCents,
+            refundableAmountCents,
             ...(allCancelled ? { status: "CANCELLED" } : {}),
           },
         },
@@ -202,6 +216,23 @@ export class InvoiceRepository {
       return paid ? toInvoice(paid) : toInvoice(document);
     }
     return toInvoice(document);
+  }
+
+  async reserveRefund(invoiceId, amountCents, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(invoiceId)) return null;
+    const document = await this.invoiceModel
+      .findOneAndUpdate(
+        { _id: invoiceId, refundableAmountCents: { $gte: amountCents } },
+        {
+          $inc: {
+            refundableAmountCents: -amountCents,
+            refundedAmountCents: amountCents,
+          },
+        },
+        { new: true, runValidators: true, session },
+      )
+      .lean();
+    return document ? toInvoice(document) : null;
   }
 
   async listByChild(childId) {

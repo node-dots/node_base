@@ -5,6 +5,7 @@ function toPayment(document) {
     id: document._id.toString(),
     invoiceId: document.invoiceId.toString(),
     amountCents: document.amountCents,
+    refundedAmountCents: document.refundedAmountCents ?? 0,
     method: document.method,
     status: document.status,
     reportedAt: new Date(document.reportedAt),
@@ -93,6 +94,32 @@ export class PaymentRepository {
       .findOneAndUpdate(
         { _id: paymentId, status: "PENDING" },
         { $set: { status: "REJECTED", rejectedAt, reviewedById } },
+        { new: true, runValidators: true, session },
+      )
+      .lean();
+    return document ? toPayment(document) : null;
+  }
+
+  async reserveRefund(paymentId, amountCents, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(paymentId)) return null;
+    const document = await this.paymentModel
+      .findOneAndUpdate(
+        {
+          _id: paymentId,
+          status: "CONFIRMED",
+          $expr: {
+            $gte: [
+              {
+                $subtract: [
+                  "$amountCents",
+                  { $ifNull: ["$refundedAmountCents", 0] },
+                ],
+              },
+              amountCents,
+            ],
+          },
+        },
+        { $inc: { refundedAmountCents: amountCents } },
         { new: true, runValidators: true, session },
       )
       .lean();

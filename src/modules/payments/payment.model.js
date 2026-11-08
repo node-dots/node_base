@@ -13,6 +13,13 @@ const paymentSchema = new mongoose.Schema(
       min: 1,
       validate: Number.isSafeInteger,
     },
+    refundedAmountCents: {
+      type: Number,
+      required: true,
+      min: 0,
+      default: 0,
+      validate: Number.isSafeInteger,
+    },
     method: { type: String, required: true, enum: ["BANK_TRANSFER", "CASH"] },
     status: {
       type: String,
