@@ -20,6 +20,9 @@ const childSummary = zod.object({
   benefitCode: zod.string().optional(),
 });
 const response = zod.object({ data: childSummary });
+const membershipTarget = zod.strictObject({
+  groupId: zod.string().regex(/^[a-f\d]{24}$/i),
+});
 
 export function registerChildDocumentation(registry) {
   registry.register("CreateChildInput", createChildSchema);
@@ -96,4 +99,61 @@ export function registerChildDocumentation(registry) {
       [HTTP_STATUS.NOT_FOUND]: { $ref: "#/components/responses/NotFound" },
     },
   });
+  for (const [suffix, method, operationId, permission] of [
+    ["enroll", "post", "enrollChild", "children:enroll"],
+    ["transfer", "post", "transferChild", "children:transfer"],
+  ]) {
+    registry.registerPath({
+      method,
+      path: `/api/v1/children/{id}/${suffix}`,
+      operationId,
+      tags: ["Діти"],
+      security: [{ BearerAuth: [] }],
+      description: `Requires ${permission}; group seat and child membership are changed in one transaction.`,
+      request: {
+        params: childId,
+        body: {
+          required: true,
+          content: { "application/json": { schema: membershipTarget } },
+        },
+      },
+      responses: {
+        [HTTP_STATUS.OK]: jsonResponse(
+          response,
+          "Membership command completed.",
+        ),
+        [HTTP_STATUS.BAD_REQUEST]: {
+          $ref: "#/components/responses/BadRequest",
+        },
+        [HTTP_STATUS.CONFLICT]: {
+          description:
+            "State, age, school year, capacity, or membership history conflict.",
+        },
+        [HTTP_STATUS.NOT_FOUND]: { $ref: "#/components/responses/NotFound" },
+        [HTTP_STATUS.FORBIDDEN]: { description: "Insufficient permission." },
+      },
+    });
+  }
+  for (const [suffix, operationId] of [
+    ["suspend", "suspendChild"],
+    ["resume", "resumeChild"],
+  ]) {
+    registry.registerPath({
+      method: "post",
+      path: `/api/v1/children/{id}/${suffix}`,
+      operationId,
+      tags: ["Діти"],
+      security: [{ BearerAuth: [] }],
+      request: { params: childId },
+      responses: {
+        [HTTP_STATUS.OK]: jsonResponse(
+          response,
+          "Membership state changed atomically.",
+        ),
+        [HTTP_STATUS.CONFLICT]: { description: "Invalid child state." },
+        [HTTP_STATUS.NOT_FOUND]: { $ref: "#/components/responses/NotFound" },
+        [HTTP_STATUS.FORBIDDEN]: { description: "Insufficient permission." },
+      },
+    });
+  }
 }

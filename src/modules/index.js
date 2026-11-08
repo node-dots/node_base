@@ -4,19 +4,17 @@ import { GroupRepository } from "./groups/group.repository.js";
 import { GroupModule } from "./groups/group.module.js";
 import { ChildModel } from "./children/child.model.js";
 import { ChildRepository } from "./children/child.repository.js";
+import { ChildService } from "./children/child.service.js";
+import { ChildMembershipService } from "./children/childMembership.service.js";
+import { createChildRoutes } from "./children/child.routes.js";
 import { CatalogModel } from "./catalog/catalog.model.js";
 import { CatalogRepository } from "./catalog/catalog.repository.js";
 import { AccountRolesService } from "./people/accountRoles.service.js";
 import { createAccountRolesRoutes } from "./people/accountRoles.routes.js";
-import { authorizer } from "./people/access/authorizer.js";
-import { ChildService } from "./children/child.service.js";
-import { createChildRoutes } from "./children/child.routes.js";
-import { PersonModel } from "./people/person.model.js";
-import { PersonRepository } from "./people/person.repository.js";
 import { EmployeeService } from "./people/employee.service.js";
 import { createEmployeeRoutes } from "./people/employee.routes.js";
+import { authorizer } from "./people/access/authorizer.js";
 
-// Єдине місце реєстрації бізнес-модулів і складання їхніх залежностей.
 export function createApiRouter({
   groupRepository = new GroupRepository({ groupModel: GroupModel }),
   guardianGroupsReader = new ChildRepository({ childModel: ChildModel }),
@@ -38,13 +36,17 @@ export function createApiRouter({
   if (authModule) {
     router.use("/auth", authModule.router ?? authModule);
     if (authModule.personRepository && authModule.unitOfWork) {
-      const childRepository = new ChildRepository({ childModel: ChildModel });
       const childService = new ChildService({
-        childRepository,
-        personRepository:
-          authModule.personRepository ??
-          new PersonRepository({ personModel: PersonModel }),
+        childRepository: guardianGroupsReader,
+        personRepository: authModule.personRepository,
         groupAssignmentsReader: groupRepository,
+        authorizer,
+        unitOfWork: authModule.unitOfWork,
+      });
+      const childMembershipService = new ChildMembershipService({
+        childRepository: guardianGroupsReader,
+        groupRepository,
+        catalogRepository: settingsRepository,
         authorizer,
         unitOfWork: authModule.unitOfWork,
       });
@@ -52,9 +54,11 @@ export function createApiRouter({
         "/children",
         createChildRoutes({
           childService,
+          membershipService: childMembershipService,
           authService: authModule.authService,
         }),
       );
+
       const employeeService = new EmployeeService({
         personRepository: authModule.personRepository,
         catalogRepository: settingsRepository,
