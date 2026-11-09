@@ -63,6 +63,46 @@ test("authorizer validates complete role configuration and denies unknown codes"
   );
 });
 
+test("role matrix keeps finance, refund, salary, and account administration out of non-admin roles", () => {
+  const rolesToCheck = [
+    ROLES.MANAGER,
+    ROLES.PARENT,
+    ROLES.TEACHER,
+    ROLES.EDUCATOR,
+    ROLES.ASSISTANT,
+    [ROLES.PARENT, ROLES.EDUCATOR],
+    [ROLES.MANAGER, ROLES.EDUCATOR],
+  ];
+  const restricted = [
+    PERMISSIONS.PAYMENTS_REFUND,
+    PERMISSIONS.EXPENSES_READ,
+    PERMISSIONS.REPORTS_FINANCE_READ,
+    PERMISSIONS.FINANCE_SCENARIOS_RUN,
+    PERMISSIONS.ROLES_ASSIGN,
+    PERMISSIONS.ACCOUNTS_MANAGE,
+  ];
+
+  for (const [index, roles] of rolesToCheck.entries()) {
+    const actorRoles = Array.isArray(roles) ? roles : [roles];
+    const actor = { id: `matrix-${index}`, roles: actorRoles };
+    for (const permission of restricted) {
+      assert.equal(
+        authorizer.hasPermission(actor, permission),
+        false,
+        `${actorRoles.join("+")} must not have ${permission}`,
+      );
+    }
+  }
+
+  assert.equal(
+    authorizer.hasPermission(
+      { id: "admin", roles: [ROLES.ADMIN] },
+      PERMISSIONS.FINANCE_SCENARIOS_RUN,
+    ),
+    true,
+  );
+});
+
 test("group and child scope merges parent and assigned-group access and fails closed", async () => {
   const ownGroup = "000000000000000000000001";
   const workGroup = "000000000000000000000002";
