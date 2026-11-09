@@ -49,6 +49,19 @@ export class ExpenseRepository {
     if (session) query = query.session(session);
     return (await query.lean()).map(dto);
   }
+  async findPageByServiceMonth({ month, page, pageSize }) {
+    const filter = { serviceMonth: month };
+    const [documents, total] = await Promise.all([
+      this.expenseModel
+        .find(filter)
+        .sort({ status: 1, category: 1, _id: 1 })
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
+        .lean(),
+      this.expenseModel.countDocuments(filter),
+    ]);
+    return { expenses: documents.map(dto), total };
+  }
   async #transition(id, filter, update, { session } = {}) {
     const doc = await this.expenseModel
       .findOneAndUpdate({ _id: id, ...filter }, update, {

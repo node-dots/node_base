@@ -92,6 +92,20 @@ export class PersonRepository {
     return (await query.lean()).map(toPerson);
   }
 
+  async findEmployeePage({ page, pageSize }) {
+    const filter = { employee: { $exists: true } };
+    const [documents, total] = await Promise.all([
+      this.personModel
+        .find(filter)
+        .sort({ lastName: 1, firstName: 1, _id: 1 })
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
+        .lean(),
+      this.personModel.countDocuments(filter),
+    ]);
+    return { employees: documents.map(toPerson), total };
+  }
+
   async updateEmployee(personId, employee, { session } = {}) {
     if (!mongoose.isObjectIdOrHexString(personId)) return null;
     const document = await this.personModel

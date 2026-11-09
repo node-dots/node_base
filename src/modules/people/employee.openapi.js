@@ -23,11 +23,41 @@ const employeeResponse = z.object({
       .optional(),
   }),
 });
+const employeeListQuery = z.strictObject({
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(50),
+});
+const employeeListResponse = z.object({
+  data: z.object({
+    employees: z.array(employeeResponse.shape.data),
+    pagination: z.object({
+      page: z.number(),
+      pageSize: z.number(),
+      total: z.number(),
+      totalPages: z.number(),
+    }),
+  }),
+});
 
 export function registerEmployeeDocumentation(registry) {
   registry.register("EmployeeProfileInput", employeeProfileSchema);
   registry.register("UpdateEmployeeProfileInput", updateEmployeeProfileSchema);
   registry.register("EmployeeProfileResponse", employeeResponse);
+  registry.registerPath({
+    method: "get",
+    path: "/api/v1/people/employees",
+    operationId: "listEmployees",
+    tags: ["People"],
+    security: [{ BearerAuth: [] }],
+    request: { query: employeeListQuery },
+    responses: {
+      [HTTP_STATUS.OK]: jsonResponse(
+        employeeListResponse,
+        "Paginated employee profiles. Salary is included for administrators only.",
+      ),
+      [HTTP_STATUS.FORBIDDEN]: { description: "Insufficient permission." },
+    },
+  });
   registry.registerPath({
     method: "get",
     path: "/api/v1/people/{id}/employee",

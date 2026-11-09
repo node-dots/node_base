@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { AppError, ResourceNotFoundError } from "../../utils/errors.js";
 import { PERMISSIONS } from "../../utils/access/permissions.js";
-import { systemClock } from "../../utils/calendar.js";
+import { getServiceMonthUtcRange, systemClock } from "../../utils/calendar.js";
 import { annualPaymentDeadline } from "../invoices/invoice.calculations.js";
 import {
   confirmPaymentSchema,
@@ -59,6 +59,27 @@ export class PaymentService {
     authorizer.assertKnown(PERMISSIONS.PAYMENTS_CONFIRM);
     authorizer.assertKnown(PERMISSIONS.PAYMENTS_REJECT);
     authorizer.assertKnown(PERMISSIONS.PAYMENTS_REFUND);
+    authorizer.assertKnown(PERMISSIONS.REPORTS_FINANCE_READ);
+  }
+
+  async listForMonth({ month, page, pageSize }, actor) {
+    this.authorizer.assertPermission(actor, PERMISSIONS.REPORTS_FINANCE_READ);
+    const { start, end } = getServiceMonthUtcRange(month);
+    const { payments, total } = await this.paymentRepository.findPageForPeriod({
+      start,
+      end,
+      page,
+      pageSize,
+    });
+    return {
+      payments: payments.map(toPublicPayment),
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    };
   }
 
   async reportPending(input, actor, requestId) {

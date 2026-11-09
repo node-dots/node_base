@@ -6,6 +6,27 @@ const childId = zod.object({ childId: zod.string().regex(/^[a-f\d]{24}$/i) });
 export function registerInvoiceDocumentation(registry) {
   registry.registerPath({
     method: "get",
+    path: "/api/v1/invoices",
+    operationId: "listInvoicesForMonth",
+    tags: ["Invoices"],
+    security: [{ BearerAuth: [] }],
+    request: {
+      query: zod.strictObject({
+        month: zod.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/),
+        page: zod.coerce.number().int().min(1).default(1),
+        pageSize: zod.coerce.number().int().min(1).max(100).default(50),
+      }),
+    },
+    responses: {
+      [HTTP_STATUS.OK]: {
+        description:
+          "Administrator-only paginated invoice list for a service month.",
+      },
+      [HTTP_STATUS.FORBIDDEN]: { description: "Insufficient permission." },
+    },
+  });
+  registry.registerPath({
+    method: "get",
     path: "/api/v1/invoices/current-balances",
     operationId: "getCurrentInvoiceBalances",
     tags: ["Invoices"],

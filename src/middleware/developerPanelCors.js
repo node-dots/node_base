@@ -9,6 +9,7 @@ export function createDeveloperPanelCors({ enabled = false } = {}) {
 
     response.vary("Origin");
     response.set("Access-Control-Allow-Origin", PANEL_ORIGIN);
+    response.set("Access-Control-Expose-Headers", "Retry-After, X-Request-Id");
 
     if (request.method !== "OPTIONS") return next();
 

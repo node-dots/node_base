@@ -217,4 +217,22 @@ export class ExpenseService {
       cashOutflowCents: await this.expenseRepository.sumCashFlow(month),
     };
   }
+  async listForMonth({ month, page, pageSize }, actor) {
+    this.authorizer.assertPermission(actor, PERMISSIONS.EXPENSES_READ);
+    const { expenses, total } =
+      await this.expenseRepository.findPageByServiceMonth({
+        month,
+        page,
+        pageSize,
+      });
+    return {
+      expenses,
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    };
+  }
 }
