@@ -36,3 +36,8 @@ export const updateScheduleDraftSchema = zod
 export const publishScheduleSchema = zod.strictObject({
   expectedRevision: zod.number().int().safe().min(1),
 });
+
+export const generateScheduleSchema = zod.strictObject({
+  expectedRevision: zod.number().int().safe().min(0),
+  fixedSlots: zod.array(scheduleSlotSchema).max(2000).default([]),
+});

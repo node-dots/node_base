@@ -19,6 +19,23 @@ export function createInvoiceRoutes({ service, authService }) {
     throw new TypeError("authService is required for invoice routes");
   const router = Router();
   const authenticate = createAuthenticationMiddleware({ authService });
+  router.get(
+    "/current-balances",
+    authenticate,
+    createRequirePermission({
+      authorizer,
+      permission: PERMISSIONS.INVOICES_READ,
+    }),
+    async (request, response, next) => {
+      try {
+        response.json({
+          data: await service.getCurrentBalances(request.actor),
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
   router.post(
     "/children/:childId/annual-tuition",
     authenticate,
