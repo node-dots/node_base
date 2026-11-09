@@ -26,18 +26,18 @@ import { ExpenseModel } from "./expenses/expense.model.js";
 import { FinanceReportRepository } from "./reports/financeReport.repository.js";
 import { FinanceReportService } from "./reports/financeReport.service.js";
 import { createFinanceReportRoutes } from "./reports/financeReport.routes.js";
+import { OperationsReportRepository } from "./reports/operationsReport.repository.js";
+import { OperationsReportService } from "./reports/operationsReport.service.js";
+import { createOperationsReportRoutes } from "./reports/operationsReport.routes.js";
 import { ExpenseRepository } from "./expenses/expense.repository.js";
 import { ExpenseService } from "./expenses/expense.service.js";
 import { createExpenseRoutes } from "./expenses/expense.routes.js";
 import { OpenMonthService } from "./expenses/openMonth.service.js";
-import { ScheduleModel } from "./schedules/schedule.model.js";
-import { OperationsReportRepository } from "./reports/operationsReport.repository.js";
-import { OperationsReportService } from "./reports/operationsReport.service.js";
-import { createOperationsReportRoutes } from "./reports/operationsReport.routes.js";
 import { AccountRolesService } from "./people/accountRoles.service.js";
 import { createAccountRolesRoutes } from "./people/accountRoles.routes.js";
 import { EmployeeService } from "./people/employee.service.js";
 import { createEmployeeRoutes } from "./people/employee.routes.js";
+import { ScheduleModel } from "./schedules/schedule.model.js";
 import { ScheduleRepository } from "./schedules/schedule.repository.js";
 import { ScheduleService } from "./schedules/schedule.service.js";
 import { createScheduleRoutes } from "./schedules/schedule.routes.js";
@@ -46,6 +46,8 @@ import { PersonModel } from "./people/person.model.js";
 import { authorizer } from "./people/access/authorizer.js";
 import { FinancialScenarioService } from "./finance/scenario.service.js";
 import { createScenarioRoutes } from "./finance/scenario.routes.js";
+import { ConfigurationSearchService } from "./finance/configurationSearch.service.js";
+import { createConfigurationSearchRoutes } from "./finance/configurationSearch.routes.js";
 
 export function createApiRouter({
   groupRepository = new GroupRepository({ groupModel: GroupModel }),
@@ -68,13 +70,6 @@ export function createApiRouter({
   if (authModule) {
     router.use("/auth", authModule.router ?? authModule);
     router.use(
-      "/finance/scenarios",
-      createScenarioRoutes({
-        service: new FinancialScenarioService({ authorizer }),
-        authService: authModule.authService,
-      }),
-    );
-    router.use(
       "/schedules",
       createScheduleRoutes({
         service: new ScheduleService({
@@ -95,6 +90,20 @@ export function createApiRouter({
         authService: authModule.authService,
       }),
     );
+    router.use(
+      "/finance/scenarios",
+      createScenarioRoutes({
+        service: new FinancialScenarioService({ authorizer }),
+        authService: authModule.authService,
+      }),
+    );
+    router.use(
+      "/finance/scenarios",
+      createConfigurationSearchRoutes({
+        service: new ConfigurationSearchService({ authorizer }),
+        authService: authModule.authService,
+      }),
+    );
     const financialCatalogService = new FinancialCatalogService({
       catalogRepository: settingsRepository,
       authorizer,
@@ -108,21 +117,6 @@ export function createApiRouter({
       }),
     );
     if (authModule.unitOfWork) {
-      const operationsReportService = new OperationsReportService({
-        reportRepository: new OperationsReportRepository({
-          childModel: ChildModel,
-          scheduleModel: ScheduleModel,
-          expenseModel: ExpenseModel,
-        }),
-        authorizer,
-      });
-      router.use(
-        "/reports",
-        createOperationsReportRoutes({
-          service: operationsReportService,
-          authService: authModule.authService,
-        }),
-      );
       const financeReportService = new FinanceReportService({
         reportRepository: new FinanceReportRepository({
           invoiceModel: InvoiceModel,
@@ -139,6 +133,21 @@ export function createApiRouter({
         "/reports/finance",
         createFinanceReportRoutes({
           service: financeReportService,
+          authService: authModule.authService,
+        }),
+      );
+      const operationsReportService = new OperationsReportService({
+        reportRepository: new OperationsReportRepository({
+          childModel: ChildModel,
+          scheduleModel: ScheduleModel,
+          expenseModel: ExpenseModel,
+        }),
+        authorizer,
+      });
+      router.use(
+        "/reports",
+        createOperationsReportRoutes({
+          service: operationsReportService,
           authService: authModule.authService,
         }),
       );
