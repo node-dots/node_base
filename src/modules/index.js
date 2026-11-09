@@ -44,6 +44,8 @@ import { createScheduleRoutes } from "./schedules/schedule.routes.js";
 import { ScheduleSnapshotProvider } from "./schedules/schedule.snapshot.js";
 import { PersonModel } from "./people/person.model.js";
 import { authorizer } from "./people/access/authorizer.js";
+import { FinancialScenarioService } from "./finance/scenario.service.js";
+import { createScenarioRoutes } from "./finance/scenario.routes.js";
 
 export function createApiRouter({
   groupRepository = new GroupRepository({ groupModel: GroupModel }),
@@ -65,6 +67,13 @@ export function createApiRouter({
   router.use("/groups", groupModule.router);
   if (authModule) {
     router.use("/auth", authModule.router ?? authModule);
+    router.use(
+      "/finance/scenarios",
+      createScenarioRoutes({
+        service: new FinancialScenarioService({ authorizer }),
+        authService: authModule.authService,
+      }),
+    );
     router.use(
       "/schedules",
       createScheduleRoutes({

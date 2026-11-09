@@ -15,6 +15,7 @@ import { registerInvoiceDocumentation } from "../modules/invoices/invoice.openap
 import { registerPaymentDocumentation } from "../modules/payments/payment.openapi.js";
 import { registerFinanceReportDocumentation } from "../modules/reports/financeReport.openapi.js";
 import { registerExpenseDocumentation } from "../modules/expenses/expense.openapi.js";
+import { registerScenarioDocumentation } from "../modules/finance/scenario.openapi.js";
 import { registerOperationsReportDocumentation } from "../modules/reports/operationsReport.openapi.js";
 
 export function createOpenApiDocument() {
@@ -32,6 +33,7 @@ export function createOpenApiDocument() {
   registerPaymentDocumentation(registry);
   registerFinanceReportDocumentation(registry);
   registerExpenseDocumentation(registry);
+  registerScenarioDocumentation(registry);
   registerOperationsReportDocumentation(registry);
 
   return new OpenApiGeneratorV31(registry.definitions).generateDocument({
