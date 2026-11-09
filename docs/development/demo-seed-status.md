@@ -1,5 +1,11 @@
 ﻿# TASK-039 demo seed
 
+## Latest verification (2026-11-09)
+
+The documented startup was run twice against the allowlisted `kindergarten_seed_test` MongoDB 8 replica set without dropping the database or volume. The second run inserted zero base groups/catalog entries and retained 2 scoped parents, 11 employees, 3 active scenario groups, 22 children, 5 invoices, confirmed/pending payments, one confirmed refund, three expense states, one published schedule and one draft. The real monthly report returned accrued income `4,680,000`, net receipts `1,500,000`, approved expenses `250,000` and cash flow `1,250,000` minor units for `2026-11`.
+
+Swagger UI was opened in Microsoft Edge; see [TASK-040 evidence](../evidence/task-040-verification.md). This verification did not constitute the required team demonstration.
+
 `npm run seed` creates a synthetic, repeatable demo scenario in the explicitly allowlisted `kindergarten_dev` or `kindergarten_seed_test` database. It first inserts the stable base catalog and groups with `$setOnInsert`, then uses MongoDB-backed application services for people, employee profiles, group activation, child applications and enrollment, invoices, payments, refunds, expenses, and schedule publication. Each business command keeps its normal authorization, transaction, validation, and audit behavior.
 
 The seed never clears a database and does not replace existing people, child profiles, account passwords, or group names. If a stable demo identity or resource has an incompatible manual change, the seed stops with an error instead of moving or overwriting it. The seed accepts only the two database names above for manual runs. Integration tests may use a unique `kindergarten_test_<32 hex>` database name; each test owns and drops only its generated database. The seed does not accept a caller-provided MongoDB URI.
