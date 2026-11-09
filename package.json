@@ -19,7 +19,7 @@
     "format:check": "prettier --check --end-of-line auto \"src/**/*.js\" \"scripts/**/*.js\" \"tests/**/*.js\"",
     "infra:up": "docker compose up -d",
     "infra:down": "docker compose down",
-    "seed": "node scripts/seed.js",
+    "seed": "node --env-file-if-exists=.env scripts/seed.js",
     "migrate:groups": "node scripts/migrate-groups.js",
     "migrate:catalog-versions": "node scripts/migrate-catalog-versions.js",
     "bootstrap:admin": "node --env-file-if-exists=.env scripts/bootstrap-admin.js",
