@@ -1,17 +1,49 @@
-﻿# Demo seed status
+﻿# TASK-039 demo seed
 
-Updated 2026-11-05.
+`npm run seed` creates a synthetic, repeatable demo scenario in the explicitly allowlisted `kindergarten_dev` or `kindergarten_seed_test` database. It first inserts the stable base catalog and groups with `$setOnInsert`, then uses MongoDB-backed application services for people, employee profiles, group activation, child applications and enrollment, invoices, payments, refunds, expenses, and schedule publication. Each business command keeps its normal authorization, transaction, validation, and audit behavior.
 
-## Verified seed behavior
+The seed never clears a database and does not replace existing people, child profiles, account passwords, or group names. If a stable demo identity or resource has an incompatible manual change, the seed stops with an error instead of moving or overwriting it. The seed accepts only the two database names above for manual runs. Integration tests may use a unique `kindergarten_test_<32 hex>` database name; each test owns and drops only its generated database. The seed does not accept a caller-provided MongoDB URI.
 
-`npm run seed` is allowlisted to `kindergarten_dev` and `kindergarten_seed_test`. The test database was seeded twice using the Docker MongoDB replica set. The first run inserted 8 demo groups and 46 catalog records. The second inserted no duplicates. A manual edit to a seeded group remained after the rerun. The test used synthetic data only.
+## Setup and run
 
-The seed remains idempotent and insert-only: it creates the initial catalog and demo groups and does not overwrite existing fields.
+Set these local environment values in `.env` (keep that file out of Git):
 
-## TASK-039 still incomplete
+```dotenv
+BOOTSTRAP_ADMIN_EMAIL=admin@example.test
+BOOTSTRAP_ADMIN_PASSWORD=<private password of at least 12 characters>
+BOOTSTRAP_ADMIN_FIRST_NAME=Demo
+BOOTSTRAP_ADMIN_LAST_NAME=Administrator
+DEMO_PARENT_PASSWORD=<private password of at least 12 characters>
+```
 
-The seed does not create people with parent accounts, children and enrollments, invoices, payments/refunds, expenses, or a published schedule. The full end-to-end dataset is not complete.
+Use the normal `MONGO_URI` from the local development setup for the admin bootstrap command. Then run:
 
-Do not add raw database inserts for dependent business records. A safe full seed needs supported domain provisioning for synthetic people/accounts and then must run the same group, child, enrollment, invoice, payment, expense, and schedule commands as the application. It also needs an allowlisted test database, repeatability checks, and proof that manual changes survive reruns.
+```powershell
+npm run bootstrap:admin
+$env:SEED_DATABASE = "kindergarten_seed_test"
+npm run seed
+npm run seed
+```
 
-Bootstrap ADMIN is configured separately through local environment variables. Never commit its password or other credentials.
+Use `kindergarten_dev` instead of `kindergarten_seed_test` when you want the data in the local development database. The `seed` command starts the Compose MongoDB replica set and loads `.env`; the application must have an enabled ADMIN account before it runs.
+
+## Expected scenario
+
+The scenario contains two synthetic parent accounts, eleven employee profiles, three active groups, and twenty-two children. One group is full, one has no children, and one is partially occupied. Parent accounts have separate child scopes. The annual-billing child is withdrawn after an annual payment so the refund workflow can be demonstrated.
+
+The seed creates monthly tuition and meal invoices plus one annual tuition invoice; one monthly receipt remains pending, another is confirmed, and the annual receipt is refunded after withdrawal. Eligible synthetic children are enrolled on the previous day within the active school year so the current month has reportable accrued invoices; the annual-refund child remains on a future billing start. It also creates a paid rent expense, an active draft food expense, a cancelled draft expense, a published weekly schedule with thirty program slots, and an editable one-slot draft for the following week. The seed prints the actual finance report totals from MongoDB rather than hard-coding them in this document.
+
+After the first run, the second run must retain the same demo child and invoice counts, payment/refund statuses, draft and cancelled expense states, published and draft schedules, and group occupancy. In particular, rerunning the seed must not restore the cancelled expense or add another receipt or refund.
+
+The MongoDB integration test starts the real API router against the seeded database, logs in as the synthetic ADMIN and both parents, and checks own/foreign child scope, invoices, refund history, finance and expense reports, draft/published schedules, financial forecast/breakeven/configuration search, and schedule generation over HTTP. It checks that forecast assumptions and the search/generator budget data are returned.
+
+## Swagger demo
+
+Start the API with `npm run dev`, then open `/api-docs/`.
+
+1. Sign in with the local ADMIN account and inspect `GET /api/v1/groups` and `GET /api/v1/groups/summary`. Confirm the full, empty, and partially occupied groups.
+2. Sign in as `demo.parent1@example.test`. Use the printed child IDs with `GET /api/v1/children/{id}` and `GET /api/v1/invoices/children/{childId}`; confirm this parent gets `404` for the other parent's child.
+3. Sign in as `demo.parent2@example.test`. Inspect the annual child's invoice. With the printed annual payment ID, `GET /api/v1/payments/{paymentId}/refunds` returns its confirmed refund.
+4. As ADMIN, inspect `GET /api/v1/reports/finance/monthly?month={month}`, `GET /api/v1/expenses/totals?month={month}`, `GET /api/v1/schedules/{weekStart}/draft` for the following week's editable draft, and `GET /api/v1/schedules/{weekStart}/published` for the current published snapshot. The seed prints the relevant weeks.
+
+Both demo-parent passwords are supplied only through `DEMO_PARENT_PASSWORD`. The seed stores a password hash and this repository contains no usable demo credential.
