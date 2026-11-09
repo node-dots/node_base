@@ -55,6 +55,12 @@ export class GroupRepository {
     };
   }
 
+  async findActiveForSnapshot({ session } = {}) {
+    let query = this.groupModel.find({ status: "ACTIVE" }).sort({ _id: 1 });
+    if (session) query = query.session(session);
+    return (await query.lean()).map(toGroup);
+  }
+
   async findOccupancyPage({
     page,
     pageSize,
@@ -118,12 +124,6 @@ export class GroupRepository {
     const documents = result?.groups ?? [];
     const total = result?.metadata?.[0]?.total ?? 0;
     return { groups: documents.map(toGroup), total };
-  }
-
-  async findActiveForSnapshot({ session } = {}) {
-    let query = this.groupModel.find({ status: "ACTIVE" }).sort({ _id: 1 });
-    if (session) query = query.session(session);
-    return (await query.lean()).map(toGroup);
   }
 
   async findById(groupId, { scope } = {}) {

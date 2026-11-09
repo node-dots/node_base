@@ -30,11 +30,14 @@ import { ExpenseRepository } from "./expenses/expense.repository.js";
 import { ExpenseService } from "./expenses/expense.service.js";
 import { createExpenseRoutes } from "./expenses/expense.routes.js";
 import { OpenMonthService } from "./expenses/openMonth.service.js";
+import { ScheduleModel } from "./schedules/schedule.model.js";
+import { OperationsReportRepository } from "./reports/operationsReport.repository.js";
+import { OperationsReportService } from "./reports/operationsReport.service.js";
+import { createOperationsReportRoutes } from "./reports/operationsReport.routes.js";
 import { AccountRolesService } from "./people/accountRoles.service.js";
 import { createAccountRolesRoutes } from "./people/accountRoles.routes.js";
 import { EmployeeService } from "./people/employee.service.js";
 import { createEmployeeRoutes } from "./people/employee.routes.js";
-import { ScheduleModel } from "./schedules/schedule.model.js";
 import { ScheduleRepository } from "./schedules/schedule.repository.js";
 import { ScheduleService } from "./schedules/schedule.service.js";
 import { createScheduleRoutes } from "./schedules/schedule.routes.js";
@@ -96,6 +99,21 @@ export function createApiRouter({
       }),
     );
     if (authModule.unitOfWork) {
+      const operationsReportService = new OperationsReportService({
+        reportRepository: new OperationsReportRepository({
+          childModel: ChildModel,
+          scheduleModel: ScheduleModel,
+          expenseModel: ExpenseModel,
+        }),
+        authorizer,
+      });
+      router.use(
+        "/reports",
+        createOperationsReportRoutes({
+          service: operationsReportService,
+          authService: authModule.authService,
+        }),
+      );
       const financeReportService = new FinanceReportService({
         reportRepository: new FinanceReportRepository({
           invoiceModel: InvoiceModel,
