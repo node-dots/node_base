@@ -63,6 +63,28 @@ export class PaymentRepository {
       : null;
   }
 
+  async findPageForPeriod({ start, end, page, pageSize }) {
+    const filter = {
+      $or: [
+        { occurredAt: { $gte: start, $lt: end } },
+        {
+          occurredAt: { $exists: false },
+          reportedAt: { $gte: start, $lt: end },
+        },
+      ],
+    };
+    const [documents, total] = await Promise.all([
+      this.paymentModel
+        .find(filter)
+        .sort({ occurredAt: -1, reportedAt: -1, _id: 1 })
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
+        .lean(),
+      this.paymentModel.countDocuments(filter),
+    ]);
+    return { payments: documents.map(toPayment), total };
+  }
+
   async confirmPending(
     paymentId,
     { occurredAt, confirmedAt, reviewedById },

@@ -7,6 +7,27 @@ import {
 import { z as zod } from "../../openapi/zod.js";
 
 export function registerPaymentDocumentation(registry) {
+  registry.registerPath({
+    method: "get",
+    path: "/api/v1/payments",
+    operationId: "listPaymentsForMonth",
+    tags: ["Payments"],
+    security: [{ BearerAuth: [] }],
+    request: {
+      query: zod.strictObject({
+        month: zod.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/),
+        page: zod.coerce.number().int().min(1).default(1),
+        pageSize: zod.coerce.number().int().min(1).max(100).default(50),
+      }),
+    },
+    responses: {
+      [HTTP_STATUS.OK]: {
+        description:
+          "Administrator-only paginated payment list for a service month.",
+      },
+      [HTTP_STATUS.FORBIDDEN]: { description: "Insufficient permission." },
+    },
+  });
   registry.register("CreatePendingPaymentInput", createPendingPaymentSchema);
   registry.register("ConfirmPaymentInput", confirmPaymentSchema);
   registry.register("RefundPaymentInput", refundPaymentSchema);

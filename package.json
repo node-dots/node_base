@@ -13,6 +13,7 @@
     "start": "node --env-file-if-exists=.env src/server.js",
     "test": "node --test",
     "test:mongodb": "node scripts/check-mongodb.js",
+    "test:panel-browser": "node scripts/check-developer-panel-browser.js",
     "check:syntax": "node scripts/check-syntax.js",
     "check": "npm run format:check && npm run check:syntax && npm test",
     "format": "prettier --write \"src/**/*.js\" \"scripts/**/*.js\" \"tests/**/*.js\"",
@@ -44,6 +45,7 @@
     "zod": "^4.0.0"
   },
   "devDependencies": {
+    "playwright-core": "1.65.0",
     "prettier": "3.9.10"
   }
 }

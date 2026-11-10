@@ -245,6 +245,22 @@ export class InvoiceRepository {
     ).map(toInvoice);
   }
 
+  async findPageForMonth({ month, page, pageSize }) {
+    const filter = {
+      $or: [{ serviceMonth: month }, { "parts.month": month }],
+    };
+    const [documents, total] = await Promise.all([
+      this.invoiceModel
+        .find(filter)
+        .sort({ serviceMonth: -1, service: 1, _id: 1 })
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
+        .lean(),
+      this.invoiceModel.countDocuments(filter),
+    ]);
+    return { invoices: documents.map(toInvoice), total };
+  }
+
   async aggregateCurrentBalances({ asOf, guardianId } = {}) {
     const pipeline = [];
     if (guardianId) {

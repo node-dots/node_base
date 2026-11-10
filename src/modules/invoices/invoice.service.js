@@ -38,6 +38,7 @@ export class InvoiceService {
     });
     authorizer.assertKnown(PERMISSIONS.INVOICES_CREATE);
     authorizer.assertKnown(PERMISSIONS.INVOICES_READ);
+    authorizer.assertKnown(PERMISSIONS.REPORTS_FINANCE_READ);
   }
 
   async generateForCurrentMonth(childId, actor, requestId) {
@@ -453,6 +454,24 @@ export class InvoiceService {
     )
       throw new ResourceNotFoundError("CHILD_NOT_FOUND", "Child not found");
     return this.invoiceRepository.listByChild(childId);
+  }
+
+  async listForMonth({ month, page, pageSize }, actor) {
+    this.authorizer.assertPermission(actor, PERMISSIONS.REPORTS_FINANCE_READ);
+    const { invoices, total } = await this.invoiceRepository.findPageForMonth({
+      month,
+      page,
+      pageSize,
+    });
+    return {
+      invoices,
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    };
   }
 
   async getCurrentBalances(actor) {

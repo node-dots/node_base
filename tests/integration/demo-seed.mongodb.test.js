@@ -172,6 +172,54 @@ test(
         const groupsResponse = await get("/api/v1/groups/summary", adminToken);
         assert.equal(groupsResponse.status, 200);
         assert.ok((await groupsResponse.json()).data.length > 0);
+        const employeeListResponse = await get(
+          "/api/v1/people/employees?page=1&pageSize=100",
+          adminToken,
+        );
+        assert.equal(employeeListResponse.status, 200);
+        const employeeList = (await employeeListResponse.json()).data;
+        assert.ok(employeeList.employees.length > 0);
+        assert.equal(
+          employeeList.pagination.total,
+          employeeList.employees.length,
+        );
+        assert.ok(
+          employeeList.employees.some(
+            ({ employee }) => employee?.salaryMinor !== undefined,
+          ),
+        );
+        assert.equal(
+          (
+            await get(
+              "/api/v1/people/employees?page=1&pageSize=100",
+              parentOneToken,
+            )
+          ).status,
+          403,
+        );
+        for (const [resource, collection] of [
+          ["invoices", "invoices"],
+          ["payments", "payments"],
+          ["expenses", "expenses"],
+        ]) {
+          const listResponse = await get(
+            `/api/v1/${resource}?month=${second.finance.month}&page=1&pageSize=100`,
+            adminToken,
+          );
+          assert.equal(listResponse.status, 200);
+          const list = (await listResponse.json()).data;
+          assert.ok(Array.isArray(list[collection]));
+          assert.equal(list.pagination.total, list[collection].length);
+          assert.equal(
+            (
+              await get(
+                `/api/v1/${resource}?month=${second.finance.month}&page=1&pageSize=100`,
+                parentOneToken,
+              )
+            ).status,
+            403,
+          );
+        }
         const financeResponse = await get(
           `/api/v1/reports/finance/monthly?month=${second.finance.month}`,
           adminToken,

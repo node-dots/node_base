@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { z as zod } from "../../openapi/zod.js";
 import { validateParams } from "../../middleware/validateParams.js";
+import { validateQuery } from "../../middleware/validateQuery.js";
 import { createAuthenticationMiddleware } from "../auth/auth.middleware.js";
 import { createRequirePermission } from "../../middleware/requirePermission.js";
 import { authorizer } from "../people/access/authorizer.js";
@@ -13,12 +14,38 @@ const childIdParams = zod.strictObject({
 const annualBody = zod.strictObject({
   firstMonth: zod.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/),
 });
+const listQuery = zod.strictObject({
+  month: zod.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/),
+  page: zod.coerce.number().int().min(1).default(1),
+  pageSize: zod.coerce.number().int().min(1).max(100).default(50),
+});
 
 export function createInvoiceRoutes({ service, authService }) {
   if (!authService)
     throw new TypeError("authService is required for invoice routes");
   const router = Router();
   const authenticate = createAuthenticationMiddleware({ authService });
+  router.get(
+    "/",
+    authenticate,
+    createRequirePermission({
+      authorizer,
+      permission: PERMISSIONS.REPORTS_FINANCE_READ,
+    }),
+    validateQuery(listQuery),
+    async (request, response, next) => {
+      try {
+        response.json({
+          data: await service.listForMonth(
+            request.validatedQuery,
+            request.actor,
+          ),
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
   router.get(
     "/current-balances",
     authenticate,

@@ -85,6 +85,25 @@ export class EmployeeService {
     return toEmployeeProfileDto(person, actor.roles.includes(ROLES.ADMIN));
   }
 
+  async list({ page, pageSize }, actor) {
+    this.authorizer.assertPermission(actor, PERMISSIONS.PEOPLE_READ);
+    const { employees, total } = await this.personRepository.findEmployeePage({
+      page,
+      pageSize,
+    });
+    return {
+      employees: employees.map((person) =>
+        toEmployeeProfileDto(person, actor.roles.includes(ROLES.ADMIN)),
+      ),
+      pagination: {
+        page,
+        pageSize,
+        total,
+        totalPages: Math.ceil(total / pageSize),
+      },
+    };
+  }
+
   async update(personId, input, actor, requestId) {
     const isSelf =
       actor.id === personId &&

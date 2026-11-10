@@ -12,6 +12,26 @@ export function registerExpenseDocumentation(registry) {
   registry.register("PayExpenseInput", payExpenseSchema);
   const secured = [{ BearerAuth: [] }];
   registry.registerPath({
+    method: "get",
+    path: "/api/v1/expenses",
+    operationId: "listExpensesForMonth",
+    tags: ["Expenses"],
+    security: secured,
+    request: {
+      query: zod.strictObject({
+        month: zod.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/),
+        page: zod.coerce.number().int().min(1).default(1),
+        pageSize: zod.coerce.number().int().min(1).max(100).default(50),
+      }),
+    },
+    responses: {
+      [HTTP_STATUS.OK]: {
+        description: "Paginated expense records for a service month.",
+      },
+      [HTTP_STATUS.FORBIDDEN]: { description: "Insufficient permission." },
+    },
+  });
+  registry.registerPath({
     method: "post",
     path: "/api/v1/expenses/open-current-month",
     operationId: "openCurrentFinanceMonth",
