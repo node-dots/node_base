@@ -298,7 +298,7 @@ export class GroupRepository {
       .findByIdAndUpdate(
         groupId,
         { $set: update },
-        { new: true, runValidators: true, session },
+        { returnDocument: "after", runValidators: true, session },
       )
       .lean();
     return document ? toGroup(document) : null;
@@ -313,7 +313,7 @@ export class GroupRepository {
         $expr: { $lt: [{ $ifNull: ["$occupiedSeats", 0] }, "$capacity"] },
       },
       { $inc: { occupiedSeats: 1 } },
-      { new: true, runValidators: true, session },
+      { returnDocument: "after", runValidators: true, session },
     );
     const document = await query.lean();
     return document ? toGroup(document) : null;
@@ -324,7 +324,7 @@ export class GroupRepository {
     let query = this.groupModel.findOneAndUpdate(
       { _id: groupId, occupiedSeats: { $gt: 0 } },
       { $inc: { occupiedSeats: -1 } },
-      { new: true, runValidators: true, session },
+      { returnDocument: "after", runValidators: true, session },
     );
     return Boolean(await query.lean());
   }
