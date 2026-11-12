@@ -129,7 +129,7 @@ export class CatalogRepository {
       .findOneAndUpdate(
         { kind: CATALOG_KIND.SETTINGS, code: "ACCOUNT_ADMIN_GUARD" },
         { $inc: { revision: 1 } },
-        { new: true, runValidators: true, session },
+        { returnDocument: "after", runValidators: true, session },
       )
       .lean();
     if (!document) throw new Error("ACCOUNT_ADMIN_GUARD is not initialized");
@@ -162,7 +162,7 @@ export class CatalogRepository {
       .findOneAndUpdate(
         { kind: CATALOG_KIND.SETTINGS, code: "EMPLOYEE_RESOURCE_GUARD" },
         { $inc: { revision: 1 } },
-        { new: true, runValidators: true, session },
+        { returnDocument: "after", runValidators: true, session },
       )
       .lean();
     if (!document)
@@ -196,7 +196,7 @@ export class CatalogRepository {
       .findOneAndUpdate(
         { kind: CATALOG_KIND.SETTINGS, code: "SCHEDULE_RESOURCE_GUARD" },
         { $inc: { revision: 1 } },
-        { new: true, runValidators: true, session },
+        { returnDocument: "after", runValidators: true, session },
       )
       .lean();
     if (!document)

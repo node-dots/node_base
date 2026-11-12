@@ -1,9 +1,11 @@
 import { z as zod } from "../../openapi/zod.js";
 import { HTTP_STATUS } from "../../utils/httpConstants.js";
-import { catalogEntrySchema } from "./catalog.schema.js";
+import { versionedCatalogEntrySchema } from "./catalog.schema.js";
+
+const versionedKinds = ["TUITION_RATE", "MEAL_RATE", "BENEFIT", "PROGRAM"];
 
 export function registerFinancialCatalogDocumentation(registry) {
-  registry.register("CatalogVersion", catalogEntrySchema);
+  registry.register("CatalogVersion", versionedCatalogEntrySchema);
   registry.registerPath({
     method: "post",
     path: "/api/v1/catalog/versions",
@@ -13,7 +15,9 @@ export function registerFinancialCatalogDocumentation(registry) {
     request: {
       body: {
         required: true,
-        content: { "application/json": { schema: catalogEntrySchema } },
+        content: {
+          "application/json": { schema: versionedCatalogEntrySchema },
+        },
       },
     },
     responses: {
@@ -33,7 +37,10 @@ export function registerFinancialCatalogDocumentation(registry) {
     tags: ["Catalog"],
     security: [{ BearerAuth: [] }],
     request: {
-      params: zod.object({ kind: zod.string(), code: zod.string() }),
+      params: zod.object({
+        kind: zod.enum(versionedKinds),
+        code: zod.string(),
+      }),
       query: zod.object({ date: zod.string() }),
     },
     responses: {

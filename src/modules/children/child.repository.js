@@ -115,7 +115,7 @@ export class ChildRepository {
       .findByIdAndUpdate(
         childId,
         { $set: membershipUpdate },
-        { new: true, runValidators: true, session },
+        { returnDocument: "after", runValidators: true, session },
       )
       .lean();
     return document ? toChild(document) : null;
@@ -131,7 +131,7 @@ export class ChildRepository {
       .findByIdAndUpdate(
         childId,
         { $set: { benefitAssignments } },
-        { new: true, runValidators: true, session },
+        { returnDocument: "after", runValidators: true, session },
       )
       .lean();
     return document ? toChild(document) : null;
@@ -147,7 +147,7 @@ export class ChildRepository {
           "withdrawalSummary.refundDueCents": { $gte: amountCents },
         },
         { $inc: { "withdrawalSummary.refundDueCents": -amountCents } },
-        { new: true, runValidators: true, session },
+        { returnDocument: "after", runValidators: true, session },
       )
       .lean();
     return document ? toChild(document) : null;

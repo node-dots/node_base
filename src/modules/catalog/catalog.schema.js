@@ -107,6 +107,13 @@ export const programCatalogSchema = zod.strictObject({
     .max(100),
 });
 
+export const versionedCatalogEntrySchema = zod.union([
+  tuitionRateSchema,
+  mealRateSchema,
+  benefitCatalogSchema,
+  programCatalogSchema,
+]);
+
 export const catalogEntrySchema = zod.union([
   ageCategoryCatalogSchema,
   roomCatalogSchema,

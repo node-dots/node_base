@@ -15,6 +15,9 @@
 - [Tracing у Jaeger](docs/development/05_Local_Telemetry.md).
 - [Карта сутностей майбутньої системи](docs/architecture/04_Entity_Diagrams.md).
 - [Стан реалізації та наступні кроки](docs/planning/plans/Implementation_Plan.md).
+- [Postman/Newman: локальний запуск та імпорт у Desktop](docs/testing/POSTMAN_GUIDE_UA.md).
+- [Фактичний фінальний статус](docs/testing/FINAL_PROJECT_STATUS.md).
+- [Сценарій захисту](docs/testing/DEFENSE_SCENARIO.md).
 
 [Пагінація груп: контракт і приклади](docs/api/groups-pagination.md).
 
@@ -24,19 +27,18 @@
 
 ## Що працює
 
-| Метод і шлях | Результат |
-|---|---|
-| GET /health/live | Стан процесу |
-| GET /health/ready | Перевірка з’єднання й ping MongoDB: 200 READY або 503 NOT_READY |
-| GET /api/v1 | Назва, версія та посилання на Swagger/OpenAPI |
-| GET /api/v1/groups | Сторінка груп із MongoDB; page/pageSize та meta.page/pageSize/total/totalPages |
-| GET /api/v1/groups/:id | Група зі строковим id |
-| POST /api/v1/groups | Створення DRAFT-групи та HTTP 201 |
-| GET /api/v1/groups/summary | Aggregation: кількість груп і місткість за віком |
-| GET /api/v1/openapi.json | Поточний OpenAPI-контракт |
-| GET /api-docs/ | Локальний Swagger UI |
+Реалізовано 65 OpenAPI-операцій: health/readiness, JWT authentication, accounts/roles, people/employees, catalog, groups, children, enrollment, financial rules/benefits, invoices, payments, refunds, expenses/payroll, schedules, financial and operational reports, forecast та configuration search. Дані зберігаються в MongoDB replica set; грошові й membership-операції використовують транзакції, Zod-контракти та role/scope permissions.
 
-Записи зберігаються після перезапуску Node.js. Seed додає 8 вигаданих груп і зберігає ручні зміни. API використовує ту саму kindergarten_dev.groups, яку видно в PhpStorm. Пагінацію списку груп реалізовано: page=1 і pageSize=20 за замовчуванням, максимальний pageSize=100. Некоректні параметри повертають 400; сторінка за межами списку — порожній data. Авторизація та інші бізнес-модулі ще не реалізовані.
+Основні локальні адреси після `npm start`:
+
+| Адреса | Призначення |
+|---|---|
+| `http://127.0.0.1:3000/health/live` | Стан процесу |
+| `http://127.0.0.1:3000/health/ready` | MongoDB readiness |
+| `http://127.0.0.1:3000/api-docs/` | Swagger UI |
+| `http://127.0.0.1:3000/api/v1/openapi.json` | Актуальний OpenAPI JSON |
+
+`npm run seed` і bootstrap зберігають наявні записи та працюють лише з дозволеними development/test базами. Секрети й паролі задаються через runtime environment, а не зберігаються в репозиторії.
 
 Helmet, загальний rate limit, окремий ліміт запису, обмеження JSON, HTTP-тайм-аути та безпечні помилки збережені. Tracing показує один HTTP-span на запит і дозволяє dev-перегляд JSON запиту/відповіді з маскуванням секретних полів. У бізнес-модулях немає tracing-коду.
 
@@ -44,6 +46,9 @@ Helmet, загальний rate limit, окремий ліміт запису, �
 
 - npm run check — форматування, синтаксис і тести без Docker.
 - npm run test:mongodb — окрема перевірка на запущеній MongoDB, ізольована випадкова база.
+- npm run test:panel-browser — браузерні стани та реальний ADMIN/API/MongoDB сценарій панелі.
+- npm run test:postman — 20 папок, усі OpenAPI-операції, security/error cases і повний HTTP E2E через Newman.
+- npm run test:all — послідовний запуск усіх перелічених перевірок.
 
 Числові обмеження й коди визначені константами. Код та коментарі українською; ідентифікатори англійською. Великі наступні функції додаємо невеликими завершеними сценаріями.
 
