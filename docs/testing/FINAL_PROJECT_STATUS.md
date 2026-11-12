@@ -9,6 +9,8 @@
 - Відкриті Issues: #6 TASK-001, #15 TASK-010, #62 TASK-040.
 - TASK-037 / #59 закрито лише після merged PR #106 і повторного browser/API acceptance evidence.
 - `main` не змінено. Фінальна інтеграція виконується feature branch → PR у `develop`.
+- Відкритий PR: [#108 · TASK-040: add complete Postman validation and defense package](https://github.com/node-dots/node_base/pull/108). Він mergeable, але потребує незалежного review.
+- Усі чотири CI jobs PR #108 успішні: Code checks, MongoDB integration, Postman API end-to-end і macOS checks/MongoDB integration.
 
 TASK-001 потребує фактичного погодження контрактів тімлідом і командою. TASK-010 має результати формул і тестові числа, але потребує незалежного S7 review. TASK-040 має технічний пакет і відтворюваний E2E, але спільна демонстрація S1–S8 ще не проведена, тому Done не заявляється.
 
