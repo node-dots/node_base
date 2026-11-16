@@ -65,7 +65,7 @@ export class ExpenseRepository {
   async #transition(id, filter, update, { session } = {}) {
     const doc = await this.expenseModel
       .findOneAndUpdate({ _id: id, ...filter }, update, {
-        new: true,
+        returnDocument: "after",
         runValidators: true,
         session,
       })

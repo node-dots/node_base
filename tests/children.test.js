@@ -54,7 +54,12 @@ test("керовані enrollment-поля не приймаються в create
 test("DOB є календарною датою та не може бути майбутньою", () => {
   assert.throws(
     () => prepareApplicant(applicant({ dateOfBirth: "2026-10-23" }), { clock }),
-    /future/,
+    (error) => {
+      assert.equal(error.name, "BusinessError");
+      assert.equal(error.code, "INVALID_DATE_OF_BIRTH");
+      assert.match(error.message, /future/);
+      return true;
+    },
   );
   assert.throws(() =>
     prepareApplicant(applicant({ dateOfBirth: "2024-02-30" }), { clock }),

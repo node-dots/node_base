@@ -64,7 +64,7 @@ export class ScheduleRepository {
           $inc: { revision: 1 },
         },
         {
-          new: true,
+          returnDocument: "after",
           upsert: expectedRevision === 0,
           runValidators: true,
           setDefaultsOnInsert: true,
@@ -79,7 +79,7 @@ export class ScheduleRepository {
       .findOneAndUpdate(
         { weekStart, revision: expectedRevision },
         { $set: { published } },
-        { new: true, runValidators: true, session },
+        { returnDocument: "after", runValidators: true, session },
       )
       .lean();
     return document ? toSchedule(document) : null;

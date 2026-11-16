@@ -77,6 +77,13 @@ web_modules/
 .env.*
 !.env.example
 
+# Raw Postman/Newman artifacts may contain request details. Track only the
+# explicitly sanitized evidence files produced by scripts/run-postman-tests.js.
+postman/results/*
+!postman/results/.gitkeep
+!postman/results/postman-summary.json
+!postman/results/postman.junit.xml
+
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 .parcel-cache

@@ -79,7 +79,7 @@ export class InvoiceRepository {
             reservedMonths: [],
           },
         },
-        { new: true, runValidators: true, session },
+        { returnDocument: "after", runValidators: true, session },
       )
       .lean();
     return document ? toInvoice(document) : null;
@@ -201,7 +201,7 @@ export class InvoiceRepository {
             ...(isAnnual ? { "parts.$[].remainingCents": 0 } : {}),
           },
         },
-        { new: true, runValidators: true, session },
+        { returnDocument: "after", runValidators: true, session },
       )
       .lean();
     if (!document) return null;
@@ -210,7 +210,7 @@ export class InvoiceRepository {
         .findOneAndUpdate(
           { _id: invoiceId, status: "PARTIAL", remainingAmountCents: 0 },
           { $set: { status: "PAID" } },
-          { new: true, runValidators: true, session },
+          { returnDocument: "after", runValidators: true, session },
         )
         .lean();
       return paid ? toInvoice(paid) : toInvoice(document);
@@ -229,7 +229,7 @@ export class InvoiceRepository {
             refundedAmountCents: amountCents,
           },
         },
-        { new: true, runValidators: true, session },
+        { returnDocument: "after", runValidators: true, session },
       )
       .lean();
     return document ? toInvoice(document) : null;

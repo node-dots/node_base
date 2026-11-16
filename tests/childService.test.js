@@ -142,3 +142,40 @@ test("children HTTP routes require authentication and reject managed fields", as
     await new Promise((resolve) => server.close(resolve));
   }
 });
+
+test("children HTTP create maps a future DOB to a safe 422 error", async () => {
+  const auth = createTestAuthModule();
+  const api = Router();
+  api.use(
+    "/children",
+    createChildRoutes({
+      authService: auth.authService,
+      childService: service(),
+      membershipService: {},
+      benefitService: {},
+    }),
+  );
+  const server = createApp({ apiRouter: api }).listen(0, "127.0.0.1");
+  await new Promise((resolve, reject) => {
+    server.once("listening", resolve);
+    server.once("error", reject);
+  });
+  const baseUrl = `http://127.0.0.1:${server.address().port}/api/v1/children`;
+  try {
+    const response = await fetch(baseUrl, {
+      method: "POST",
+      headers: { ...testAuthHeaders(), "Content-Type": "application/json" },
+      body: JSON.stringify({
+        firstName: "Future",
+        lastName: "Child",
+        dateOfBirth: "2999-01-01",
+      }),
+    });
+    assert.equal(response.status, 422);
+    const body = await response.json();
+    assert.equal(body.error.code, "INVALID_DATE_OF_BIRTH");
+    assert.equal(JSON.stringify(body).includes("stack"), false);
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
+});

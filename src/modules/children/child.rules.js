@@ -4,10 +4,19 @@ import {
 } from "../../utils/calendar.js";
 import { CHILD_STATE_TRANSITIONS, CHILD_STATUS } from "./child.constants.js";
 import { createChildSchema, updateChildProfileSchema } from "./child.schema.js";
+import { BusinessError } from "../../utils/errors.js";
+
+function assertValidDateOfBirth(dateOfBirth, clock) {
+  try {
+    assertDateOfBirthNotInFuture(dateOfBirth, clock);
+  } catch (error) {
+    throw new BusinessError("INVALID_DATE_OF_BIRTH", error.message);
+  }
+}
 
 export function prepareApplicant(input, { clock = systemClock } = {}) {
   const applicant = createChildSchema.parse(input);
-  assertDateOfBirthNotInFuture(applicant.dateOfBirth, clock);
+  assertValidDateOfBirth(applicant.dateOfBirth, clock);
 
   return {
     ...applicant,
@@ -19,7 +28,7 @@ export function prepareApplicant(input, { clock = systemClock } = {}) {
 export function prepareChildProfileUpdate(input, { clock = systemClock } = {}) {
   const update = updateChildProfileSchema.parse(input);
   if (update.dateOfBirth !== undefined) {
-    assertDateOfBirthNotInFuture(update.dateOfBirth, clock);
+    assertValidDateOfBirth(update.dateOfBirth, clock);
   }
   return update;
 }

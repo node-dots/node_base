@@ -7,7 +7,7 @@ import { createAuthenticationMiddleware } from "../auth/auth.middleware.js";
 import { createRequirePermission } from "../../middleware/requirePermission.js";
 import { authorizer } from "../people/access/authorizer.js";
 import { PERMISSIONS } from "../../utils/access/permissions.js";
-import { catalogEntrySchema } from "./catalog.schema.js";
+import { versionedCatalogEntrySchema } from "./catalog.schema.js";
 import { CATALOG_KIND } from "./catalog.constants.js";
 
 const paramsSchema = zod.strictObject({
@@ -30,7 +30,7 @@ export function createFinancialCatalogRoutes({ service, authService }) {
       authorizer,
       permission: PERMISSIONS.CATALOG_CREATE,
     }),
-    validateBody(catalogEntrySchema),
+    validateBody(versionedCatalogEntrySchema),
     async (request, response, next) => {
       try {
         response.status(201).json({

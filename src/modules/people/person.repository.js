@@ -112,7 +112,7 @@ export class PersonRepository {
       .findByIdAndUpdate(
         personId,
         { $set: { employee } },
-        { new: true, runValidators: true, session },
+        { returnDocument: "after", runValidators: true, session },
       )
       .lean();
     return document ? toPerson(document) : null;
@@ -168,7 +168,7 @@ export class PersonRepository {
           $set: { "account.roles": roles },
           $inc: { "account.tokenVersion": 1 },
         },
-        { new: true, runValidators: true, session },
+        { returnDocument: "after", runValidators: true, session },
       )
       .lean();
     return document ? toPerson(document) : null;
@@ -190,7 +190,7 @@ export class PersonRepository {
           ? { $set: { "account.passwordHash": passwordHash } }
           : {}),
       },
-      { new: true, runValidators: true, session },
+      { returnDocument: "after", runValidators: true, session },
     );
     const document = await query.lean();
     return document ? toPerson(document) : null;

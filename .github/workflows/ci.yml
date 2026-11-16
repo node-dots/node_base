@@ -74,6 +74,39 @@ jobs:
         if: failure()
         run: docker logs task-mongodb
 
+  postman-api:
+    name: Postman API end-to-end
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Отримати код
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Налаштувати Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Встановити залежності
+        run: npm ci
+
+      - name: Виконати повний Postman/Newman сценарій
+        run: npm run test:postman
+
+      - name: Зберегти санітизовані результати
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: postman-results
+          path: |
+            postman/results/postman-summary.json
+            postman/results/postman.junit.xml
+          if-no-files-found: error
+
   macos-integration:
     name: macOS checks and MongoDB integration
     runs-on: macos-15

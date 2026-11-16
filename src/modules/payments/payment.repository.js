@@ -101,7 +101,7 @@ export class PaymentRepository {
             reviewedById,
           },
         },
-        { new: true, runValidators: true, session },
+        { returnDocument: "after", runValidators: true, session },
       )
       .lean();
     return document ? toPayment(document) : null;
@@ -116,7 +116,7 @@ export class PaymentRepository {
       .findOneAndUpdate(
         { _id: paymentId, status: "PENDING" },
         { $set: { status: "REJECTED", rejectedAt, reviewedById } },
-        { new: true, runValidators: true, session },
+        { returnDocument: "after", runValidators: true, session },
       )
       .lean();
     return document ? toPayment(document) : null;
@@ -142,7 +142,7 @@ export class PaymentRepository {
           },
         },
         { $inc: { refundedAmountCents: amountCents } },
-        { new: true, runValidators: true, session },
+        { returnDocument: "after", runValidators: true, session },
       )
       .lean();
     return document ? toPayment(document) : null;
