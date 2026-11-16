@@ -8,9 +8,10 @@
 - Після закриття перевіреної TASK-037: 37 Done, 3 In Review.
 - Відкриті Issues: #6 TASK-001, #15 TASK-010, #62 TASK-040.
 - TASK-037 / #59 закрито лише після merged PR #106 і повторного browser/API acceptance evidence.
-- `main` не змінено. Фінальна інтеграція виконується feature branch → PR у `develop`.
-- Відкритий PR: [#108 · TASK-040: add complete Postman validation and defense package](https://github.com/node-dots/node_base/pull/108). Незалежний approval фактично надано `ulianasubacheva24-web` 16 листопада 2026 року; додатковий review також запитано у `yuriiizhevskyi24-coder`.
-- Усі чотири CI jobs PR #108 успішні: Code checks, MongoDB integration, Postman API end-to-end і macOS checks/MongoDB integration.
+- `main` не змінено.
+- PR [#108 · TASK-040: add complete Postman validation and defense package](https://github.com/node-dots/node_base/pull/108) отримав незалежний approval `ulianasubacheva24-web` і штатно merged у `develop` 16 листопада 2026 року (`7ce8b49`).
+- Усі чотири CI jobs merged PR #108 успішні: Code checks, MongoDB integration, Postman API end-to-end і macOS checks/MongoDB integration.
+- Відкритий follow-up PR [#109 · Docs: refresh final validation evidence](https://github.com/node-dots/node_base/pull/109) містить лише повторно згенеровані докази й уточнення acceptance-документації; він також має пройти звичайні checks і review.
 
 TASK-001 потребує фактичного погодження контрактів тімлідом і командою. TASK-010 має результати формул і тестові числа, але потребує незалежного S7 review. TASK-040 має технічний пакет і відтворюваний E2E, але спільна демонстрація S1–S8 ще не проведена, тому Done не заявляється.
 
@@ -44,8 +45,8 @@ Auth/JWT, account roles/token revocation, people/employees, catalog/versioning, 
 
 ## Що потрібно до `main`
 
-1. Зелений CI актуального commit поточного PR у `develop`; required review уже отримано.
-2. Merge у `develop` без обходу branch protection.
+1. Зелений CI і required review follow-up PR #109.
+2. Merge PR #109 у `develop` без обходу branch protection.
 3. Проведення й документування TASK-001, незалежного S7 review TASK-010 і спільної TASK-040 demo.
 4. Окремий погоджений release PR `develop` → `main`; direct push або self-merge не використовувати.
 
