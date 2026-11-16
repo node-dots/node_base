@@ -1,6 +1,6 @@
 # Фактичний фінальний статус
 
-Стан перевірено 12 листопада 2026 року на Windows, Node.js 24.19.0, npm 11.17.0, Docker 29.7.2 і MongoDB 8 replica set `rs0`.
+Стан повторно перевірено 16 листопада 2026 року на Windows, Node.js 24.19.0, npm 11.17.0, Docker 29.7.2 і MongoDB 8 replica set `rs0`.
 
 ## GitHub і задачі
 
@@ -9,7 +9,7 @@
 - Відкриті Issues: #6 TASK-001, #15 TASK-010, #62 TASK-040.
 - TASK-037 / #59 закрито лише після merged PR #106 і повторного browser/API acceptance evidence.
 - `main` не змінено. Фінальна інтеграція виконується feature branch → PR у `develop`.
-- Відкритий PR: [#108 · TASK-040: add complete Postman validation and defense package](https://github.com/node-dots/node_base/pull/108). Він mergeable, але потребує незалежного review.
+- Відкритий PR: [#108 · TASK-040: add complete Postman validation and defense package](https://github.com/node-dots/node_base/pull/108). Незалежний approval фактично надано `ulianasubacheva24-web` 16 листопада 2026 року; додатковий review також запитано у `yuriiizhevskyi24-coder`.
 - Усі чотири CI jobs PR #108 успішні: Code checks, MongoDB integration, Postman API end-to-end і macOS checks/MongoDB integration.
 
 TASK-001 потребує фактичного погодження контрактів тімлідом і командою. TASK-010 має результати формул і тестові числа, але потребує незалежного S7 review. TASK-040 має технічний пакет і відтворюваний E2E, але спільна демонстрація S1–S8 ще не проведена, тому Done не заявляється.
@@ -29,6 +29,7 @@ Auth/JWT, account roles/token revocation, people/employees, catalog/versioning, 
 | `npm run test:mongodb` | PASS, 26/26; rs0 PRIMARY |
 | `npm run test:panel-browser` | PASS: mock/error states + real ADMIN/API/MongoDB mode |
 | `npm run test:postman` | PASS: 107 requests, 608 assertions, 0 failed/skipped |
+| `npm run test:all` | PASS: усі перелічені code, MongoDB, browser і Postman перевірки одним послідовним запуском |
 | Swagger/OpenAPI/health | PASS against started backend |
 
 Локальні browser screenshots: [`task-037-panel-browser.png`](../evidence/task-037-panel-browser.png) і [`task-037-panel-real-api.png`](../evidence/task-037-panel-real-api.png).
@@ -43,7 +44,7 @@ Auth/JWT, account roles/token revocation, people/employees, catalog/versioning, 
 
 ## Що потрібно до `main`
 
-1. Required review і зелений CI поточного PR у `develop`.
+1. Зелений CI актуального commit поточного PR у `develop`; required review уже отримано.
 2. Merge у `develop` без обходу branch protection.
 3. Проведення й документування TASK-001, незалежного S7 review TASK-010 і спільної TASK-040 demo.
 4. Окремий погоджений release PR `develop` → `main`; direct push або self-merge не використовувати.
