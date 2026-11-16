@@ -75,6 +75,51 @@ test(
       assert.equal(versions[1].after.capacity, 12);
       assert.deepEqual(versions[1].changedFields, ["capacity", "status"]);
 
+      await withHistoryContext(
+        { requestId: "history-no-op", source: "API" },
+        () =>
+          connection.transaction((session) =>
+            Group.findByIdAndUpdate(
+              groupId,
+              { $set: { capacity: 12, status: "ACTIVE" } },
+              { returnDocument: "after", runValidators: true, session },
+            ).lean(),
+          ),
+      );
+      assert.equal(
+        await History.countDocuments({
+          entityType: "GROUP",
+          entityId: groupId.toString(),
+        }),
+        2,
+      );
+
+      await withHistoryContext(
+        { requestId: "history-replace", source: "MIGRATION" },
+        () =>
+          connection.transaction((session) =>
+            Group.replaceOne(
+              { _id: groupId },
+              {
+                name: "History Group",
+                ageCategory: 3,
+                capacity: 14,
+                status: "ACTIVE",
+                occupiedSeats: 0,
+              },
+              { runValidators: true, session },
+            ),
+          ),
+      );
+      const replaced = await History.findOne({
+        entityType: "GROUP",
+        entityId: groupId.toString(),
+        version: 3,
+      }).lean();
+      assert.equal(replaced.before.capacity, 12);
+      assert.equal(replaced.after.capacity, 14);
+      assert.deepEqual(replaced.changedFields, ["capacity"]);
+
       const rolledBackId = new mongoose.Types.ObjectId();
       await assert.rejects(
         withHistoryContext({ source: "SERVICE" }, () =>
@@ -237,6 +282,31 @@ test(
         ),
         /append-only/,
       );
+      await assert.rejects(
+        History.bulkWrite([
+          {
+            deleteOne: {
+              filter: {
+                entityType: "GROUP",
+                entityId: groupId.toString(),
+                version: 1,
+              },
+            },
+          },
+        ]),
+        /append-only/,
+      );
+      await assert.rejects(
+        Group.bulkWrite([
+          {
+            updateOne: {
+              filter: { _id: groupId },
+              update: { $set: { capacity: 15 } },
+            },
+          },
+        ]),
+        /bulkWrite is disabled/,
+      );
 
       const personId = new mongoose.Types.ObjectId();
       await withHistoryContext(
@@ -288,6 +358,7 @@ test(
         .lean();
       assert.equal(personVersions.length, 2);
       assert.equal(personVersions[0].after.account.passwordHash, "[REDACTED]");
+      assert.equal(personVersions[0].after.account.tokenVersion, 0);
       assert.doesNotMatch(JSON.stringify(personVersions), /must-never-appear/);
       assert.ok(personVersions[1].changedFields.includes("account.roles"));
       assert.ok(personVersions[1].changedFields.includes("employee"));

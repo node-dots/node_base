@@ -368,6 +368,15 @@ add(G, {
   ],
 });
 add(G, {
+  name: "Change DRAFT group capacity again",
+  method: "PATCH",
+  url: "/api/v1/groups/{{createdGroupId}}/capacity",
+  body: { capacity: 16 },
+  tests: [
+    'pm.test("Second capacity change is stored", function () { pm.expect(responseJson.data.capacity).to.eql(16); });',
+  ],
+});
+add(G, {
   name: "Activation rejects occupied resources",
   method: "PUT",
   url: "/api/v1/groups/{{createdGroupId}}/resources",
@@ -1085,8 +1094,8 @@ add(VH, {
   name: "List complete group history",
   url: "/api/v1/history?entityType=GROUP&entityId={{createdGroupId}}&page=1&pageSize=50",
   tests: [
-    'pm.test("Create and update versions are present", function () { pm.expect(responseJson.data.versions).to.be.an("array").with.length.of.at.least(2); const versions = responseJson.data.versions.map(function (entry) { return entry.version; }); pm.expect(versions).to.include(1); pm.expect(versions).to.include(2); });',
-    'pm.test("Snapshots preserve prior capacity", function () { const update = responseJson.data.versions.find(function (entry) { return entry.version === 2; }); pm.expect(update.before.capacity).to.eql(18); pm.expect(update.after.capacity).to.eql(17); });',
+    'pm.test("Create and two update versions are present", function () { pm.expect(responseJson.data.versions).to.be.an("array").with.length.of.at.least(3); const versions = responseJson.data.versions.map(function (entry) { return entry.version; }); pm.expect(versions).to.include(1); pm.expect(versions).to.include(2); pm.expect(versions).to.include(3); });',
+    'pm.test("Snapshots preserve both prior capacities", function () { const first = responseJson.data.versions.find(function (entry) { return entry.version === 2; }); const second = responseJson.data.versions.find(function (entry) { return entry.version === 3; }); pm.expect(first.before.capacity).to.eql(18); pm.expect(first.after.capacity).to.eql(17); pm.expect(second.before.capacity).to.eql(17); pm.expect(second.after.capacity).to.eql(16); });',
   ],
 });
 add(VH, {
@@ -1098,9 +1107,9 @@ add(VH, {
 });
 add(VH, {
   name: "Compare group versions",
-  url: "/api/v1/history/GROUP/{{createdGroupId}}/compare?fromVersion=1&toVersion=2",
+  url: "/api/v1/history/GROUP/{{createdGroupId}}/compare?fromVersion=1&toVersion=3",
   tests: [
-    'pm.test("Capacity change is explicit", function () { pm.expect(responseJson.data.fromState.capacity).to.eql(18); pm.expect(responseJson.data.toState.capacity).to.eql(17); pm.expect(responseJson.data.changedFields).to.include("capacity"); });',
+    'pm.test("Two-step capacity change is explicit", function () { pm.expect(responseJson.data.fromState.capacity).to.eql(18); pm.expect(responseJson.data.toState.capacity).to.eql(16); pm.expect(responseJson.data.changedFields).to.include("capacity"); });',
   ],
 });
 add(VH, {

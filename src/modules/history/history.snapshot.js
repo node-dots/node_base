@@ -7,11 +7,13 @@ export const HISTORY_LIMITS = Object.freeze({
 });
 
 const SENSITIVE_KEY =
-  /(password|passphrase|credential|authorization|cookie|jwt|token|secret|api[_-]?key|private[_-]?key|card(number)?|cvv|cvc|passwordHash)/i;
+  /(password|passphrase|credential|authorization|cookie|jwt|secret|api[_-]?key|private[_-]?key|card(number)?|cvv|cvc)/i;
+const TOKEN_KEY =
+  /(^|[_-])token($|[_-])|(?:access|refresh|id|auth|csrf|session)token/i;
 export const REDACTED_VALUE = "[REDACTED]";
 
 function normalizeValue(value, key, seen) {
-  if (SENSITIVE_KEY.test(key)) return REDACTED_VALUE;
+  if (SENSITIVE_KEY.test(key) || TOKEN_KEY.test(key)) return REDACTED_VALUE;
   if (value === undefined) return undefined;
   if (value === null || typeof value === "string" || typeof value === "boolean")
     return value;

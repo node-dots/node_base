@@ -3,7 +3,7 @@ import { PERMISSIONS } from "../../utils/access/permissions.js";
 import { collectChangedFields } from "./history.snapshot.js";
 
 function stateAt(version) {
-  return version.after ?? version.before ?? null;
+  return version.after;
 }
 
 export class HistoryService {

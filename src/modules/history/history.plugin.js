@@ -25,11 +25,16 @@ function queryHistoryState(query) {
   return query.$locals;
 }
 
+function sameState(before, after) {
+  return JSON.stringify(before) === JSON.stringify(after);
+}
+
 export function entityHistoryPlugin(schema, { entityType }) {
   if (!entityType) throw new TypeError("history entityType is required");
 
   schema.pre("save", async function rememberBeforeSave() {
     this.$locals.historyWasNew = this.isNew;
+    this.$locals.historyShouldRecord = this.isNew || this.isModified();
     if (!this.isNew) {
       let query = this.constructor.findById(this._id);
       const session = this.$session();
@@ -38,6 +43,7 @@ export function entityHistoryPlugin(schema, { entityType }) {
     }
   });
   schema.post("save", async function recordSaved(document) {
+    if (!this.$locals.historyShouldRecord) return;
     const before = this.$locals.historyBefore ?? null;
     await appendEntityVersion(
       {
@@ -55,10 +61,16 @@ export function entityHistoryPlugin(schema, { entityType }) {
     schema.pre(operation, async function rememberBeforeQuery() {
       queryHistoryState(this).historyBefore = await findBefore(this);
     });
-    schema.post(operation, async function recordQueryUpdate(document) {
+    schema.post(operation, async function recordQueryUpdate() {
       const before = queryHistoryState(this).historyBefore;
-      const after = plain(document);
+      const session = this.getOptions().session;
+      let query = before
+        ? this.model.findById(before._id)
+        : this.model.findOne(this.getFilter());
+      if (session) query = query.session(session);
+      const after = await query.lean();
       if (!before && !after) return;
+      if (before && after && sameState(before, after)) return;
       await appendEntityVersion(
         {
           entityType,
@@ -67,12 +79,12 @@ export function entityHistoryPlugin(schema, { entityType }) {
           before: before ?? null,
           after: after ?? null,
         },
-        { session: this.getOptions().session, connection: this.model.db },
+        { session, connection: this.model.db },
       );
     });
   }
 
-  for (const operation of ["updateOne", "updateMany"]) {
+  for (const operation of ["updateOne", "updateMany", "replaceOne"]) {
     const many = operation === "updateMany";
     schema.pre(operation, async function rememberBeforeUpdate() {
       const found = await findBefore(this, many);
@@ -106,8 +118,7 @@ export function entityHistoryPlugin(schema, { entityType }) {
         let query = this.model.findById(before._id);
         if (session) query = query.session(session);
         const after = await query.lean();
-        if (!after || JSON.stringify(before) === JSON.stringify(after))
-          continue;
+        if (!after || sameState(before, after)) continue;
         await appendEntityVersion(
           {
             entityType,
@@ -133,7 +144,11 @@ export function entityHistoryPlugin(schema, { entityType }) {
           : [];
     });
     schema.post(operation, async function recordDeleted() {
-      for (const before of queryHistoryState(this).historyBefore ?? [])
+      const session = this.getOptions().session;
+      for (const before of queryHistoryState(this).historyBefore ?? []) {
+        let query = this.model.exists({ _id: before._id });
+        if (session) query = query.session(session);
+        if (await query) continue;
         await appendEntityVersion(
           {
             entityType,
@@ -143,12 +158,19 @@ export function entityHistoryPlugin(schema, { entityType }) {
             after: null,
           },
           {
-            session: this.getOptions().session,
+            session,
             connection: this.model.db,
           },
         );
+      }
     });
   }
+
+  schema.pre("bulkWrite", function rejectUntrackedBulkWrite() {
+    throw new Error(
+      `${entityType} bulkWrite is disabled; use tracked model operations`,
+    );
+  });
 
   schema.post("insertMany", async function recordInserted(documents) {
     const session = documents[0]?.$session?.() ?? null;

@@ -58,6 +58,7 @@ for (const operation of [
   "deleteOne",
   "deleteMany",
   "findOneAndDelete",
+  "bulkWrite",
 ]) {
   historySchema.pre(operation, rejectHistoryMutation);
 }

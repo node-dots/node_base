@@ -898,6 +898,51 @@
           ]
         },
         {
+          "name": "Change DRAFT group capacity again",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/groups/{{createdGroupId}}/capacity",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"capacity\": 16\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Фактичний запит PATCH /api/v1/groups/{{createdGroupId}}/capacity. Очікувані статуси: 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is one of: 200\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });",
+                  "pm.test(\"Response time is below 5 seconds\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.have.header(\"Content-Type\"); pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"); });",
+                  "let responseJson; try { responseJson = pm.response.json(); } catch (error) { responseJson = null; }",
+                  "pm.test(\"Response has a data or error envelope\", function () { pm.expect(responseJson).to.be.an(\"object\"); pm.expect(responseJson).to.satisfy(function (value) { return Object.prototype.hasOwnProperty.call(value, \"data\") || Object.prototype.hasOwnProperty.call(value, \"error\"); }); });",
+                  "pm.test(\"Response does not expose stored secrets\", function () { const raw = pm.response.text(); pm.expect(raw).not.to.match(/passwordHash|JWT_SECRET|currentPassword|newPassword/i); });",
+                  "pm.test(\"Second capacity change is stored\", function () { pm.expect(responseJson.data.capacity).to.eql(16); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "Activation rejects occupied resources",
           "request": {
             "method": "PUT",
@@ -3858,8 +3903,8 @@
                   "let responseJson; try { responseJson = pm.response.json(); } catch (error) { responseJson = null; }",
                   "pm.test(\"Response has a data or error envelope\", function () { pm.expect(responseJson).to.be.an(\"object\"); pm.expect(responseJson).to.satisfy(function (value) { return Object.prototype.hasOwnProperty.call(value, \"data\") || Object.prototype.hasOwnProperty.call(value, \"error\"); }); });",
                   "pm.test(\"Response does not expose stored secrets\", function () { const raw = pm.response.text(); pm.expect(raw).not.to.match(/passwordHash|JWT_SECRET|currentPassword|newPassword/i); });",
-                  "pm.test(\"Create and update versions are present\", function () { pm.expect(responseJson.data.versions).to.be.an(\"array\").with.length.of.at.least(2); const versions = responseJson.data.versions.map(function (entry) { return entry.version; }); pm.expect(versions).to.include(1); pm.expect(versions).to.include(2); });",
-                  "pm.test(\"Snapshots preserve prior capacity\", function () { const update = responseJson.data.versions.find(function (entry) { return entry.version === 2; }); pm.expect(update.before.capacity).to.eql(18); pm.expect(update.after.capacity).to.eql(17); });"
+                  "pm.test(\"Create and two update versions are present\", function () { pm.expect(responseJson.data.versions).to.be.an(\"array\").with.length.of.at.least(3); const versions = responseJson.data.versions.map(function (entry) { return entry.version; }); pm.expect(versions).to.include(1); pm.expect(versions).to.include(2); pm.expect(versions).to.include(3); });",
+                  "pm.test(\"Snapshots preserve both prior capacities\", function () { const first = responseJson.data.versions.find(function (entry) { return entry.version === 2; }); const second = responseJson.data.versions.find(function (entry) { return entry.version === 3; }); pm.expect(first.before.capacity).to.eql(18); pm.expect(first.after.capacity).to.eql(17); pm.expect(second.before.capacity).to.eql(17); pm.expect(second.after.capacity).to.eql(16); });"
                 ]
               }
             }
@@ -3908,8 +3953,8 @@
                 "type": "text"
               }
             ],
-            "url": "{{baseUrl}}/api/v1/history/GROUP/{{createdGroupId}}/compare?fromVersion=1&toVersion=2",
-            "description": "Фактичний запит GET /api/v1/history/GROUP/{{createdGroupId}}/compare?fromVersion=1&toVersion=2. Очікувані статуси: 200."
+            "url": "{{baseUrl}}/api/v1/history/GROUP/{{createdGroupId}}/compare?fromVersion=1&toVersion=3",
+            "description": "Фактичний запит GET /api/v1/history/GROUP/{{createdGroupId}}/compare?fromVersion=1&toVersion=3. Очікувані статуси: 200."
           },
           "event": [
             {
@@ -3923,7 +3968,7 @@
                   "let responseJson; try { responseJson = pm.response.json(); } catch (error) { responseJson = null; }",
                   "pm.test(\"Response has a data or error envelope\", function () { pm.expect(responseJson).to.be.an(\"object\"); pm.expect(responseJson).to.satisfy(function (value) { return Object.prototype.hasOwnProperty.call(value, \"data\") || Object.prototype.hasOwnProperty.call(value, \"error\"); }); });",
                   "pm.test(\"Response does not expose stored secrets\", function () { const raw = pm.response.text(); pm.expect(raw).not.to.match(/passwordHash|JWT_SECRET|currentPassword|newPassword/i); });",
-                  "pm.test(\"Capacity change is explicit\", function () { pm.expect(responseJson.data.fromState.capacity).to.eql(18); pm.expect(responseJson.data.toState.capacity).to.eql(17); pm.expect(responseJson.data.changedFields).to.include(\"capacity\"); });"
+                  "pm.test(\"Two-step capacity change is explicit\", function () { pm.expect(responseJson.data.fromState.capacity).to.eql(18); pm.expect(responseJson.data.toState.capacity).to.eql(16); pm.expect(responseJson.data.changedFields).to.include(\"capacity\"); });"
                 ]
               }
             }

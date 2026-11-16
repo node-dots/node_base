@@ -55,7 +55,7 @@ npm start
 npm run test:postman
 ```
 
-Поясніть: 21 папка, 105 статичних requests, 111 фактичних викликів, 632 assertions, 0 failures. Випадкова test database видаляється після run, development data не чіпаються.
+Поясніть: 21 папка, 106 статичних requests, 112 фактичних викликів, 638 assertions, 0 failures. Випадкова test database видаляється після run, development data не чіпаються.
 
 ## 4. Транзакції та безпека
 

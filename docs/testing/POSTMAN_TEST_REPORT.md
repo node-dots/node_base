@@ -7,14 +7,14 @@
 | Показник | Значення |
 |---|---:|
 | Логічні папки | 21 |
-| Статичні запити в collection | 105 |
-| Фактично виконані HTTP-запити | 111 |
-| Assertions | 632 |
+| Статичні запити в collection | 106 |
+| Фактично виконані HTTP-запити | 112 |
+| Assertions | 638 |
 | Failed | 0 |
 | Skipped | 0 |
 | Результат | PASSED |
 
-Різниця між 105 і 111 виникає через керований цикл login-запитів до фактичного отримання `429 Too Many Requests`. Санітизовані докази: [`postman-summary.json`](../../postman/results/postman-summary.json) і [`postman.junit.xml`](../../postman/results/postman.junit.xml). JUnit та summary перевіряються на відсутність паролів, JWT і полів із секретами.
+Різниця між 106 і 112 виникає через керований цикл login-запитів до фактичного отримання `429 Too Many Requests`. Санітизовані докази: [`postman-summary.json`](../../postman/results/postman-summary.json) і [`postman.junit.xml`](../../postman/results/postman.junit.xml). JUnit та summary перевіряються на відсутність паролів, JWT і полів із секретами.
 
 ## Покриття API
 
@@ -36,7 +36,7 @@ Security/error сценарії включають відсутній і під�
 2. OpenAPI для versioned catalog дозволяв kinds, які service не підтримує. Контракт і route validation звужено до `TUITION_RATE`, `MEAL_RATE`, `BENEFIT`, `PROGRAM`.
 3. Mongoose update options використовували deprecated `new: true`. Репозиторії переведено на `returnDocument: "after"` без зміни поведінки.
 4. `mongoose@9.11.1` мав high-severity advisories. Оновлено до `9.12.1`; `npm audit` — 0 vulnerabilities.
-5. History plugin втрачав BSON-тип ObjectId у `.lean()` mutation result через `structuredClone`, тому UPDATE міг отримати хибний `entityId`. Snapshot normalization виправлено, а MongoDB regression і Postman compare перевіряють дві послідовні версії.
+5. History plugin втрачав BSON-тип ObjectId у `.lean()` mutation result через `structuredClone`, тому UPDATE міг отримати хибний `entityId`. Snapshot normalization виправлено, а MongoDB regression і Postman compare перевіряють CREATE та дві послідовні UPDATE-версії.
 
 Під час побудови E2E також виправлено хибні припущення тестових fixtures щодо response envelope, status expense після оплати, шляху revision, benefit assignments і `remainingAmountCents`. Backend-контракти для цих випадків не послаблювалися.
 
