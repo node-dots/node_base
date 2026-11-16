@@ -40,7 +40,7 @@ npm start
 ## Запуск Collection Runner
 
 1. Відкрийте collection → **Run collection**.
-2. Виберіть усі 20 папок у наявному порядку.
+2. Виберіть усі 21 папку в наявному порядку.
 3. Виберіть **Kindergarten Local**.
 4. Не вмикайте збереження response bodies у спільний cloud workspace, якщо там можуть бути тестові персональні дані.
 5. Натисніть **Run Kindergarten API**.

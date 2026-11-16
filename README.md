@@ -27,7 +27,7 @@
 
 ## Що працює
 
-Реалізовано 65 OpenAPI-операцій: health/readiness, JWT authentication, accounts/roles, people/employees, catalog, groups, children, enrollment, financial rules/benefits, invoices, payments, refunds, expenses/payroll, schedules, financial and operational reports, forecast та configuration search. Дані зберігаються в MongoDB replica set; грошові й membership-операції використовують транзакції, Zod-контракти та role/scope permissions.
+Реалізовано 68 OpenAPI-операцій: health/readiness, JWT authentication, accounts/roles, people/employees, catalog, groups, children, enrollment, financial rules/benefits, invoices, payments, refunds, expenses/payroll, schedules, financial and operational reports, forecast, configuration search та read-only history API. Дані зберігаються в MongoDB replica set; бізнес-зміни, історія версій, грошові й membership-операції використовують транзакції, Zod-контракти та role/scope permissions.
 
 Основні локальні адреси після `npm start`:
 
@@ -47,7 +47,7 @@ Helmet, загальний rate limit, окремий ліміт запису, �
 - npm run check — форматування, синтаксис і тести без Docker.
 - npm run test:mongodb — окрема перевірка на запущеній MongoDB, ізольована випадкова база.
 - npm run test:panel-browser — браузерні стани та реальний ADMIN/API/MongoDB сценарій панелі.
-- npm run test:postman — 20 папок, усі OpenAPI-операції, security/error cases і повний HTTP E2E через Newman.
+- npm run test:postman — 21 папка, усі OpenAPI-операції, history, security/error cases і повний HTTP E2E через Newman.
 - npm run test:all — послідовний запуск усіх перелічених перевірок.
 
 Числові обмеження й коди визначені константами. Код та коментарі українською; ідентифікатори англійською. Великі наступні функції додаємо невеликими завершеними сценаріями.

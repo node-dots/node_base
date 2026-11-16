@@ -39,7 +39,7 @@ npm start
 ## 3. Жива демонстрація
 
 1. Login ADMIN і `/auth/me`; у response немає password/hash.
-2. Swagger: показати 65 операцій і Bearer Auth.
+2. Swagger: показати 68 операцій і Bearer Auth.
 3. Groups CRUD: DRAFT → resources → ACTIVE; показати capacity/occupied seats.
 4. Створити child, guardian link і enrollment; повторна/некоректна операція дає domain error.
 5. Показати invoice, PENDING payment, ADMIN confirm і зміну balance.
@@ -55,7 +55,7 @@ npm start
 npm run test:postman
 ```
 
-Поясніть: 20 папок, 101 статичний request, 107 фактичних викликів, 608 assertions, 0 failures. Випадкова test database видаляється після run, development data не чіпаються.
+Поясніть: 21 папка, 105 статичних requests, 111 фактичних викликів, 632 assertions, 0 failures. Випадкова test database видаляється після run, development data не чіпаються.
 
 ## 4. Транзакції та безпека
 
