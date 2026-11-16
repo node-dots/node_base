@@ -27,6 +27,7 @@ const folderNames = [
   "18. Security & Permissions",
   "19. Error Handling",
   "20. Complete End-to-End Scenario",
+  "21. Entity Version History",
 ];
 
 const folders = Object.fromEntries(
@@ -1077,6 +1078,36 @@ add(Z, {
   tests: [
     'pm.test("Final report remains available", function () { pm.expect(responseJson.data.distribution).to.be.an("array"); });',
   ],
+});
+
+const VH = "21. Entity Version History";
+add(VH, {
+  name: "List complete group history",
+  url: "/api/v1/history?entityType=GROUP&entityId={{createdGroupId}}&page=1&pageSize=50",
+  tests: [
+    'pm.test("Create and update versions are present", function () { pm.expect(responseJson.data.versions).to.be.an("array").with.length.of.at.least(2); const versions = responseJson.data.versions.map(function (entry) { return entry.version; }); pm.expect(versions).to.include(1); pm.expect(versions).to.include(2); });',
+    'pm.test("Snapshots preserve prior capacity", function () { const update = responseJson.data.versions.find(function (entry) { return entry.version === 2; }); pm.expect(update.before.capacity).to.eql(18); pm.expect(update.after.capacity).to.eql(17); });',
+  ],
+});
+add(VH, {
+  name: "Read group version one",
+  url: "/api/v1/history/GROUP/{{createdGroupId}}/versions/1",
+  tests: [
+    'pm.test("Initial restorable state is returned", function () { pm.expect(responseJson.data.version).to.eql(1); pm.expect(responseJson.data.action).to.eql("CREATE"); pm.expect(responseJson.data.after.capacity).to.eql(18); });',
+  ],
+});
+add(VH, {
+  name: "Compare group versions",
+  url: "/api/v1/history/GROUP/{{createdGroupId}}/compare?fromVersion=1&toVersion=2",
+  tests: [
+    'pm.test("Capacity change is explicit", function () { pm.expect(responseJson.data.fromState.capacity).to.eql(18); pm.expect(responseJson.data.toState.capacity).to.eql(17); pm.expect(responseJson.data.changedFields).to.include("capacity"); });',
+  ],
+});
+add(VH, {
+  name: "PARENT cannot read entity history",
+  url: "/api/v1/history?entityType=GROUP&entityId={{createdGroupId}}",
+  auth: "parent",
+  expected: [403],
 });
 
 const dateBootstrap = [
