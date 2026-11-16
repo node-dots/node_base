@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { getSafeRequestPath } from "./tracing.js";
+import { withHistoryContext } from "../modules/history/history.context.js";
 
 // Ідентифікатор і технічний журнал спільні для всіх HTTP-запитів.
 export function requestContext(request, response, next) {
@@ -20,5 +21,13 @@ export function requestContext(request, response, next) {
     );
   });
 
-  next();
+  return withHistoryContext(
+    {
+      requestId: request.requestId,
+      correlationId: request.get("x-correlation-id") ?? null,
+      source: "API",
+      reason: `${request.method} ${getSafeRequestPath(request)}`,
+    },
+    next,
+  );
 }

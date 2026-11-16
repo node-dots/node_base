@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { entityHistoryPlugin } from "../history/history.plugin.js";
 import {
   ACCOUNT_ROLE,
   EMPLOYEE_STATUS,
@@ -219,4 +220,5 @@ personSchema.index(
   },
 );
 
+personSchema.plugin(entityHistoryPlugin, { entityType: "PERSON" });
 export const PersonModel = mongoose.model("Person", personSchema);

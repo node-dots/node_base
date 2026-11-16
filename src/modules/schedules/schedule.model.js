@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { entityHistoryPlugin } from "../history/history.plugin.js";
 
 const slotSchema = new mongoose.Schema(
   {
@@ -59,4 +60,5 @@ scheduleSchema.index(
   { unique: true, name: "schedule_week_unique" },
 );
 
+scheduleSchema.plugin(entityHistoryPlugin, { entityType: "SCHEDULE" });
 export const ScheduleModel = mongoose.model("Schedule", scheduleSchema);

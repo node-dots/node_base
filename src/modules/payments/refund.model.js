@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { entityHistoryPlugin } from "../history/history.plugin.js";
 
 const refundSchema = new mongoose.Schema(
   {
@@ -65,4 +66,5 @@ refundSchema.index(
 refundSchema.index({ paymentId: 1, recordedAt: -1, _id: 1 });
 refundSchema.index({ invoiceId: 1, recordedAt: -1, _id: 1 });
 
+refundSchema.plugin(entityHistoryPlugin, { entityType: "REFUND" });
 export const RefundModel = mongoose.model("Refund", refundSchema);

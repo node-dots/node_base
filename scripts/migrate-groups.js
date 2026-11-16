@@ -10,6 +10,7 @@ import { GroupModel } from "../src/modules/groups/group.model.js";
 import { CatalogModel } from "../src/modules/catalog/catalog.model.js";
 import { CATALOG_KIND } from "../src/modules/catalog/catalog.constants.js";
 import { demoGroups } from "./demo-groups.js";
+import { withHistoryContext } from "../src/modules/history/history.context.js";
 
 export function planGroupMigration(groups, categories, schoolYear) {
   if (!/^\d{4}-\d{4}$/.test(schoolYear))
@@ -93,12 +94,27 @@ async function main() {
       ),
     );
     if (plan.blockers.length || !apply) return;
-    for (const item of plan.updates) {
-      await GroupModel.updateOne(
-        { _id: item.id },
-        { $set: item.set },
-        { runValidators: true },
+    const session = await mongoose.connection.startSession();
+    try {
+      await withHistoryContext(
+        {
+          requestId: `migrate-groups:${schoolYear}`,
+          source: "MIGRATION",
+          reason: `Add age-category and school-year references for ${schoolYear}`,
+        },
+        () =>
+          session.withTransaction(async () => {
+            for (const item of plan.updates) {
+              await GroupModel.updateOne(
+                { _id: item.id },
+                { $set: item.set },
+                { runValidators: true, session },
+              );
+            }
+          }),
       );
+    } finally {
+      await session.endSession();
     }
     console.log(
       "Migration completed. Existing group fields and assignments were preserved.",

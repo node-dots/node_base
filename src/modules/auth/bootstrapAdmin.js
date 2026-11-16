@@ -48,16 +48,18 @@ export async function bootstrapAdmin({
   config,
   personRepository,
   hasher = passwordHasher,
+  session,
 }) {
   if (!config || !personRepository || !hasher) {
     throw new TypeError("config, personRepository, and hasher are required");
   }
 
-  const activeAdmin = await personRepository.findFirstEnabledAdmin();
+  const activeAdmin = await personRepository.findFirstEnabledAdmin({ session });
   if (activeAdmin) return { created: false };
 
   const existing = await personRepository.findAccountByEmail(
     config.BOOTSTRAP_ADMIN_EMAIL,
+    { session },
   );
   if (existing) {
     if (isAdminRolePresent(existing)) return { created: false };
@@ -66,25 +68,31 @@ export async function bootstrapAdmin({
 
   const passwordHash = await hasher.hash(config.BOOTSTRAP_ADMIN_PASSWORD);
   try {
-    await personRepository.insert({
-      firstName: config.BOOTSTRAP_ADMIN_FIRST_NAME,
-      lastName: config.BOOTSTRAP_ADMIN_LAST_NAME,
-      status: PERSON_STATUS.ACTIVE,
-      account: {
-        email: config.BOOTSTRAP_ADMIN_EMAIL,
-        passwordHash,
-        roles: [ACCOUNT_ROLE.ADMIN],
-        enabled: true,
-        tokenVersion: 0,
+    await personRepository.insert(
+      {
+        firstName: config.BOOTSTRAP_ADMIN_FIRST_NAME,
+        lastName: config.BOOTSTRAP_ADMIN_LAST_NAME,
+        status: PERSON_STATUS.ACTIVE,
+        account: {
+          email: config.BOOTSTRAP_ADMIN_EMAIL,
+          passwordHash,
+          roles: [ACCOUNT_ROLE.ADMIN],
+          enabled: true,
+          tokenVersion: 0,
+        },
       },
-    });
+      { session },
+    );
     return { created: true };
   } catch (error) {
     if (error?.code !== 11000) throw error;
-    const racedAdmin = await personRepository.findFirstEnabledAdmin();
+    const racedAdmin = await personRepository.findFirstEnabledAdmin({
+      session,
+    });
     if (racedAdmin) return { created: false };
     const racedEmail = await personRepository.findAccountByEmail(
       config.BOOTSTRAP_ADMIN_EMAIL,
+      { session },
     );
     if (racedEmail && isAdminRolePresent(racedEmail)) return { created: false };
     throw new Error("Bootstrap could not create the initial administrator");

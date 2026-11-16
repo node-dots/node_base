@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { entityHistoryPlugin } from "../history/history.plugin.js";
 import {
   CATALOG_KIND,
   CATALOG_LIMITS,
@@ -235,4 +236,5 @@ catalogSchema.index(
   { unique: true, name: "catalog_kind_code_effective_unique" },
 );
 
+catalogSchema.plugin(entityHistoryPlugin, { entityType: "CATALOG" });
 export const CatalogModel = mongoose.model("Catalog", catalogSchema);

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { entityHistoryPlugin } from "../history/history.plugin.js";
 
 const expenseSchema = new mongoose.Schema(
   {
@@ -46,4 +47,5 @@ expenseSchema.index(
   { unique: true, sparse: true, name: "expense_source_key_unique" },
 );
 expenseSchema.index({ serviceMonth: 1, status: 1, category: 1 });
+expenseSchema.plugin(entityHistoryPlugin, { entityType: "EXPENSE" });
 export const ExpenseModel = mongoose.model("Expense", expenseSchema);

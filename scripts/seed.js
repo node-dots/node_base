@@ -1,6 +1,10 @@
 import { spawnSync } from "node:child_process";
+import mongoose from "mongoose";
 import { demoGroups } from "./demo-groups.js";
-import { initialCatalogEntries } from "../src/modules/catalog/catalog.seed.js";
+import { seedCatalog } from "../src/modules/catalog/catalog.seed.js";
+import { CatalogModel } from "../src/modules/catalog/catalog.model.js";
+import { GroupModel } from "../src/modules/groups/group.model.js";
+import { withHistoryContext } from "../src/modules/history/history.context.js";
 import { isSeedDatabaseAllowed } from "./seed-policy.js";
 
 function docker(argumentsList, timeout = 60000) {
@@ -37,49 +41,55 @@ try {
     "/scripts/mongodb-init.js",
   ]);
 
-  const script = `
-    const database = db.getSiblingDB(${JSON.stringify(databaseName)});
-    const groups = ${JSON.stringify(demoGroups)};
-    const catalogEntries = ${JSON.stringify(initialCatalogEntries)};
-    let inserted = 0;
-    for (const group of groups) {
-      const { _id, ...fields } = group;
-      const result = database.groups.updateOne(
-        { _id: ObjectId(_id) },
-        { $setOnInsert: fields },
-        { upsert: true }
+  await mongoose.connect(
+    `mongodb://127.0.0.1:27017/${databaseName}?replicaSet=rs0&directConnection=true`,
+    { serverSelectionTimeoutMS: 5000 },
+  );
+  try {
+    const session = await mongoose.connection.startSession();
+    let summary;
+    try {
+      summary = await withHistoryContext(
+        {
+          requestId: "seed:base-data",
+          source: "SEED",
+          reason: "Provision idempotent base groups and catalog entries",
+        },
+        () =>
+          session.withTransaction(async () => {
+            let inserted = 0;
+            for (const { _id, ...fields } of demoGroups) {
+              const result = await GroupModel.updateOne(
+                { _id },
+                { $setOnInsert: fields },
+                { upsert: true, session },
+              );
+              inserted += result.upsertedCount;
+            }
+            const catalog = await seedCatalog(CatalogModel, { session });
+            return {
+              database: databaseName,
+              groups: {
+                inserted,
+                existing: demoGroups.length - inserted,
+                total: await GroupModel.countDocuments().session(session),
+              },
+              catalog: {
+                ...catalog,
+                total: await CatalogModel.countDocuments().session(session),
+              },
+            };
+          }),
       );
-      inserted += result.upsertedCount;
+    } finally {
+      await session.endSession();
     }
-    let catalogInserted = 0;
-    for (const entry of catalogEntries) {
-      const { _id, ...fields } = entry;
-      const result = database.catalog.updateOne(
-        { _id: ObjectId(_id) },
-        { $setOnInsert: fields },
-        { upsert: true }
-      );
-      catalogInserted += result.upsertedCount;
-    }
-    print(JSON.stringify({
-      database: database.getName(),
-      groups: { inserted, existing: groups.length - inserted, total: database.groups.countDocuments() },
-      catalog: { inserted: catalogInserted, existing: catalogEntries.length - catalogInserted, total: database.catalog.countDocuments() }
-    }));
-  `;
-  // Аргументи передаємо без shell; дані вставляємо як JSON, а не як команди оболонки.
-  docker([
-    "compose",
-    "exec",
-    "-T",
-    "mongodb",
-    "mongosh",
-    "--quiet",
-    "--eval",
-    script,
-  ]);
-  const { seedDemoScenario } = await import("./demo-scenario.js");
-  await seedDemoScenario({ databaseName });
+    console.log(JSON.stringify(summary));
+    const { seedDemoScenario } = await import("./demo-scenario.js");
+    await seedDemoScenario({ databaseName });
+  } finally {
+    await mongoose.disconnect();
+  }
   console.log(
     `Seed завершено. Наявні записи збережено. База: ${databaseName}; сценарій охоплює групи, каталог, людей, дітей, фінанси та розклад.`,
   );
