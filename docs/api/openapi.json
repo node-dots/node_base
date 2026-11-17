@@ -37,6 +37,9 @@
       "name": "Облікові записи"
     },
     {
+      "name": "History"
+    },
+    {
       "name": "Документація"
     }
   ],
@@ -2803,6 +2806,101 @@
         },
         "required": [
           "data"
+        ],
+        "additionalProperties": false
+      },
+      "EntityVersion": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "entityType": {
+            "type": "string",
+            "enum": [
+              "GROUP",
+              "CHILD",
+              "PERSON",
+              "CATALOG",
+              "INVOICE",
+              "PAYMENT",
+              "REFUND",
+              "EXPENSE",
+              "SCHEDULE"
+            ]
+          },
+          "entityId": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "CREATE",
+              "UPDATE",
+              "DELETE"
+            ]
+          },
+          "changedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actorId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "requestId": {
+            "type": "string"
+          },
+          "correlationId": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "API",
+              "SERVICE",
+              "SEED",
+              "MIGRATION",
+              "OTHER"
+            ]
+          },
+          "reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "before": {},
+          "after": {},
+          "changedFields": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "entityType",
+          "entityId",
+          "version",
+          "action",
+          "changedAt",
+          "actorId",
+          "requestId",
+          "correlationId",
+          "source",
+          "reason",
+          "changedFields"
         ],
         "additionalProperties": false
       }
@@ -8493,6 +8591,571 @@
           },
           "403": {
             "description": "Finance report permission required."
+          }
+        }
+      }
+    },
+    "/api/v1/history": {
+      "get": {
+        "operationId": "listEntityVersions",
+        "tags": [
+          "History"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "GROUP",
+                "CHILD",
+                "PERSON",
+                "CATALOG",
+                "INVOICE",
+                "PAYMENT",
+                "REFUND",
+                "EXPENSE",
+                "SCHEDULE"
+              ]
+            },
+            "required": false,
+            "name": "entityType",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": false,
+            "name": "entityId",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "required": false,
+            "name": "version",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "required": false,
+            "name": "from",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "required": false,
+            "name": "to",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "required": false,
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 50
+            },
+            "required": false,
+            "name": "pageSize",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ADMIN-only append-only history search.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Ідентифікатор запиту для пошуку в логах.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "versions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "entityType": {
+                                "type": "string",
+                                "enum": [
+                                  "GROUP",
+                                  "CHILD",
+                                  "PERSON",
+                                  "CATALOG",
+                                  "INVOICE",
+                                  "PAYMENT",
+                                  "REFUND",
+                                  "EXPENSE",
+                                  "SCHEDULE"
+                                ]
+                              },
+                              "entityId": {
+                                "type": "string"
+                              },
+                              "version": {
+                                "type": "integer",
+                                "minimum": 1
+                              },
+                              "action": {
+                                "type": "string",
+                                "enum": [
+                                  "CREATE",
+                                  "UPDATE",
+                                  "DELETE"
+                                ]
+                              },
+                              "changedAt": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "actorId": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "requestId": {
+                                "type": "string"
+                              },
+                              "correlationId": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "source": {
+                                "type": "string",
+                                "enum": [
+                                  "API",
+                                  "SERVICE",
+                                  "SEED",
+                                  "MIGRATION",
+                                  "OTHER"
+                                ]
+                              },
+                              "reason": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "before": {},
+                              "after": {},
+                              "changedFields": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "entityType",
+                              "entityId",
+                              "version",
+                              "action",
+                              "changedAt",
+                              "actorId",
+                              "requestId",
+                              "correlationId",
+                              "source",
+                              "reason",
+                              "changedFields"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "pagination": {
+                          "type": "object",
+                          "properties": {
+                            "page": {
+                              "type": "integer"
+                            },
+                            "pageSize": {
+                              "type": "integer"
+                            },
+                            "total": {
+                              "type": "integer"
+                            },
+                            "totalPages": {
+                              "type": "integer"
+                            }
+                          },
+                          "required": [
+                            "page",
+                            "pageSize",
+                            "total",
+                            "totalPages"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "required": [
+                        "versions",
+                        "pagination"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required."
+          },
+          "403": {
+            "description": "ADMIN permission required."
+          }
+        }
+      }
+    },
+    "/api/v1/history/{entityType}/{entityId}/versions/{version}": {
+      "get": {
+        "operationId": "getEntityVersion",
+        "tags": [
+          "History"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "GROUP",
+                "CHILD",
+                "PERSON",
+                "CATALOG",
+                "INVOICE",
+                "PAYMENT",
+                "REFUND",
+                "EXPENSE",
+                "SCHEDULE"
+              ]
+            },
+            "required": true,
+            "name": "entityType",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "entityId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "required": true,
+            "name": "version",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Version.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Ідентифікатор запиту для пошуку в логах.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string"
+                        },
+                        "entityType": {
+                          "type": "string",
+                          "enum": [
+                            "GROUP",
+                            "CHILD",
+                            "PERSON",
+                            "CATALOG",
+                            "INVOICE",
+                            "PAYMENT",
+                            "REFUND",
+                            "EXPENSE",
+                            "SCHEDULE"
+                          ]
+                        },
+                        "entityId": {
+                          "type": "string"
+                        },
+                        "version": {
+                          "type": "integer",
+                          "minimum": 1
+                        },
+                        "action": {
+                          "type": "string",
+                          "enum": [
+                            "CREATE",
+                            "UPDATE",
+                            "DELETE"
+                          ]
+                        },
+                        "changedAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "actorId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "requestId": {
+                          "type": "string"
+                        },
+                        "correlationId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "source": {
+                          "type": "string",
+                          "enum": [
+                            "API",
+                            "SERVICE",
+                            "SEED",
+                            "MIGRATION",
+                            "OTHER"
+                          ]
+                        },
+                        "reason": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "before": {},
+                        "after": {},
+                        "changedFields": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "id",
+                        "entityType",
+                        "entityId",
+                        "version",
+                        "action",
+                        "changedAt",
+                        "actorId",
+                        "requestId",
+                        "correlationId",
+                        "source",
+                        "reason",
+                        "changedFields"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Version not found."
+          }
+        }
+      }
+    },
+    "/api/v1/history/{entityType}/{entityId}/compare": {
+      "get": {
+        "operationId": "compareEntityVersions",
+        "tags": [
+          "History"
+        ],
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "enum": [
+                "GROUP",
+                "CHILD",
+                "PERSON",
+                "CATALOG",
+                "INVOICE",
+                "PAYMENT",
+                "REFUND",
+                "EXPENSE",
+                "SCHEDULE"
+              ]
+            },
+            "required": true,
+            "name": "entityType",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "string"
+            },
+            "required": true,
+            "name": "entityId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "required": true,
+            "name": "fromVersion",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "required": true,
+            "name": "toVersion",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Two immutable states and changed paths.",
+            "headers": {
+              "X-Request-Id": {
+                "description": "Ідентифікатор запиту для пошуку в логах.",
+                "schema": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "entityType": {
+                          "type": "string",
+                          "enum": [
+                            "GROUP",
+                            "CHILD",
+                            "PERSON",
+                            "CATALOG",
+                            "INVOICE",
+                            "PAYMENT",
+                            "REFUND",
+                            "EXPENSE",
+                            "SCHEDULE"
+                          ]
+                        },
+                        "entityId": {
+                          "type": "string"
+                        },
+                        "fromVersion": {
+                          "type": "integer"
+                        },
+                        "toVersion": {
+                          "type": "integer"
+                        },
+                        "fromState": {},
+                        "toState": {},
+                        "changedFields": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "required": [
+                        "entityType",
+                        "entityId",
+                        "fromVersion",
+                        "toVersion",
+                        "changedFields"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Version not found."
           }
         }
       }

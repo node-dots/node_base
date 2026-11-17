@@ -51,6 +51,11 @@ import {
 } from "../src/utils/calendar.js";
 import { ensureDemoParents } from "./demo-people.js";
 import { isSeedDatabaseAllowed } from "./seed-policy.js";
+import {
+  getHistoryContext,
+  setHistoryActor,
+  withHistoryContext,
+} from "../src/modules/history/history.context.js";
 
 const demoPersonId = (number) => `d039${number.toString(16).padStart(20, "0")}`;
 
@@ -638,7 +643,17 @@ export async function seedDemoScenario({
     );
   }
   try {
-    return await runDemoScenario({ password, databaseName });
+    const execute = () => runDemoScenario({ password, databaseName });
+    return await (getHistoryContext()
+      ? execute()
+      : withHistoryContext(
+          {
+            requestId: "task-039-demo-seed",
+            source: "SEED",
+            reason: "Provision the deterministic demonstration scenario",
+          },
+          execute,
+        ));
   } finally {
     if (ownsConnection) await mongoose.disconnect();
   }
@@ -668,6 +683,7 @@ async function runDemoScenario({ password, databaseName }) {
   if (!admin)
     throw new Error("Run npm run bootstrap:admin before the full demo seed");
   const actor = { id: admin.id, roles: [ACCOUNT_ROLE.ADMIN] };
+  setHistoryActor(actor.id);
   const today = getCurrentCalendarDate(systemClock);
   const currentMonth = today.slice(0, 7);
   const followingMonth = nextMonth(currentMonth);

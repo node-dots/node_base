@@ -30,6 +30,7 @@ export class GroupController {
     const group = await this.groupService.createGroup(
       request.validatedBody,
       request.actor,
+      request.requestId,
     );
     response
       .location(`/api/v1/groups/${group.id}`)

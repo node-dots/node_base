@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { entityHistoryPlugin } from "../history/history.plugin.js";
 import { CHILD_LIMITS, CHILD_STATUS } from "./child.constants.js";
 
 const guardianSchema = new mongoose.Schema(
@@ -200,4 +201,5 @@ childSchema.pre("validate", function validateStateFields() {
 
 childSchema.index({ lastName: 1, firstName: 1, dateOfBirth: 1 });
 
+childSchema.plugin(entityHistoryPlugin, { entityType: "CHILD" });
 export const ChildModel = mongoose.model("Child", childSchema);

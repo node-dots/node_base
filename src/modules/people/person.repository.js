@@ -137,10 +137,13 @@ export class PersonRepository {
     return document ? toPerson(document) : null;
   }
 
-  async findFirstEnabledAdmin() {
-    const document = await this.personModel
-      .findOne({ "account.roles": "ADMIN", "account.enabled": true })
-      .lean();
+  async findFirstEnabledAdmin({ session } = {}) {
+    let query = this.personModel.findOne({
+      "account.roles": "ADMIN",
+      "account.enabled": true,
+    });
+    if (session) query = query.session(session);
+    const document = await query.lean();
     return document ? toPerson(document) : null;
   }
 

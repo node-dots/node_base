@@ -48,6 +48,10 @@ import { FinancialScenarioService } from "./finance/scenario.service.js";
 import { createScenarioRoutes } from "./finance/scenario.routes.js";
 import { ConfigurationSearchService } from "./finance/configurationSearch.service.js";
 import { createConfigurationSearchRoutes } from "./finance/configurationSearch.routes.js";
+import { EntityVersionModel } from "./history/history.model.js";
+import { HistoryRepository } from "./history/history.repository.js";
+import { HistoryService } from "./history/history.service.js";
+import { createHistoryRoutes } from "./history/history.routes.js";
 
 export function createApiRouter({
   groupRepository = new GroupRepository({ groupModel: GroupModel }),
@@ -69,6 +73,18 @@ export function createApiRouter({
   router.use("/groups", groupModule.router);
   if (authModule) {
     router.use("/auth", authModule.router ?? authModule);
+    router.use(
+      "/history",
+      createHistoryRoutes({
+        service: new HistoryService({
+          historyRepository: new HistoryRepository({
+            historyModel: EntityVersionModel,
+          }),
+          authorizer,
+        }),
+        authService: authModule.authService,
+      }),
+    );
     router.use(
       "/schedules",
       createScheduleRoutes({
