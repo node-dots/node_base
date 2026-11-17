@@ -18,6 +18,7 @@ import { registerExpenseDocumentation } from "../modules/expenses/expense.openap
 import { registerScenarioDocumentation } from "../modules/finance/scenario.openapi.js";
 import { registerConfigurationSearchDocumentation } from "../modules/finance/configurationSearch.openapi.js";
 import { registerOperationsReportDocumentation } from "../modules/reports/operationsReport.openapi.js";
+import { registerHistoryDocumentation } from "../modules/history/history.openapi.js";
 
 export function createOpenApiDocument() {
   const registry = new OpenAPIRegistry();
@@ -37,6 +38,7 @@ export function createOpenApiDocument() {
   registerScenarioDocumentation(registry);
   registerConfigurationSearchDocumentation(registry);
   registerOperationsReportDocumentation(registry);
+  registerHistoryDocumentation(registry);
 
   return new OpenApiGeneratorV31(registry.definitions).generateDocument({
     openapi: "3.1.0",
@@ -56,6 +58,7 @@ export function createOpenApiDocument() {
       { name: "Payments" },
       { name: "Автентифікація" },
       { name: "Облікові записи" },
+      { name: "History" },
       { name: "Документація" },
     ],
   });

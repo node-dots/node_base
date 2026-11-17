@@ -130,18 +130,18 @@ export const initialCatalogEntries = Object.freeze([
   ...financialSeed,
 ]);
 
-export async function seedCatalog(catalogModel) {
-  const operations = initialCatalogEntries.map(({ _id, ...entry }) => ({
-    updateOne: {
-      filter: { _id },
-      update: { $setOnInsert: entry },
-      upsert: true,
-    },
-  }));
-
-  const result = await catalogModel.bulkWrite(operations, { ordered: true });
+export async function seedCatalog(catalogModel, { session } = {}) {
+  let inserted = 0;
+  for (const { _id, ...entry } of initialCatalogEntries) {
+    const result = await catalogModel.updateOne(
+      { _id },
+      { $setOnInsert: entry },
+      { upsert: true, session },
+    );
+    inserted += result.upsertedCount;
+  }
   return {
-    inserted: result.upsertedCount,
-    existing: initialCatalogEntries.length - result.upsertedCount,
+    inserted,
+    existing: initialCatalogEntries.length - inserted,
   };
 }

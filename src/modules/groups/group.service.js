@@ -77,9 +77,24 @@ export class GroupService {
     this.authorizer.assertKnown(PERMISSIONS.GROUPS_UPDATE);
   }
 
-  async createGroup(input, actor) {
+  async createGroup(input, actor, requestId) {
     this.authorizer.assertPermission(actor, PERMISSIONS.GROUPS_CREATE);
-    return this.groupRepository.insert(buildGroupDraft(input));
+    const draft = buildGroupDraft(input);
+    if (!this.unitOfWork) return this.groupRepository.insert(draft);
+    return this.unitOfWork.execute(async ({ session, recordAudit }) => {
+      const created = await this.groupRepository.insert(draft, { session });
+      await recordAudit({
+        actorId: actor.id,
+        requestId,
+        action: "group.create",
+        entityType: "GROUP",
+        entityId: created.id,
+        before: null,
+        after: created,
+        safeFields: ["name", "ageCategory", "capacity", "status"],
+      });
+      return created;
+    });
   }
 
   async listGroups({ page, pageSize, schoolYear, status, ageCategory }, actor) {

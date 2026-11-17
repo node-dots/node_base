@@ -1,5 +1,6 @@
 import { AppError } from "../../utils/errors.js";
 import { AUTH_ERROR_CODES, AUTH_ERROR_MESSAGES } from "./auth.constants.js";
+import { setHistoryActor } from "../history/history.context.js";
 
 function authenticationError() {
   return new AppError(
@@ -18,6 +19,7 @@ export function createAuthenticationMiddleware({ authService }) {
 
     try {
       request.actor = await authService.authenticate(match[1]);
+      setHistoryActor(request.actor.id);
       return next();
     } catch (error) {
       return next(error);

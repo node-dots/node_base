@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { entityHistoryPlugin } from "../history/history.plugin.js";
 
 const partSchema = new mongoose.Schema(
   {
@@ -144,4 +145,5 @@ invoiceSchema.pre("validate", function setReservedMonths() {
   }
 });
 
+invoiceSchema.plugin(entityHistoryPlugin, { entityType: "INVOICE" });
 export const InvoiceModel = mongoose.model("Invoice", invoiceSchema);

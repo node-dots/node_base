@@ -6,19 +6,19 @@
 
 | Показник | Значення |
 |---|---:|
-| Логічні папки | 20 |
-| Статичні запити в collection | 101 |
-| Фактично виконані HTTP-запити | 107 |
-| Assertions | 608 |
+| Логічні папки | 21 |
+| Статичні запити в collection | 106 |
+| Фактично виконані HTTP-запити | 112 |
+| Assertions | 638 |
 | Failed | 0 |
 | Skipped | 0 |
 | Результат | PASSED |
 
-Різниця між 101 і 107 виникає через керований цикл login-запитів до фактичного отримання `429 Too Many Requests`. Санітизовані докази: [`postman-summary.json`](../../postman/results/postman-summary.json) і [`postman.junit.xml`](../../postman/results/postman.junit.xml). JUnit та summary перевіряються на відсутність паролів, JWT і полів із секретами.
+Різниця між 106 і 112 виникає через керований цикл login-запитів до фактичного отримання `429 Too Many Requests`. Санітизовані докази: [`postman-summary.json`](../../postman/results/postman-summary.json) і [`postman.junit.xml`](../../postman/results/postman.junit.xml). JUnit та summary перевіряються на відсутність паролів, JWT і полів із секретами.
 
 ## Покриття API
 
-Колекція містить усі 65 операцій поточного OpenAPI та додаткові негативні/E2E виклики. Папки: health/readiness, authentication, accounts/roles, people/employees, catalog, groups, children, enrollment/membership, financial rules/benefits, invoices, payments, refunds, expenses/payroll, schedules, financial reports, operational reports, forecast/configuration search, security/permissions, error handling і complete E2E.
+Колекція містить усі 68 операцій поточного OpenAPI та додаткові негативні/E2E виклики. Папки: health/readiness, authentication, accounts/roles, people/employees, catalog, groups, children, enrollment/membership, financial rules/benefits, invoices, payments, refunds, expenses/payroll, schedules, financial reports, operational reports, forecast/configuration search, security/permissions, error handling, complete E2E та entity version history.
 
 Перевіряються реальні status codes `200`, `201`, `400`, `401`, `403`, `404`, `409`, `422`, `429`, JSON-envelope, типи й обов’язкові поля, відсутність секретних полів, role/scope доступ, idempotency, зміни стану та підсумкові aggregation-значення.
 
@@ -36,6 +36,7 @@ Security/error сценарії включають відсутній і під�
 2. OpenAPI для versioned catalog дозволяв kinds, які service не підтримує. Контракт і route validation звужено до `TUITION_RATE`, `MEAL_RATE`, `BENEFIT`, `PROGRAM`.
 3. Mongoose update options використовували deprecated `new: true`. Репозиторії переведено на `returnDocument: "after"` без зміни поведінки.
 4. `mongoose@9.11.1` мав high-severity advisories. Оновлено до `9.12.1`; `npm audit` — 0 vulnerabilities.
+5. History plugin втрачав BSON-тип ObjectId у `.lean()` mutation result через `structuredClone`, тому UPDATE міг отримати хибний `entityId`. Snapshot normalization виправлено, а MongoDB regression і Postman compare перевіряють CREATE та дві послідовні UPDATE-версії.
 
 Під час побудови E2E також виправлено хибні припущення тестових fixtures щодо response envelope, status expense після оплати, шляху revision, benefit assignments і `remainingAmountCents`. Backend-контракти для цих випадків не послаблювалися.
 

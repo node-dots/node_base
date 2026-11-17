@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { GROUP_STATUS, GROUP_LIMITS } from "./group.constants.js";
+import { entityHistoryPlugin } from "../history/history.plugin.js";
 
 const groupSchema = new mongoose.Schema(
   {
@@ -73,4 +74,5 @@ groupSchema.pre("validate", function validateResources() {
 groupSchema.index({ schoolYear: 1, roomId: 1, status: 1 });
 groupSchema.index({ schoolYear: 1, educatorId: 1, status: 1 });
 groupSchema.index({ schoolYear: 1, assistantId: 1, status: 1 });
+groupSchema.plugin(entityHistoryPlugin, { entityType: "GROUP" });
 export const GroupModel = mongoose.model("Group", groupSchema);

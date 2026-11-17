@@ -39,4 +39,5 @@ export const PERMISSIONS = Object.freeze({
   REPORTS_FINANCE_READ: "reports:finance-read",
   FINANCE_SCENARIOS_RUN: "finance:scenarios-run",
   AUDIT_READ: "audit:read",
+  HISTORY_READ: "history:read",
 });

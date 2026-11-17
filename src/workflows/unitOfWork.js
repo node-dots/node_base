@@ -1,3 +1,8 @@
+import {
+  getHistoryContext,
+  withHistoryContext,
+} from "../modules/history/history.context.js";
+
 export class UnitOfWork {
   constructor({ connection, auditWriter }) {
     if (!connection || typeof connection.startSession !== "function") {
@@ -14,6 +19,11 @@ export class UnitOfWork {
     if (typeof operation !== "function") {
       throw new TypeError("operation must be a function");
     }
+
+    if (!getHistoryContext())
+      return withHistoryContext({ source: "SERVICE" }, () =>
+        this.execute(operation),
+      );
 
     const session = await this.connection.startSession();
     let result;
