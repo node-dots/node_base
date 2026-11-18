@@ -49,6 +49,7 @@
 - [Git-процес команди](team/GIT_WORKFLOW.md).
 - [Початкові командні контракти — Proposed / Needs approval](team/14_Initial_Team_Contracts.md).
 - [Сесія фактичного погодження TASK-001](team/TASK-001_ACCEPTANCE_SESSION.md).
+- [Спільна відповідальність S1–S8 за історію даних](team/DATA_HISTORY_TEAM_RESPONSIBILITIES.md).
 
 ### Плани, задачі та строки — `planning/`
 

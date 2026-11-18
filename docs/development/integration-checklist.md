@@ -1,21 +1,21 @@
 # TASK-040: інтеграційний checklist
 
-Оновлено 18 листопада 2026 року для `develop` `c4759f2`. Тут записані технічно
-підтверджені факти. Командна демонстрація ще не проводилася.
+Оновлено 18 листопада 2026 року для baseline `develop` `c4759f2` і feature head PR #112.
+Тут записані технічно підтверджені факти. Командна демонстрація ще не проводилася.
 
 ## Поточні докази
 
 | Перевірка | Фактичний результат |
 | --- | --- |
 | Dependency install/audit | `npm ci` PASS; 0 vulnerabilities |
-| Unit/HTTP/security | 212 tests: 184 pass, 28 Mongo-skipped, 0 fail |
-| MongoDB replica-set integration | 27/27 PASS |
+| Unit/HTTP/security | 213 tests: 184 pass, 29 Mongo-skipped, 0 fail |
+| MongoDB replica-set integration | 28/28 PASS |
 | Browser panel | PASS: 40 read-only requests і real ADMIN/API mode |
-| Postman/Newman | 112 requests, 638 assertions, 0 failures |
+| Postman/Newman | 120 requests, 687 assertions, 0 failures |
 | GitHub CI PR #109 | 4/4 SUCCESS |
 | GitHub CI merged `develop` | 4/4 SUCCESS, run `44194028615` |
 | Swagger/OpenAPI | OpenAPI 3.1, 68 operations, `/api-docs/` і JSON endpoint |
-| Entity history | Transactional snapshots, ADMIN list/version/compare, Postman folder 21 |
+| Entity history | 9/9 persistent models, transactional snapshots, ADMIN API, 12 requests folder 21 |
 
 Seed report для `2026-11`: accrued income `4 680 000` minor units, net receipts
 `1 500 000`, approved expenses `250 000`, cash flow `1 250 000`. Це значення реального

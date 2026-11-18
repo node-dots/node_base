@@ -3,7 +3,9 @@
 Статус: **підготовлено до людського погодження, але не погоджено**. Цей документ не є
 протоколом проведеної зустрічі. Детальні технічні контракти описані в
 [`14_Initial_Team_Contracts.md`](14_Initial_Team_Contracts.md), а короткі критерії — у
-[`15_Contract_Acceptance_Checklist.md`](15_Contract_Acceptance_Checklist.md).
+[`15_Contract_Acceptance_Checklist.md`](15_Contract_Acceptance_Checklist.md). Спільна
+відповідальність за version history описана в
+[`DATA_HISTORY_TEAM_RESPONSIBILITIES.md`](DATA_HISTORY_TEAM_RESPONSIBILITIES.md).
 
 ## Що саме погоджується
 
@@ -20,6 +22,7 @@
 | Доступ | role permissions + record scope + field policy, fail closed | Чому одного валідного JWT недостатньо? |
 | Шари | route/controller → service → repository/model → DTO; ручний DI | Хто володіє бізнес-рішенням і MongoDB query? |
 | Транзакція | один `session` для business write, audit і version history | Що залишається після rollback/retry? |
+| Історія | кожен S1–S8 відповідає за tracked writes власного модуля; один shared plugin/store | Яку version і негативний no-version сценарій показує кожна команда? |
 | Git | feature branch → PR → CI → незалежний review → merge | Хто не може self-approve? |
 
 ## Конкретний сценарій для однакового пояснення
@@ -57,8 +60,8 @@ Content-Type: application/json
 2. **5–15 хв:** команда проходить таблицю контрактів; спірні пункти записуються як GitHub comments.
 3. **15–25 хв:** два заздалегідь неузгоджені учасники незалежно пояснюють Groups-сценарій.
 4. **25–32 хв:** негативні приклади: зайве поле, чужий scope, 409/422, rollback.
-5. **32–37 хв:** owners підтверджують вузькі readers/commands між people, catalog, groups і children.
-6. **37–40 хв:** тімлід фіксує рішення, відкриті питання, відповідальних і строки.
+5. **32–37 хв:** S1–S8 підтверджують owners/readers і свій рядок history-матриці; S6 не є одноосібним owner history.
+6. **37–40 хв:** тімлід фіксує handles S1–S8, рішення, відкриті питання, відповідальних і строки.
 
 ## Доказ у GitHub
 
@@ -70,6 +73,7 @@ TASK-001 acceptance проведено на SHA <sha>, дата/час <Europe/K
 Groups-сценарій незалежно пояснили: @handle1, @handle2.
 Підтверджено: ID/DTO/errors, money/basisPoints/dates/Clock, layer boundaries,
 access/scope, transaction/session, owners/readers і Git review.
+History responsibilities S1–S8 і module reviewers: <confirmed | corrections>.
 Відкриті питання: none | <issue links, owner, due date>.
 Рішення тімліда: accepted | changes requested.
 ```

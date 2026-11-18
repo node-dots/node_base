@@ -311,6 +311,7 @@ add(C, {
   expected: [201],
   tests: [
     'pm.test("Catalog version was created", function () { pm.expect(responseJson.data.code).to.eql(pm.environment.get("testSubjectCode")); });',
+    'pm.environment.set("catalogVersionId", responseJson.data.id);',
   ],
 });
 add(C, {
@@ -1072,6 +1073,7 @@ add(Z, {
   expected: [201],
   tests: [
     'pm.test("Refund is confirmed", function () { pm.expect(responseJson.data.status).to.eql("CONFIRMED"); });',
+    'pm.environment.set("e2eRefundId", responseJson.data.id);',
   ],
 });
 add(Z, {
@@ -1110,6 +1112,69 @@ add(VH, {
   url: "/api/v1/history/GROUP/{{createdGroupId}}/compare?fromVersion=1&toVersion=3",
   tests: [
     'pm.test("Two-step capacity change is explicit", function () { pm.expect(responseJson.data.fromState.capacity).to.eql(18); pm.expect(responseJson.data.toState.capacity).to.eql(16); pm.expect(responseJson.data.changedFields).to.include("capacity"); });',
+  ],
+});
+function addModuleHistoryRequest({
+  name,
+  entityType,
+  entityId,
+  tests = [],
+  secretCheck = true,
+}) {
+  add(VH, {
+    name,
+    url: `/api/v1/history?entityType=${entityType}${entityId ? `&entityId={{${entityId}}}` : ""}&page=1&pageSize=50`,
+    secretCheck,
+    tests: [
+      `pm.test("${entityType} history is present", function () { pm.expect(responseJson.data.versions).to.be.an("array").that.is.not.empty; pm.expect(responseJson.data.versions.every(function (entry) { return entry.entityType === "${entityType}"; })).to.eql(true); });`,
+      ...tests,
+    ],
+  });
+}
+addModuleHistoryRequest({
+  name: "List people and auth history",
+  entityType: "PERSON",
+  entityId: "employeeId",
+  secretCheck: false,
+  tests: [
+    'pm.test("Person secrets are redacted", function () { responseJson.data.versions.forEach(function (entry) { [entry.before, entry.after].filter(Boolean).forEach(function (snapshot) { if (snapshot.account && Object.prototype.hasOwnProperty.call(snapshot.account, "passwordHash")) pm.expect(snapshot.account.passwordHash).to.eql("[REDACTED]"); }); }); });',
+  ],
+});
+addModuleHistoryRequest({
+  name: "List catalog history",
+  entityType: "CATALOG",
+  entityId: "catalogVersionId",
+});
+addModuleHistoryRequest({
+  name: "List child and membership history",
+  entityType: "CHILD",
+  entityId: "e2eChildId",
+});
+addModuleHistoryRequest({
+  name: "List invoice history",
+  entityType: "INVOICE",
+  entityId: "e2eInvoiceId",
+});
+addModuleHistoryRequest({
+  name: "List payment history",
+  entityType: "PAYMENT",
+  entityId: "e2ePaymentId",
+});
+addModuleHistoryRequest({
+  name: "List refund history",
+  entityType: "REFUND",
+  entityId: "e2eRefundId",
+});
+addModuleHistoryRequest({
+  name: "List expense history",
+  entityType: "EXPENSE",
+  entityId: "expenseId",
+});
+addModuleHistoryRequest({
+  name: "List schedule history",
+  entityType: "SCHEDULE",
+  tests: [
+    'pm.test("Schedule snapshot matches the demonstrated week", function () { pm.expect(responseJson.data.versions.some(function (entry) { return entry.after && entry.after.weekStart === pm.environment.get("draftWeek"); })).to.eql(true); });',
   ],
 });
 add(VH, {
@@ -1183,6 +1248,8 @@ const environment = {
       "invoiceId",
       "paymentId",
       "scheduleId",
+      "catalogVersionId",
+      "e2eRefundId",
       "currentMonth",
       "schoolYear",
     ].map((key) => [key, "", "default"]),

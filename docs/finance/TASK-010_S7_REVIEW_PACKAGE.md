@@ -67,6 +67,21 @@ npm run test:mongodb
 Reviewer звіряє не лише green tests, а й вручну повторює обидві таблиці, перевіряє одиниці,
 знаки refund та часові осі. Після роботи: `npm run infra:down`.
 
+## Історія фінансових змін
+
+- `INVOICE` зберігає створення, зміни parts/balance/status і cancellation після withdrawal.
+- `PAYMENT` зберігає PENDING create та окремий confirm/reject update; idempotent repeat не
+  створює дубльованого payment або version.
+- `REFUND` створюється один раз після cap/idempotency checks; invoice/payment balances і
+  refund version входять до тієї самої transaction.
+- `EXPENSE` зберігає draft, approve/pay/cancel/correction та вкладений calculation snapshot.
+- Financial reports нічого не записують: вони агрегують versioned source collections.
+
+S7 додатково звіряє через History API, що PENDING не змінює invoice balance, failed/capped
+refund не залишає partial versions, integer amounts не перетворюються на float, а rollback
+скасовує і фінансові документи, і counters/versions. Технічна матриця:
+[`DATA_HISTORY_TEAM_RESPONSIBILITIES.md`](../team/DATA_HISTORY_TEAM_RESPONSIBILITIES.md).
+
 ## Шаблон незалежного висновку
 
 У [Issue #15](https://github.com/node-dots/node_base/issues/15) S7 або офіційно призначений
@@ -78,6 +93,7 @@ Fixture 2026-10: accrual 2 688 000; receipts net 1 700 000; expenses 700 000;
 result 1 988 000; cash flow 1 500 000; outstanding/overdue 500 000; refund due 0.
 300 дітей: income 4 172 400 грн; expenses 2 470 000 грн; result 1 702 400 грн.
 Перевірено units/time axes/PENDING/refund signs/notes: PASS | <findings>.
+History INVOICE/PAYMENT/REFUND/EXPENSE, idempotency і transaction rollback: PASS | <findings>.
 Рішення: accepted | changes requested.
 ```
 

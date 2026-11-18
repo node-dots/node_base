@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuites name="Kindergarten API — Full Validation" tests="112" time="5.628">
-  <testsuite name="01. Health &amp; Readiness / Liveness" id="b5c54924-6b83-4bea-958f-8c4de90f440d" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.071">
-    <testcase name="HTTP status is one of: 200" time="0.071" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.071" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.071" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.071" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.071" classname="KindergartenApiFullValidation"/>
-    <testcase name="Service is alive" time="0.071" classname="KindergartenApiFullValidation"/>
+<testsuites name="Kindergarten API — Full Validation" tests="120" time="5.159">
+  <testsuite name="01. Health &amp; Readiness / Liveness" id="876772bf-8995-4c65-8620-d969d8ae318c" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.059">
+    <testcase name="HTTP status is one of: 200" time="0.059" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.059" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.059" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.059" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.059" classname="KindergartenApiFullValidation"/>
+    <testcase name="Service is alive" time="0.059" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="01. Health &amp; Readiness / Readiness" id="69584d68-b042-4ccb-933f-08bd206ebcbf" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.008">
+  <testsuite name="01. Health &amp; Readiness / Readiness" id="fdeabd96-0404-4ae5-a5fa-01bb2c6fd3a4" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.008">
     <testcase name="HTTP status is one of: 200" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
@@ -16,144 +16,144 @@
     <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="MongoDB is ready" time="0.008" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="01. Health &amp; Readiness / API information" id="ba020483-74f9-4532-a4ac-8ec27ecf1eab" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.005">
-    <testcase name="HTTP status is one of: 200" time="0.005" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.005" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.005" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.005" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.005" classname="KindergartenApiFullValidation"/>
-    <testcase name="API metadata is current" time="0.005" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="01. Health &amp; Readiness / OpenAPI JSON" id="827fc362-9efe-4e0c-977f-befeb63c18e7" timestamp="2026-11-17T22:47:19.873Z" tests="4" failures="0" errors="0" time="0.016">
-    <testcase name="HTTP status is one of: 200" time="0.016" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.016" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.016" classname="KindergartenApiFullValidation"/>
-    <testcase name="OpenAPI document is 3.1" time="0.016" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="01. Health &amp; Readiness / Swagger UI" id="67f0e800-ddff-4c26-9368-98bad9ada99d" timestamp="2026-11-17T22:47:19.873Z" tests="3" failures="0" errors="0" time="0.007">
-    <testcase name="HTTP status is one of: 200" time="0.007" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.007" classname="KindergartenApiFullValidation"/>
-    <testcase name="Swagger returns HTML" time="0.007" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="02. Authentication / Login as ADMIN" id="cd1fd8cd-87e0-4ca9-84bf-d4831e082950" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.314">
-    <testcase name="HTTP status is one of: 200" time="0.314" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.314" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.314" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.314" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.314" classname="KindergartenApiFullValidation"/>
-    <testcase name="Access token is returned" time="0.314" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="02. Authentication / ADMIN profile" id="f28636fd-e08a-4385-9b50-073db37274a3" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.011">
-    <testcase name="HTTP status is one of: 200" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="ADMIN role is active" time="0.011" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="02. Authentication / Login as PARENT" id="49502861-bc2f-4a18-a82f-16fe88574993" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.305">
-    <testcase name="HTTP status is one of: 200" time="0.305" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.305" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.305" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.305" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.305" classname="KindergartenApiFullValidation"/>
-    <testcase name="Parent token is returned" time="0.305" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="02. Authentication / PARENT profile" id="b619b4f3-8328-4003-986e-877187e1de6c" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.011">
-    <testcase name="HTTP status is one of: 200" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="PARENT role is active" time="0.011" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="02. Authentication / Invalid password is rejected" id="0399c162-09ed-4a01-8cb5-5eb0a9f8bd76" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.297">
-    <testcase name="HTTP status is one of: 401" time="0.297" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.297" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.297" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.297" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.297" classname="KindergartenApiFullValidation"/>
-    <testcase name="Failure is public and safe" time="0.297" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="02. Authentication / Password change rejects wrong current password" id="fb5318af-41c6-4125-a1fb-9200d44d0b0f" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.292">
-    <testcase name="HTTP status is one of: 401" time="0.292" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.292" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.292" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.292" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.292" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="02. Authentication / Logout-all requires JWT" id="060f7795-520a-462d-8852-1943e9ebf10a" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.006">
-    <testcase name="HTTP status is one of: 401" time="0.006" classname="KindergartenApiFullValidation"/>
+  <testsuite name="01. Health &amp; Readiness / API information" id="bc31163a-2d05-4d81-8ab1-b56027461fb6" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.006">
+    <testcase name="HTTP status is one of: 200" time="0.006" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.006" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.006" classname="KindergartenApiFullValidation"/>
     <testcase name="Response has a data or error envelope" time="0.006" classname="KindergartenApiFullValidation"/>
     <testcase name="Response does not expose stored secrets" time="0.006" classname="KindergartenApiFullValidation"/>
+    <testcase name="API metadata is current" time="0.006" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="03. Accounts &amp; Roles / Preserve PARENT role" id="34c4dc5a-422a-4032-9568-0ea89a5514db" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.078">
-    <testcase name="HTTP status is one of: 200" time="0.078" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.078" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.078" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.078" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.078" classname="KindergartenApiFullValidation"/>
-    <testcase name="Role assignment is audited and stable" time="0.078" classname="KindergartenApiFullValidation"/>
+  <testsuite name="01. Health &amp; Readiness / OpenAPI JSON" id="bc1b4328-1791-4bfe-b44a-41a323222ec3" timestamp="2026-11-18T00:44:11.916Z" tests="4" failures="0" errors="0" time="0.010">
+    <testcase name="HTTP status is one of: 200" time="0.010" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.010" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.010" classname="KindergartenApiFullValidation"/>
+    <testcase name="OpenAPI document is 3.1" time="0.010" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="03. Accounts &amp; Roles / Refresh PARENT token after role mutation" id="c64f2f8e-b3be-4084-8e1f-1f734c6f214a" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.299">
-    <testcase name="HTTP status is one of: 200" time="0.299" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.299" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.299" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.299" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.299" classname="KindergartenApiFullValidation"/>
-    <testcase name="Fresh parent token is returned" time="0.299" classname="KindergartenApiFullValidation"/>
+  <testsuite name="01. Health &amp; Readiness / Swagger UI" id="7e179f07-3cc5-40a4-ac8d-f3d8656d1be1" timestamp="2026-11-18T00:44:11.916Z" tests="3" failures="0" errors="0" time="0.006">
+    <testcase name="HTTP status is one of: 200" time="0.006" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.006" classname="KindergartenApiFullValidation"/>
+    <testcase name="Swagger returns HTML" time="0.006" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="04. People &amp; Employees / List employees" id="9b8ddabc-6f1f-4dfd-a8cc-cb6fe86e87d7" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.014">
-    <testcase name="HTTP status is one of: 200" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Employee page is non-empty" time="0.014" classname="KindergartenApiFullValidation"/>
+  <testsuite name="02. Authentication / Login as ADMIN" id="9d9b5eb1-08a7-4824-a95d-ee227e795abe" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.304">
+    <testcase name="HTTP status is one of: 200" time="0.304" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.304" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.304" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.304" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.304" classname="KindergartenApiFullValidation"/>
+    <testcase name="Access token is returned" time="0.304" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="04. People &amp; Employees / Read employee" id="8c0a642a-ff25-488b-90a4-204371f1e095" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.009">
+  <testsuite name="02. Authentication / ADMIN profile" id="f9323974-760f-4ebf-a335-d164ae17349c" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.009">
     <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
     <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
     <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Employee id matches" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="ADMIN role is active" time="0.009" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="04. People &amp; Employees / Idempotent employee profile update" id="67b455bb-8d63-493b-bc0e-882de544656d" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.062">
-    <testcase name="HTTP status is one of: 200" time="0.062" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.062" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.062" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.062" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.062" classname="KindergartenApiFullValidation"/>
-    <testcase name="Employee remains available" time="0.062" classname="KindergartenApiFullValidation"/>
+  <testsuite name="02. Authentication / Login as PARENT" id="2ae3fb0b-2e45-45c6-b860-071e4c7fb15d" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.281">
+    <testcase name="HTTP status is one of: 200" time="0.281" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.281" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.281" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.281" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.281" classname="KindergartenApiFullValidation"/>
+    <testcase name="Parent token is returned" time="0.281" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="05. Catalog / Create dated benefit version" id="2a408fa9-8b69-48c0-aa3c-18544c069a29" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.044">
-    <testcase name="HTTP status is one of: 201" time="0.044" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.044" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.044" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.044" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.044" classname="KindergartenApiFullValidation"/>
-    <testcase name="Catalog version was created" time="0.044" classname="KindergartenApiFullValidation"/>
+  <testsuite name="02. Authentication / PARENT profile" id="9cd0f9d4-e6fd-45ae-9918-1bdf1cd889b7" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.009">
+    <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="PARENT role is active" time="0.009" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="05. Catalog / Read created benefit for date" id="53441533-b0d1-4811-abd0-17ea798e9432" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.010">
-    <testcase name="HTTP status is one of: 200" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Created benefit is effective" time="0.010" classname="KindergartenApiFullValidation"/>
+  <testsuite name="02. Authentication / Invalid password is rejected" id="9c69c922-51b7-474f-88e9-f3938c409a23" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.280">
+    <testcase name="HTTP status is one of: 401" time="0.280" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.280" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.280" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.280" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.280" classname="KindergartenApiFullValidation"/>
+    <testcase name="Failure is public and safe" time="0.280" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="06. Groups / List groups and capture live resources" id="ea86a486-3bc9-4395-a023-1443ee5d0c88" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.013">
+  <testsuite name="02. Authentication / Password change rejects wrong current password" id="80527e66-3b4e-4133-82c0-91d1ba32b6bc" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.279">
+    <testcase name="HTTP status is one of: 401" time="0.279" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.279" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.279" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.279" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.279" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="02. Authentication / Logout-all requires JWT" id="046c7214-4360-4b2f-8384-689e0cb6a560" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.005">
+    <testcase name="HTTP status is one of: 401" time="0.005" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.005" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.005" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.005" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.005" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="03. Accounts &amp; Roles / Preserve PARENT role" id="bb729b72-3db8-43d6-af2c-4f5faaf6c268" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.066">
+    <testcase name="HTTP status is one of: 200" time="0.066" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.066" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.066" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.066" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.066" classname="KindergartenApiFullValidation"/>
+    <testcase name="Role assignment is audited and stable" time="0.066" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="03. Accounts &amp; Roles / Refresh PARENT token after role mutation" id="6ed7c458-fb37-4f90-9c92-aaa1230d609c" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.277">
+    <testcase name="HTTP status is one of: 200" time="0.277" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.277" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.277" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.277" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.277" classname="KindergartenApiFullValidation"/>
+    <testcase name="Fresh parent token is returned" time="0.277" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="04. People &amp; Employees / List employees" id="3b64b420-3148-41b8-bca0-cab58f48f68d" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.013">
     <testcase name="HTTP status is one of: 200" time="0.013" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.013" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.013" classname="KindergartenApiFullValidation"/>
     <testcase name="Response has a data or error envelope" time="0.013" classname="KindergartenApiFullValidation"/>
     <testcase name="Response does not expose stored secrets" time="0.013" classname="KindergartenApiFullValidation"/>
-    <testcase name="Groups page is populated" time="0.013" classname="KindergartenApiFullValidation"/>
+    <testcase name="Employee page is non-empty" time="0.013" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="06. Groups / Group age summary" id="1b627386-3632-44ab-8f51-4eb799138698" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.011">
+  <testsuite name="04. People &amp; Employees / Read employee" id="fc95a2a6-9312-40a3-bf5b-33719fa434f8" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.008">
+    <testcase name="HTTP status is one of: 200" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Employee id matches" time="0.008" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="04. People &amp; Employees / Idempotent employee profile update" id="8dc473f6-93fd-495c-998a-eee1cc593063" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.044">
+    <testcase name="HTTP status is one of: 200" time="0.044" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.044" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.044" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.044" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.044" classname="KindergartenApiFullValidation"/>
+    <testcase name="Employee remains available" time="0.044" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="05. Catalog / Create dated benefit version" id="083b29cc-f94b-4216-ab7c-c810f5acfdca" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.040">
+    <testcase name="HTTP status is one of: 201" time="0.040" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.040" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.040" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.040" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.040" classname="KindergartenApiFullValidation"/>
+    <testcase name="Catalog version was created" time="0.040" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="05. Catalog / Read created benefit for date" id="63024eea-5f22-4f1e-bfed-8a06875b86c2" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.009">
+    <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Created benefit is effective" time="0.009" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="06. Groups / List groups and capture live resources" id="38548aee-4fc2-480e-b5ef-4050f8b6c9dd" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.012">
+    <testcase name="HTTP status is one of: 200" time="0.012" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.012" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.012" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.012" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.012" classname="KindergartenApiFullValidation"/>
+    <testcase name="Groups page is populated" time="0.012" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="06. Groups / Group age summary" id="fa083305-b37f-4e63-9277-78ddb12d719c" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.011">
     <testcase name="HTTP status is one of: 200" time="0.011" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.011" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.011" classname="KindergartenApiFullValidation"/>
@@ -161,100 +161,100 @@
     <testcase name="Response does not expose stored secrets" time="0.011" classname="KindergartenApiFullValidation"/>
     <testcase name="Summary is aggregate-only" time="0.011" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="06. Groups / Read group" id="ac93d30f-2e66-4440-a7b8-010fd090ee62" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.009">
-    <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Group id matches" time="0.009" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="06. Groups / Create DRAFT group" id="aaf3c91c-dbff-44bf-bf07-73b5bf8187d4" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.019">
-    <testcase name="HTTP status is one of: 201" time="0.019" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.019" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.019" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.019" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.019" classname="KindergartenApiFullValidation"/>
-    <testcase name="Draft group was created" time="0.019" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="06. Groups / Change DRAFT group capacity" id="12739f4b-5375-4709-aad1-0e8a5d11ef1a" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.055">
-    <testcase name="HTTP status is one of: 200" time="0.055" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.055" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.055" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.055" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.055" classname="KindergartenApiFullValidation"/>
-    <testcase name="Capacity changed" time="0.055" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="06. Groups / Change DRAFT group capacity again" id="215a9e2a-0188-47b7-bc4c-2f64aca9546e" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.051">
-    <testcase name="HTTP status is one of: 200" time="0.051" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.051" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.051" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.051" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.051" classname="KindergartenApiFullValidation"/>
-    <testcase name="Second capacity change is stored" time="0.051" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="06. Groups / Activation rejects occupied resources" id="b5bc84fd-fda1-4d55-8297-a883a67aacdf" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.050">
-    <testcase name="HTTP status is one of: 409" time="0.050" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.050" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.050" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.050" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.050" classname="KindergartenApiFullValidation"/>
-    <testcase name="Conflict is explicit" time="0.050" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="06. Groups / Non-empty group cannot be deactivated" id="be28fb84-2512-403d-95bd-594c58301ca5" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.045">
-    <testcase name="HTTP status is one of: 409" time="0.045" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.045" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.045" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.045" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.045" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="06. Groups / Current-year occupied group cannot be blindly transferred" id="3c5c2ebf-3781-4e5d-9f97-f41516ebdcd2" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.043">
-    <testcase name="HTTP status is one of: 409" time="0.043" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.043" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.043" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.043" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.043" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="07. Children / List children as ADMIN" id="c66f02b2-623e-4508-b6d6-95403bd31a95" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.012">
-    <testcase name="HTTP status is one of: 200" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Children page is populated" time="0.012" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="07. Children / Create applicant without guardian" id="7f485e34-2c87-4789-9216-9ce7da43bb54" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.023">
-    <testcase name="HTTP status is one of: 201" time="0.023" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.023" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.023" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.023" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.023" classname="KindergartenApiFullValidation"/>
-    <testcase name="Applicant state is explicit" time="0.023" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="07. Children / Read applicant" id="7337d28a-71bb-41c0-9e3c-54d3d358fb20" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.008">
+  <testsuite name="06. Groups / Read group" id="fd1c1e24-180f-4d4e-9206-5fcb0611ed58" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.008">
     <testcase name="HTTP status is one of: 200" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Response has a data or error envelope" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
-    <testcase name="Applicant id matches" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Group id matches" time="0.008" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="07. Children / Update applicant nutrition" id="d2d8e6f9-9176-410a-b0d2-47bffec96b64" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.036">
-    <testcase name="HTTP status is one of: 200" time="0.036" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.036" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.036" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.036" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.036" classname="KindergartenApiFullValidation"/>
-    <testcase name="Nutrition changed" time="0.036" classname="KindergartenApiFullValidation"/>
+  <testsuite name="06. Groups / Create DRAFT group" id="b4a78b86-2bb8-40be-bccb-f526eaab2f75" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.017">
+    <testcase name="HTTP status is one of: 201" time="0.017" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.017" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.017" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.017" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.017" classname="KindergartenApiFullValidation"/>
+    <testcase name="Draft group was created" time="0.017" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="08. Enrollment &amp; Membership / Enrollment without guardian is rejected" id="0c9a8eec-9995-4aa3-a1a2-b0fe39a13b32" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.014">
-    <testcase name="HTTP status is one of: 422" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.014" classname="KindergartenApiFullValidation"/>
+  <testsuite name="06. Groups / Change DRAFT group capacity" id="e3c74430-925a-491a-ab28-2946f50db51c" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.044">
+    <testcase name="HTTP status is one of: 200" time="0.044" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.044" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.044" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.044" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.044" classname="KindergartenApiFullValidation"/>
+    <testcase name="Capacity changed" time="0.044" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="08. Enrollment &amp; Membership / Duplicate transfer target is rejected" id="1d873990-6e2b-43ad-be84-2f9911a641ad" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.013">
+  <testsuite name="06. Groups / Change DRAFT group capacity again" id="e9ed46ca-1cee-491e-8581-a4beeaa93fa5" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.043">
+    <testcase name="HTTP status is one of: 200" time="0.043" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.043" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.043" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.043" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.043" classname="KindergartenApiFullValidation"/>
+    <testcase name="Second capacity change is stored" time="0.043" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="06. Groups / Activation rejects occupied resources" id="99a7ce78-7b50-4775-882f-1bb0c415b98a" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.048">
+    <testcase name="HTTP status is one of: 409" time="0.048" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.048" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.048" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.048" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.048" classname="KindergartenApiFullValidation"/>
+    <testcase name="Conflict is explicit" time="0.048" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="06. Groups / Non-empty group cannot be deactivated" id="61d0aa26-54ba-48b4-8bb1-55f0e2b9a4df" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.033">
+    <testcase name="HTTP status is one of: 409" time="0.033" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.033" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.033" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.033" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.033" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="06. Groups / Current-year occupied group cannot be blindly transferred" id="31e948b4-c7f4-4c5e-a734-37a8e76c932f" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.033">
+    <testcase name="HTTP status is one of: 409" time="0.033" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.033" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.033" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.033" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.033" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="07. Children / List children as ADMIN" id="387a5893-3632-4507-bc06-095cd232b3e7" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.011">
+    <testcase name="HTTP status is one of: 200" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Children page is populated" time="0.011" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="07. Children / Create applicant without guardian" id="18b011bd-e292-4889-a1c9-c56e9b9bbd6a" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.019">
+    <testcase name="HTTP status is one of: 201" time="0.019" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.019" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.019" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.019" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.019" classname="KindergartenApiFullValidation"/>
+    <testcase name="Applicant state is explicit" time="0.019" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="07. Children / Read applicant" id="202911c2-748c-4aa6-85e5-71e436a7bf91" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.007">
+    <testcase name="HTTP status is one of: 200" time="0.007" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.007" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.007" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.007" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.007" classname="KindergartenApiFullValidation"/>
+    <testcase name="Applicant id matches" time="0.007" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="07. Children / Update applicant nutrition" id="240bf181-22b2-4931-a1c4-a75c5a7b385a" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.028">
+    <testcase name="HTTP status is one of: 200" time="0.028" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.028" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.028" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.028" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.028" classname="KindergartenApiFullValidation"/>
+    <testcase name="Nutrition changed" time="0.028" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="08. Enrollment &amp; Membership / Enrollment without guardian is rejected" id="3a65960a-aac9-41ff-b09b-8fbe92c05e19" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.009">
+    <testcase name="HTTP status is one of: 422" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="08. Enrollment &amp; Membership / Duplicate transfer target is rejected" id="50bec669-8824-48c3-b2cb-4a2bb14b54cb" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.013">
     <testcase name="HTTP status is one of: 200" time="0.013" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.013" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.013" classname="KindergartenApiFullValidation"/>
@@ -262,28 +262,28 @@
     <testcase name="Response does not expose stored secrets" time="0.013" classname="KindergartenApiFullValidation"/>
     <testcase name="Same-group transfer is idempotent" time="0.013" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="08. Enrollment &amp; Membership / Applicant cannot be suspended" id="15fb6a45-5e29-4d09-a049-92c6ede5df76" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.011">
-    <testcase name="HTTP status is one of: 409" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.011" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="08. Enrollment &amp; Membership / Applicant cannot be resumed" id="15345063-791b-44c3-864c-35bc402c3882" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.009">
-    <testcase name="HTTP status is one of: 409" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="08. Enrollment &amp; Membership / Applicant withdrawal is rejected" id="50425cd8-a3fb-4142-a87f-00ded4f5d0ca" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.010">
+  <testsuite name="08. Enrollment &amp; Membership / Applicant cannot be suspended" id="0408dccc-c88b-4608-9ca6-d878f110691e" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.010">
     <testcase name="HTTP status is one of: 409" time="0.010" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.010" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.010" classname="KindergartenApiFullValidation"/>
     <testcase name="Response has a data or error envelope" time="0.010" classname="KindergartenApiFullValidation"/>
     <testcase name="Response does not expose stored secrets" time="0.010" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="09. Financial Rules &amp; Benefits / Read active benefit catalog" id="0311d646-2a99-4e19-9aed-2722df07dd3b" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.008">
+  <testsuite name="08. Enrollment &amp; Membership / Applicant cannot be resumed" id="15dde679-e3ea-4461-b652-5c62ad08afd3" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.008">
+    <testcase name="HTTP status is one of: 409" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="08. Enrollment &amp; Membership / Applicant withdrawal is rejected" id="30ab387e-926b-4950-9204-77d1cb46b632" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.008">
+    <testcase name="HTTP status is one of: 409" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="09. Financial Rules &amp; Benefits / Read active benefit catalog" id="b169399d-8d7d-4281-9cce-b2ed2c96c7d2" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.008">
     <testcase name="HTTP status is one of: 200" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
@@ -291,22 +291,22 @@
     <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Benefit uses basis points" time="0.008" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="09. Financial Rules &amp; Benefits / Assign benefit only to enrolled child" id="af82272c-d7cc-47f1-9a49-dbee00be49cb" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.014">
-    <testcase name="HTTP status is one of: 400" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.014" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="10. Invoices / List monthly invoices" id="a8ed05c2-00d3-48e9-a7ec-a43828b58ede" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.011">
-    <testcase name="HTTP status is one of: 200" time="0.011" classname="KindergartenApiFullValidation"/>
+  <testsuite name="09. Financial Rules &amp; Benefits / Assign benefit only to enrolled child" id="557c83b4-4c94-4837-941b-77586c9792cf" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.011">
+    <testcase name="HTTP status is one of: 400" time="0.011" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.011" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.011" classname="KindergartenApiFullValidation"/>
     <testcase name="Response has a data or error envelope" time="0.011" classname="KindergartenApiFullValidation"/>
     <testcase name="Response does not expose stored secrets" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Invoice page is valid" time="0.011" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="10. Invoices / Current balances" id="06b2f516-e930-499f-a6b4-831448f6106d" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.010">
+  <testsuite name="10. Invoices / List monthly invoices" id="0b8b6f10-20fc-4eee-ac35-0f96fe7e0b2c" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.010">
+    <testcase name="HTTP status is one of: 200" time="0.010" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.010" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.010" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.010" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.010" classname="KindergartenApiFullValidation"/>
+    <testcase name="Invoice page is valid" time="0.010" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="10. Invoices / Current balances" id="44d67468-fbc1-46ca-b430-e840f62b381a" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.010">
     <testcase name="HTTP status is one of: 200" time="0.010" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.010" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.010" classname="KindergartenApiFullValidation"/>
@@ -314,7 +314,7 @@
     <testcase name="Response does not expose stored secrets" time="0.010" classname="KindergartenApiFullValidation"/>
     <testcase name="Balance values use integers" time="0.010" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="10. Invoices / Read child invoices" id="7c840423-1b41-48cc-9402-43d2e0b7fd06" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.011">
+  <testsuite name="10. Invoices / Read child invoices" id="d99686d8-1670-4081-b569-996fa76a0708" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.011">
     <testcase name="HTTP status is one of: 200" time="0.011" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.011" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.011" classname="KindergartenApiFullValidation"/>
@@ -322,222 +322,222 @@
     <testcase name="Response does not expose stored secrets" time="0.011" classname="KindergartenApiFullValidation"/>
     <testcase name="Child invoice list is an array" time="0.011" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="10. Invoices / Generate current-month invoices idempotently" id="d1cd785d-afae-48e3-9455-a3366d1f6cc0" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.012">
+  <testsuite name="10. Invoices / Generate current-month invoices idempotently" id="44a3bc3b-fb37-402a-8a32-056a07d305de" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.012">
     <testcase name="HTTP status is one of: 200, 409" time="0.012" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.012" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.012" classname="KindergartenApiFullValidation"/>
     <testcase name="Response has a data or error envelope" time="0.012" classname="KindergartenApiFullValidation"/>
     <testcase name="Response does not expose stored secrets" time="0.012" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="10. Invoices / Duplicate annual tuition is rejected" id="7d97f4b3-bb50-4268-8881-a00ceec7e6ca" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.048">
-    <testcase name="HTTP status is one of: 201, 409" time="0.048" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.048" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.048" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.048" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.048" classname="KindergartenApiFullValidation"/>
+  <testsuite name="10. Invoices / Duplicate annual tuition is rejected" id="0faa0f43-2a8b-43d4-a381-ec056a0b352f" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.049">
+    <testcase name="HTTP status is one of: 201, 409" time="0.049" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.049" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.049" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.049" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.049" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="10. Invoices / Annual fallback observes business state" id="358051d2-fd54-4d2f-a854-b7cc11e42c2b" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.015">
+  <testsuite name="10. Invoices / Annual fallback observes business state" id="00e407cb-b86e-4556-ae87-0ce6f66de386" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.015">
     <testcase name="HTTP status is one of: 200, 409" time="0.015" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.015" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.015" classname="KindergartenApiFullValidation"/>
     <testcase name="Response has a data or error envelope" time="0.015" classname="KindergartenApiFullValidation"/>
     <testcase name="Response does not expose stored secrets" time="0.015" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="11. Payments / List monthly payments" id="224b52b5-4bc8-4f69-bac9-2467b9a9081c" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.012">
-    <testcase name="HTTP status is one of: 200" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Payment page is valid" time="0.012" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="11. Payments / Report small PENDING payment" id="aa59858b-a8e2-4d9e-bbbb-bceca20e2d6c" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.025">
-    <testcase name="HTTP status is one of: 201" time="0.025" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.025" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.025" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.025" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.025" classname="KindergartenApiFullValidation"/>
-    <testcase name="Payment is pending" time="0.025" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="11. Payments / Confirm reported payment" id="21e4469d-9878-4220-ae66-e2bb171ecb93" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.037">
-    <testcase name="HTTP status is one of: 200" time="0.037" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.037" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.037" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.037" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.037" classname="KindergartenApiFullValidation"/>
-    <testcase name="Payment is confirmed" time="0.037" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="11. Payments / Reject seeded pending payment" id="8396e8a9-eb97-4a70-be28-8074d9a2a59d" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.021">
-    <testcase name="HTTP status is one of: 200, 409" time="0.021" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.021" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.021" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.021" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.021" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="12. Refunds / Refund without withdrawal is rejected" id="b4511cce-bfab-4f55-8551-d3fcf81fa1fa" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.016">
-    <testcase name="HTTP status is one of: 409" time="0.016" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.016" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.016" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.016" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.016" classname="KindergartenApiFullValidation"/>
-    <testcase name="Refund requires recorded due amount" time="0.016" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="12. Refunds / Read refund history" id="bdade3dc-2480-4ed7-ab88-0c87d21bb992" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.014">
-    <testcase name="HTTP status is one of: 200" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Rejected refund leaves history unchanged" time="0.014" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="13. Expenses &amp; Payroll / List expenses" id="589b0574-f4c0-4d60-a2d0-c290a93f9e1c" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.011">
+  <testsuite name="11. Payments / List monthly payments" id="be05752a-5a8e-4278-9c9c-8df139858808" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.011">
     <testcase name="HTTP status is one of: 200" time="0.011" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.011" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.011" classname="KindergartenApiFullValidation"/>
     <testcase name="Response has a data or error envelope" time="0.011" classname="KindergartenApiFullValidation"/>
     <testcase name="Response does not expose stored secrets" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Expense page is valid" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Payment page is valid" time="0.011" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="13. Expenses &amp; Payroll / Open current finance month" id="55dceef9-801a-496a-9984-a08edc8266ab" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.091">
-    <testcase name="HTTP status is one of: 201, 409" time="0.091" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.091" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.091" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.091" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.091" classname="KindergartenApiFullValidation"/>
+  <testsuite name="11. Payments / Report small PENDING payment" id="fc709d88-52d2-4a1a-9af2-f4368dc8cda9" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.026">
+    <testcase name="HTTP status is one of: 201" time="0.026" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.026" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.026" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.026" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.026" classname="KindergartenApiFullValidation"/>
+    <testcase name="Payment is pending" time="0.026" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="13. Expenses &amp; Payroll / Create expense draft" id="602f1d10-04a2-4faa-871d-3e74f86c6478" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.019">
-    <testcase name="HTTP status is one of: 201" time="0.019" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.019" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.019" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.019" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.019" classname="KindergartenApiFullValidation"/>
-    <testcase name="Expense is DRAFT" time="0.019" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="13. Expenses &amp; Payroll / Approve expense" id="8239fdcc-97d0-4432-b8c3-01e328b5f486" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.021">
-    <testcase name="HTTP status is one of: 200" time="0.021" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.021" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.021" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.021" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.021" classname="KindergartenApiFullValidation"/>
-    <testcase name="Expense is approved" time="0.021" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="13. Expenses &amp; Payroll / Pay expense" id="22db5570-e81f-461b-9409-d479406c6456" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.021">
-    <testcase name="HTTP status is one of: 200" time="0.021" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.021" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.021" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.021" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.021" classname="KindergartenApiFullValidation"/>
-    <testcase name="Expense records payment without inventing a status" time="0.021" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="13. Expenses &amp; Payroll / Create expense correction" id="ddfce8b8-d4d8-461b-8a11-6d5d175522a7" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.012">
-    <testcase name="HTTP status is one of: 201, 409" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.012" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="13. Expenses &amp; Payroll / Create expense for cancellation" id="b800273a-ad77-46f1-8080-93cf0d76a281" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.017">
-    <testcase name="HTTP status is one of: 201" time="0.017" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.017" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.017" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.017" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.017" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="13. Expenses &amp; Payroll / Cancel expense" id="b95422a3-d6be-453b-bb11-aa9562909352" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.019">
-    <testcase name="HTTP status is one of: 200" time="0.019" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.019" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.019" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.019" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.019" classname="KindergartenApiFullValidation"/>
-    <testcase name="Expense is cancelled" time="0.019" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="13. Expenses &amp; Payroll / Expense totals" id="498efb78-a711-4760-9085-eaa344f8ff9e" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.011">
-    <testcase name="HTTP status is one of: 200" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Totals are integer cents" time="0.011" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="14. Schedules / Read seeded draft" id="e552af42-63c9-4ca5-baf5-9bff4d6962c5" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.009">
-    <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="14. Schedules / Generate complete draft" id="33d33c16-7f4f-440c-94e9-9089a61dd084" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.203">
-    <testcase name="HTTP status is one of: 200" time="0.203" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.203" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.203" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.203" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.203" classname="KindergartenApiFullValidation"/>
-    <testcase name="Generated draft has slots" time="0.203" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="14. Schedules / Update generated draft" id="19518619-adb1-4cf4-84a8-85f7936b0f95" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.034">
+  <testsuite name="11. Payments / Confirm reported payment" id="3f2f9c8a-244b-49b7-b6e8-b16620847d80" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.034">
     <testcase name="HTTP status is one of: 200" time="0.034" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.034" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.034" classname="KindergartenApiFullValidation"/>
     <testcase name="Response has a data or error envelope" time="0.034" classname="KindergartenApiFullValidation"/>
     <testcase name="Response does not expose stored secrets" time="0.034" classname="KindergartenApiFullValidation"/>
+    <testcase name="Payment is confirmed" time="0.034" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="14. Schedules / Publish schedule" id="22cae7f7-b37d-4f65-8b6e-706081957d2d" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.056">
-    <testcase name="HTTP status is one of: 200" time="0.056" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.056" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.056" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.056" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.056" classname="KindergartenApiFullValidation"/>
-    <testcase name="Schedule is published" time="0.056" classname="KindergartenApiFullValidation"/>
+  <testsuite name="11. Payments / Reject seeded pending payment" id="e4243926-3337-4c42-9cbd-bda4c0034142" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.022">
+    <testcase name="HTTP status is one of: 200, 409" time="0.022" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.022" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.022" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.022" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.022" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="14. Schedules / Read published schedule" id="44c7003d-3a22-460c-b775-f68c8e63981d" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.010">
-    <testcase name="HTTP status is one of: 200" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Published snapshot is non-empty" time="0.010" classname="KindergartenApiFullValidation"/>
+  <testsuite name="12. Refunds / Refund without withdrawal is rejected" id="cb660a77-ad50-42cd-a710-0c965e483ffe" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.020">
+    <testcase name="HTTP status is one of: 409" time="0.020" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.020" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.020" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.020" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.020" classname="KindergartenApiFullValidation"/>
+    <testcase name="Refund requires recorded due amount" time="0.020" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="15. Financial Reports / Monthly finance report" id="fd5e903f-a6de-4d4f-94aa-0ef7c3bb5a24" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.014">
-    <testcase name="HTTP status is one of: 200" time="0.014" classname="KindergartenApiFullValidation"/>
+  <testsuite name="12. Refunds / Read refund history" id="fcfe1213-bfea-409b-a24a-8dabd4b869e5" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.011">
+    <testcase name="HTTP status is one of: 200" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Rejected refund leaves history unchanged" time="0.011" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="13. Expenses &amp; Payroll / List expenses" id="98c5c506-d458-4769-973f-4865c143efd1" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.008">
+    <testcase name="HTTP status is one of: 200" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Expense page is valid" time="0.008" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="13. Expenses &amp; Payroll / Open current finance month" id="2634f81a-d3e8-453c-b159-b33c0cb570ac" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.071">
+    <testcase name="HTTP status is one of: 201, 409" time="0.071" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.071" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.071" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.071" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.071" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="13. Expenses &amp; Payroll / Create expense draft" id="c38a2c3f-f664-40e7-a360-b5f70b98272e" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.016">
+    <testcase name="HTTP status is one of: 201" time="0.016" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.016" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.016" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.016" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.016" classname="KindergartenApiFullValidation"/>
+    <testcase name="Expense is DRAFT" time="0.016" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="13. Expenses &amp; Payroll / Approve expense" id="250c550a-3639-4e44-9c38-67065cf8620a" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.017">
+    <testcase name="HTTP status is one of: 200" time="0.017" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.017" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.017" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.017" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.017" classname="KindergartenApiFullValidation"/>
+    <testcase name="Expense is approved" time="0.017" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="13. Expenses &amp; Payroll / Pay expense" id="e7b62e35-6077-4325-83ef-ea2a3f33df1c" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.019">
+    <testcase name="HTTP status is one of: 200" time="0.019" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.019" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.019" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.019" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.019" classname="KindergartenApiFullValidation"/>
+    <testcase name="Expense records payment without inventing a status" time="0.019" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="13. Expenses &amp; Payroll / Create expense correction" id="76830437-a0e7-46e0-a649-750aeb08c19e" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.011">
+    <testcase name="HTTP status is one of: 201, 409" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.011" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="13. Expenses &amp; Payroll / Create expense for cancellation" id="2963a44f-a7d3-48c9-b81e-121946f3a89d" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.014">
+    <testcase name="HTTP status is one of: 201" time="0.014" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.014" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.014" classname="KindergartenApiFullValidation"/>
     <testcase name="Response has a data or error envelope" time="0.014" classname="KindergartenApiFullValidation"/>
     <testcase name="Response does not expose stored secrets" time="0.014" classname="KindergartenApiFullValidation"/>
-    <testcase name="Financial metrics are exact integers" time="0.014" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="16. Operational Reports / Benefit distribution" id="e34f8d44-b1c7-4a17-bfa9-a5a60a10755b" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.012">
-    <testcase name="HTTP status is one of: 200" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Benefits report is aggregate data" time="0.012" classname="KindergartenApiFullValidation"/>
+  <testsuite name="13. Expenses &amp; Payroll / Cancel expense" id="d4a7db61-7000-4ab3-a715-7021c31f7c7f" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.017">
+    <testcase name="HTTP status is one of: 200" time="0.017" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.017" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.017" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.017" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.017" classname="KindergartenApiFullValidation"/>
+    <testcase name="Expense is cancelled" time="0.017" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="16. Operational Reports / Published teacher load" id="de249c77-db47-4db3-a79d-9b5456b9d1ba" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.010">
-    <testcase name="HTTP status is one of: 200" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Teacher-load report is an array" time="0.010" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="16. Operational Reports / Approved expense categories" id="5d457c0d-5b87-458a-bb40-ae3274cdbd4d" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.009">
+  <testsuite name="13. Expenses &amp; Payroll / Expense totals" id="5ca2623c-dbba-41ae-b4b6-8c4d6a85a969" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.009">
     <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
     <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
     <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Expense categories are aggregate data" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Totals are integer cents" time="0.009" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="17. Forecast &amp; Configuration Search / Forecast scenario" id="3812dbdc-474a-40c5-82ff-c3f12668e59e" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.010">
-    <testcase name="HTTP status is one of: 200" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Forecast is complete" time="0.010" classname="KindergartenApiFullValidation"/>
+  <testsuite name="14. Schedules / Read seeded draft" id="4c344279-2149-4370-b25b-9fe981531c72" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.008">
+    <testcase name="HTTP status is one of: 200" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="17. Forecast &amp; Configuration Search / Breakeven scenario" id="525e81d8-686a-4ad2-aa36-3cd7a4cffd65" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.008">
+  <testsuite name="14. Schedules / Generate complete draft" id="799c9fd4-1b02-47b7-a42f-0c5ee48db2ca" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.170">
+    <testcase name="HTTP status is one of: 200" time="0.170" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.170" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.170" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.170" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.170" classname="KindergartenApiFullValidation"/>
+    <testcase name="Generated draft has slots" time="0.170" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="14. Schedules / Update generated draft" id="601d3967-5644-49c0-a1f0-1c4c141893f2" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.030">
+    <testcase name="HTTP status is one of: 200" time="0.030" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.030" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.030" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.030" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.030" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="14. Schedules / Publish schedule" id="b1197f63-9290-4bd7-9e4d-a4eb449657e5" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.047">
+    <testcase name="HTTP status is one of: 200" time="0.047" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.047" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.047" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.047" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.047" classname="KindergartenApiFullValidation"/>
+    <testcase name="Schedule is published" time="0.047" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="14. Schedules / Read published schedule" id="e97f12a8-30f9-40ec-8a86-2843a3c1f5a7" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.009">
+    <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Published snapshot is non-empty" time="0.009" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="15. Financial Reports / Monthly finance report" id="47314741-c12f-4766-9246-74d9140a74d7" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.012">
+    <testcase name="HTTP status is one of: 200" time="0.012" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.012" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.012" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.012" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.012" classname="KindergartenApiFullValidation"/>
+    <testcase name="Financial metrics are exact integers" time="0.012" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="16. Operational Reports / Benefit distribution" id="8b9832cc-b54c-41d4-b589-52bd59eda835" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.009">
+    <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Benefits report is aggregate data" time="0.009" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="16. Operational Reports / Published teacher load" id="8c2e51e6-2af3-40da-96bc-3ebe76e63685" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.009">
+    <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Teacher-load report is an array" time="0.009" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="16. Operational Reports / Approved expense categories" id="97127739-1ea4-4e28-807d-0cc87ee8752a" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.008">
+    <testcase name="HTTP status is one of: 200" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Expense categories are aggregate data" time="0.008" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="17. Forecast &amp; Configuration Search / Forecast scenario" id="c1e2e176-1c91-4b75-84d6-4924fe9f2560" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.009">
+    <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Forecast is complete" time="0.009" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="17. Forecast &amp; Configuration Search / Breakeven scenario" id="b82c125c-51b8-4208-bff6-0d6ea885325b" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.008">
     <testcase name="HTTP status is one of: 200" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
@@ -545,108 +545,108 @@
     <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Breakeven scan reports checked candidates" time="0.008" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="17. Forecast &amp; Configuration Search / Compare configurations" id="f8f9e946-4a61-48a8-9db0-3cfa530fdd68" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.012">
-    <testcase name="HTTP status is one of: 200" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.012" classname="KindergartenApiFullValidation"/>
-    <testcase name="Configuration search checked candidates" time="0.012" classname="KindergartenApiFullValidation"/>
+  <testsuite name="17. Forecast &amp; Configuration Search / Compare configurations" id="4d0c6213-7827-4837-898a-a4ae5398b8f8" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.011">
+    <testcase name="HTTP status is one of: 200" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Configuration search checked candidates" time="0.011" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="18. Security &amp; Permissions / Missing JWT is rejected" id="a5b72e41-083a-420b-9f22-b15921b87ab1" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.005">
-    <testcase name="HTTP status is one of: 401" time="0.005" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.005" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.005" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.005" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.005" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="18. Security &amp; Permissions / Forged JWT is rejected" id="33948ea2-d109-4101-bd3d-fe83b7ef3831" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.004">
+  <testsuite name="18. Security &amp; Permissions / Missing JWT is rejected" id="fd56e109-7158-464d-b294-039fff817e71" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.004">
     <testcase name="HTTP status is one of: 401" time="0.004" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.004" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.004" classname="KindergartenApiFullValidation"/>
     <testcase name="Response has a data or error envelope" time="0.004" classname="KindergartenApiFullValidation"/>
     <testcase name="Response does not expose stored secrets" time="0.004" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="18. Security &amp; Permissions / PARENT sees only own children" id="06df2604-87de-4b42-86fc-2355ab8a5a3d" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.011">
-    <testcase name="HTTP status is one of: 200" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.011" classname="KindergartenApiFullValidation"/>
-    <testcase name="Parent child list is scoped" time="0.011" classname="KindergartenApiFullValidation"/>
+  <testsuite name="18. Security &amp; Permissions / Forged JWT is rejected" id="2b21e194-f69c-48d3-ab0e-14a47c9c60c0" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.004">
+    <testcase name="HTTP status is one of: 401" time="0.004" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.004" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.004" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.004" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.004" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="18. Security &amp; Permissions / PARENT reads own child" id="d2e5cf65-605b-473a-adfd-7030716bbabe" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.010">
+  <testsuite name="18. Security &amp; Permissions / PARENT sees only own children" id="41a24615-7a2f-4946-8341-41bcf337d69b" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.010">
     <testcase name="HTTP status is one of: 200" time="0.010" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.010" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.010" classname="KindergartenApiFullValidation"/>
     <testcase name="Response has a data or error envelope" time="0.010" classname="KindergartenApiFullValidation"/>
     <testcase name="Response does not expose stored secrets" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Own child is visible" time="0.010" classname="KindergartenApiFullValidation"/>
+    <testcase name="Parent child list is scoped" time="0.010" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="18. Security &amp; Permissions / PARENT cannot read employees" id="0e8b4533-60a2-4a40-8bce-40ec95f00287" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.007">
+  <testsuite name="18. Security &amp; Permissions / PARENT reads own child" id="49525506-4477-4bac-8581-0a26309dd09c" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.007">
+    <testcase name="HTTP status is one of: 200" time="0.007" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.007" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.007" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.007" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.007" classname="KindergartenApiFullValidation"/>
+    <testcase name="Own child is visible" time="0.007" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="18. Security &amp; Permissions / PARENT cannot read employees" id="fecd0a36-dc6c-4643-af20-197015521848" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.006">
+    <testcase name="HTTP status is one of: 403" time="0.006" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.006" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.006" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.006" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.006" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="18. Security &amp; Permissions / PARENT cannot read finance list" id="bbbafac3-b335-4a73-a38e-1f1f3c789c25" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.006">
+    <testcase name="HTTP status is one of: 403" time="0.006" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.006" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.006" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.006" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.006" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="18. Security &amp; Permissions / PARENT cannot create groups" id="8dfc5188-0612-48a1-889a-9083ae057b67" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.007">
     <testcase name="HTTP status is one of: 403" time="0.007" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.007" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.007" classname="KindergartenApiFullValidation"/>
     <testcase name="Response has a data or error envelope" time="0.007" classname="KindergartenApiFullValidation"/>
     <testcase name="Response does not expose stored secrets" time="0.007" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="18. Security &amp; Permissions / PARENT cannot read finance list" id="4d65c19d-9489-4107-a76a-dcce60529cf5" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.007">
-    <testcase name="HTTP status is one of: 403" time="0.007" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.007" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.007" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.007" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.007" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="18. Security &amp; Permissions / PARENT cannot create groups" id="a3512ed2-923b-4084-9b0d-8a0e71d0cd04" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.007">
-    <testcase name="HTTP status is one of: 403" time="0.007" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.007" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.007" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.007" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.007" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="18. Security &amp; Permissions / PARENT cannot change managed child status" id="80cc32cb-1908-458d-a762-8da81af7a997" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.008">
+  <testsuite name="18. Security &amp; Permissions / PARENT cannot change managed child status" id="a4f64d1e-390a-48cd-bd94-bba58c2cccad" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.008">
     <testcase name="HTTP status is one of: 400" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Response has a data or error envelope" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="19. Error Handling / Invalid pagination" id="bb9da5c4-aa64-4f43-84e1-df28429cebdd" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.007">
-    <testcase name="HTTP status is one of: 400" time="0.007" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.007" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.007" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.007" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.007" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="19. Error Handling / Missing group" id="d3b45fc5-537e-4cfc-90f8-84df8801ed8d" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.013">
-    <testcase name="HTTP status is one of: 404" time="0.013" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.013" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.013" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.013" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.013" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="19. Error Handling / Invalid child DOB" id="fe4e568d-9aa2-4c9a-86cf-4956f3946176" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.008">
-    <testcase name="HTTP status is one of: 422" time="0.008" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.008" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="19. Error Handling / Invalid money is rejected" id="3635aa87-b279-4af9-a9a0-252fd5ac0b73" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.008">
+  <testsuite name="19. Error Handling / Invalid pagination" id="37160084-9e10-48cb-80b8-7e726d8c1a8d" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.008">
     <testcase name="HTTP status is one of: 400" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Response has a data or error envelope" time="0.008" classname="KindergartenApiFullValidation"/>
     <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="19. Error Handling / Unknown route" id="448e6683-f006-4615-a90c-e22a34ad78f3" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.005">
-    <testcase name="HTTP status is one of: 404" time="0.005" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.005" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.005" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.005" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.005" classname="KindergartenApiFullValidation"/>
+  <testsuite name="19. Error Handling / Missing group" id="fe6b9792-1cd6-4685-ada0-05b8ab9099e1" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.008">
+    <testcase name="HTTP status is one of: 404" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="19. Error Handling / Login rate limit reaches 429" id="fdfac4a4-2010-4cc7-8762-7e8f9ae697a7" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.259">
+  <testsuite name="19. Error Handling / Invalid child DOB" id="cb885a04-410a-4d45-b80c-69bf4b5933fc" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.010">
+    <testcase name="HTTP status is one of: 422" time="0.010" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.010" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.010" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.010" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.010" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="19. Error Handling / Invalid money is rejected" id="85979314-80ae-42a3-89dc-7a69ed36583b" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.006">
+    <testcase name="HTTP status is one of: 400" time="0.006" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.006" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.006" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.006" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.006" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="19. Error Handling / Unknown route" id="0d80bb3a-3221-4b7c-8ab9-62c541d6c7c4" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.004">
+    <testcase name="HTTP status is one of: 404" time="0.004" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.004" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.004" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.004" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.004" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="19. Error Handling / Login rate limit reaches 429" id="4a62d3c9-14e5-49c1-a320-7b6434a474d1" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.247">
     <testcase name="HTTP status is one of: 401, 429" time="0.005" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.005" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.005" classname="KindergartenApiFullValidation"/>
@@ -654,87 +654,87 @@
     <testcase name="Response does not expose stored secrets" time="0.005" classname="KindergartenApiFullValidation"/>
     <testcase name="Rate limiter eventually returns 429" time="0.005" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="20. Complete End-to-End Scenario / E2E 01 Create child with legal guardian" id="37cf5dd2-0f2c-4563-9006-38716cec796d" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.023">
-    <testcase name="HTTP status is one of: 201" time="0.023" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.023" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.023" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.023" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.023" classname="KindergartenApiFullValidation"/>
-    <testcase name="New child is APPLICANT" time="0.023" classname="KindergartenApiFullValidation"/>
+  <testsuite name="20. Complete End-to-End Scenario / E2E 01 Create child with legal guardian" id="b2c2a296-b55f-415f-b249-dcc3fce3c471" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.025">
+    <testcase name="HTTP status is one of: 201" time="0.025" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.025" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.025" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.025" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.025" classname="KindergartenApiFullValidation"/>
+    <testcase name="New child is APPLICANT" time="0.025" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="20. Complete End-to-End Scenario / E2E 02 Enroll child" id="374c7560-7642-47b3-b312-bd9e18206944" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.054">
-    <testcase name="HTTP status is one of: 200" time="0.054" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.054" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.054" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.054" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.054" classname="KindergartenApiFullValidation"/>
-    <testcase name="Child is ACTIVE" time="0.054" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="20. Complete End-to-End Scenario / E2E 03 Verify occupied seats" id="c27b3b3e-6d7d-4a3f-8610-cb41df6fe8d0" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.009">
-    <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Occupied seats increased" time="0.009" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="20. Complete End-to-End Scenario / E2E 04 Suspend" id="46433976-2988-493c-8039-7d1b8b906c36" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.031">
-    <testcase name="HTTP status is one of: 200" time="0.031" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.031" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.031" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.031" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.031" classname="KindergartenApiFullValidation"/>
-    <testcase name="Child is SUSPENDED" time="0.031" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="20. Complete End-to-End Scenario / E2E 05 Resume" id="52cb46f0-0778-40f7-bb08-b88232e9e8ab" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.027">
-    <testcase name="HTTP status is one of: 200" time="0.027" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.027" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.027" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.027" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.027" classname="KindergartenApiFullValidation"/>
-    <testcase name="Child is ACTIVE again" time="0.027" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="20. Complete End-to-End Scenario / E2E 06 Assign benefit" id="16d594d7-e984-41b2-986e-d8c155357105" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.034">
-    <testcase name="HTTP status is one of: 200" time="0.034" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.034" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.034" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.034" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.034" classname="KindergartenApiFullValidation"/>
-    <testcase name="Benefit snapshot is visible" time="0.034" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="20. Complete End-to-End Scenario / E2E 07 Create annual tuition invoice" id="c1a9ae60-8560-40c7-abbb-937c9e6e441c" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.115">
-    <testcase name="HTTP status is one of: 201" time="0.115" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.115" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.115" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.115" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.115" classname="KindergartenApiFullValidation"/>
-    <testcase name="Annual invoice has exact integer total" time="0.115" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="20. Complete End-to-End Scenario / E2E 08 Parent reports PENDING payment" id="616a95a8-fd72-4482-b588-44c5018240e7" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.034">
-    <testcase name="HTTP status is one of: 201" time="0.034" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.034" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.034" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.034" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.034" classname="KindergartenApiFullValidation"/>
-    <testcase name="Payment remains pending before review" time="0.034" classname="KindergartenApiFullValidation"/>
-  </testsuite>
-  <testsuite name="20. Complete End-to-End Scenario / E2E 09 ADMIN confirms payment" id="e61f12f7-eac9-42c3-9638-9c5f5abf5c15" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.046">
+  <testsuite name="20. Complete End-to-End Scenario / E2E 02 Enroll child" id="83a66321-c83b-4a58-a36e-5b9b97261711" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.046">
     <testcase name="HTTP status is one of: 200" time="0.046" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.046" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.046" classname="KindergartenApiFullValidation"/>
     <testcase name="Response has a data or error envelope" time="0.046" classname="KindergartenApiFullValidation"/>
     <testcase name="Response does not expose stored secrets" time="0.046" classname="KindergartenApiFullValidation"/>
-    <testcase name="Payment is confirmed" time="0.046" classname="KindergartenApiFullValidation"/>
+    <testcase name="Child is ACTIVE" time="0.046" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="20. Complete End-to-End Scenario / E2E 10 Verify paid invoice" id="dfb1526a-8439-4268-9d98-63b589f20176" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.010">
-    <testcase name="HTTP status is one of: 200" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Invoice paid amount and balance are consistent" time="0.010" classname="KindergartenApiFullValidation"/>
+  <testsuite name="20. Complete End-to-End Scenario / E2E 03 Verify occupied seats" id="6c75ad83-c61b-49cd-8ffe-cf2eabcbcc10" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.008">
+    <testcase name="HTTP status is one of: 200" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Occupied seats increased" time="0.008" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="20. Complete End-to-End Scenario / E2E 11 Verify financial report" id="b0f4c39c-dc01-4cfc-8e69-c0e34d652bc9" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.012">
+  <testsuite name="20. Complete End-to-End Scenario / E2E 04 Suspend" id="a4a87a62-91c8-4106-8025-4ff148dc3244" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.020">
+    <testcase name="HTTP status is one of: 200" time="0.020" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.020" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.020" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.020" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.020" classname="KindergartenApiFullValidation"/>
+    <testcase name="Child is SUSPENDED" time="0.020" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="20. Complete End-to-End Scenario / E2E 05 Resume" id="92c97eec-01bd-4093-9959-7d2ebe9943c0" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.024">
+    <testcase name="HTTP status is one of: 200" time="0.024" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.024" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.024" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.024" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.024" classname="KindergartenApiFullValidation"/>
+    <testcase name="Child is ACTIVE again" time="0.024" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="20. Complete End-to-End Scenario / E2E 06 Assign benefit" id="ea352215-942e-408c-b713-7eeef22092cf" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.032">
+    <testcase name="HTTP status is one of: 200" time="0.032" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.032" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.032" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.032" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.032" classname="KindergartenApiFullValidation"/>
+    <testcase name="Benefit snapshot is visible" time="0.032" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="20. Complete End-to-End Scenario / E2E 07 Create annual tuition invoice" id="e9808c60-1a66-49cd-b75c-5fdefc7f9336" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.034">
+    <testcase name="HTTP status is one of: 201" time="0.034" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.034" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.034" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.034" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.034" classname="KindergartenApiFullValidation"/>
+    <testcase name="Annual invoice has exact integer total" time="0.034" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="20. Complete End-to-End Scenario / E2E 08 Parent reports PENDING payment" id="dd98f556-2653-4e93-874c-0afb9cab5cf2" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.029">
+    <testcase name="HTTP status is one of: 201" time="0.029" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.029" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.029" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.029" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.029" classname="KindergartenApiFullValidation"/>
+    <testcase name="Payment remains pending before review" time="0.029" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="20. Complete End-to-End Scenario / E2E 09 ADMIN confirms payment" id="bbcf4340-9536-4781-b126-592877344a9a" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.040">
+    <testcase name="HTTP status is one of: 200" time="0.040" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.040" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.040" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.040" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.040" classname="KindergartenApiFullValidation"/>
+    <testcase name="Payment is confirmed" time="0.040" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="20. Complete End-to-End Scenario / E2E 10 Verify paid invoice" id="f922f7a8-28fe-4885-ad14-5e0b66d2d042" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.016">
+    <testcase name="HTTP status is one of: 200" time="0.016" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.016" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.016" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.016" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.016" classname="KindergartenApiFullValidation"/>
+    <testcase name="Invoice paid amount and balance are consistent" time="0.016" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="20. Complete End-to-End Scenario / E2E 11 Verify financial report" id="2e41a530-215c-4fbb-b36a-ed418aacf97f" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.012">
     <testcase name="HTTP status is one of: 200" time="0.012" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.012" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.012" classname="KindergartenApiFullValidation"/>
@@ -742,31 +742,31 @@
     <testcase name="Response does not expose stored secrets" time="0.012" classname="KindergartenApiFullValidation"/>
     <testcase name="Confirmed receipt is reflected" time="0.012" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="20. Complete End-to-End Scenario / E2E 12 Verify published schedule" id="bf861892-518a-4802-8f8e-beb3706d6937" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.009">
-    <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
-    <testcase name="Published schedule remains readable" time="0.009" classname="KindergartenApiFullValidation"/>
+  <testsuite name="20. Complete End-to-End Scenario / E2E 12 Verify published schedule" id="355a8d25-cb33-4b21-b896-c669d574c67e" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.008">
+    <testcase name="HTTP status is one of: 200" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Published schedule remains readable" time="0.008" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="20. Complete End-to-End Scenario / E2E 13 Withdraw child" id="260c05f4-f326-4070-b1c3-31c7c79fc3a3" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.045">
-    <testcase name="HTTP status is one of: 200" time="0.045" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.045" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.045" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.045" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.045" classname="KindergartenApiFullValidation"/>
-    <testcase name="Child left and refund is due" time="0.045" classname="KindergartenApiFullValidation"/>
+  <testsuite name="20. Complete End-to-End Scenario / E2E 13 Withdraw child" id="c74e0282-6fec-4701-86ef-49ed98aafc50" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.038">
+    <testcase name="HTTP status is one of: 200" time="0.038" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.038" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.038" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.038" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.038" classname="KindergartenApiFullValidation"/>
+    <testcase name="Child left and refund is due" time="0.038" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="20. Complete End-to-End Scenario / E2E 14 Refund confirmed payment" id="5e5eac23-dcd8-4917-9616-50693bfd3066" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.051">
-    <testcase name="HTTP status is one of: 201" time="0.051" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.051" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.051" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.051" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.051" classname="KindergartenApiFullValidation"/>
-    <testcase name="Refund is confirmed" time="0.051" classname="KindergartenApiFullValidation"/>
+  <testsuite name="20. Complete End-to-End Scenario / E2E 14 Refund confirmed payment" id="cac8f679-672e-446e-b2c8-d0a9ccf7b414" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.043">
+    <testcase name="HTTP status is one of: 201" time="0.043" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.043" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.043" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.043" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.043" classname="KindergartenApiFullValidation"/>
+    <testcase name="Refund is confirmed" time="0.043" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="20. Complete End-to-End Scenario / E2E 15 Verify refund history" id="8b5c3233-95ac-4215-9384-45c171b8a3e8" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.013">
+  <testsuite name="20. Complete End-to-End Scenario / E2E 15 Verify refund history" id="957122ec-ce9e-4fe3-bb99-a04edeb7a856" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.013">
     <testcase name="HTTP status is one of: 200" time="0.013" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.013" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.013" classname="KindergartenApiFullValidation"/>
@@ -774,32 +774,32 @@
     <testcase name="Response does not expose stored secrets" time="0.013" classname="KindergartenApiFullValidation"/>
     <testcase name="Refund history contains E2E refund" time="0.013" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="20. Complete End-to-End Scenario / E2E 16 Final aggregation checks" id="843458dc-764e-4111-b471-ebe100f7444c" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.010">
-    <testcase name="HTTP status is one of: 200" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Final report remains available" time="0.010" classname="KindergartenApiFullValidation"/>
+  <testsuite name="20. Complete End-to-End Scenario / E2E 16 Final aggregation checks" id="a1629a28-beb1-40d9-a4f9-68cf64becede" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.009">
+    <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Final report remains available" time="0.009" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="21. Entity Version History / List complete group history" id="14d3bc1f-9141-44c3-bc52-15ffe44aae7e" timestamp="2026-11-17T22:47:19.873Z" tests="7" failures="0" errors="0" time="0.010">
-    <testcase name="HTTP status is one of: 200" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Create and two update versions are present" time="0.010" classname="KindergartenApiFullValidation"/>
-    <testcase name="Snapshots preserve both prior capacities" time="0.010" classname="KindergartenApiFullValidation"/>
+  <testsuite name="21. Entity Version History / List complete group history" id="1a2b4fd2-7a29-4c54-8ff7-67a0ad89f729" timestamp="2026-11-18T00:44:11.916Z" tests="7" failures="0" errors="0" time="0.011">
+    <testcase name="HTTP status is one of: 200" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Create and two update versions are present" time="0.011" classname="KindergartenApiFullValidation"/>
+    <testcase name="Snapshots preserve both prior capacities" time="0.011" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="21. Entity Version History / Read group version one" id="e22a6968-27f1-4c03-9e36-a4d14db4ebb2" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.008">
-    <testcase name="HTTP status is one of: 200" time="0.008" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response has a data or error envelope" time="0.008" classname="KindergartenApiFullValidation"/>
-    <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
-    <testcase name="Initial restorable state is returned" time="0.008" classname="KindergartenApiFullValidation"/>
+  <testsuite name="21. Entity Version History / Read group version one" id="44031d50-c024-4cb3-9d0d-b610abb6069f" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.009">
+    <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Initial restorable state is returned" time="0.009" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="21. Entity Version History / Compare group versions" id="ed518094-540a-4aa9-839a-e3bcca71a615" timestamp="2026-11-17T22:47:19.873Z" tests="6" failures="0" errors="0" time="0.010">
+  <testsuite name="21. Entity Version History / Compare group versions" id="e37972f8-9584-4382-baa8-27c9c78700a6" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.010">
     <testcase name="HTTP status is one of: 200" time="0.010" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.010" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.010" classname="KindergartenApiFullValidation"/>
@@ -807,7 +807,72 @@
     <testcase name="Response does not expose stored secrets" time="0.010" classname="KindergartenApiFullValidation"/>
     <testcase name="Two-step capacity change is explicit" time="0.010" classname="KindergartenApiFullValidation"/>
   </testsuite>
-  <testsuite name="21. Entity Version History / PARENT cannot read entity history" id="95394ec2-5d2f-45e4-b70f-d0c62377cb36" timestamp="2026-11-17T22:47:19.873Z" tests="5" failures="0" errors="0" time="0.007">
+  <testsuite name="21. Entity Version History / List people and auth history" id="934d8b44-26f4-44a1-a728-aed8be5e29af" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.009">
+    <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="PERSON history is present" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Person secrets are redacted" time="0.009" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="21. Entity Version History / List catalog history" id="de96459d-8a64-4640-9fc9-04f9d16da2a1" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.009">
+    <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="CATALOG history is present" time="0.009" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="21. Entity Version History / List child and membership history" id="80298325-370a-409e-9750-015146e71b5c" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.009">
+    <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="CHILD history is present" time="0.009" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="21. Entity Version History / List invoice history" id="7cec3897-d565-4305-a324-a26952fbf93c" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.009">
+    <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="INVOICE history is present" time="0.009" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="21. Entity Version History / List payment history" id="fe96ea34-4c42-49ae-b933-7ad8b1ccbdf1" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.008">
+    <testcase name="HTTP status is one of: 200" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="PAYMENT history is present" time="0.008" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="21. Entity Version History / List refund history" id="b681883b-4412-4268-a153-5b686c6cddf0" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.009">
+    <testcase name="HTTP status is one of: 200" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.009" classname="KindergartenApiFullValidation"/>
+    <testcase name="REFUND history is present" time="0.009" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="21. Entity Version History / List expense history" id="9addaa0f-9ee7-4198-be9a-c2ddac2b92e5" timestamp="2026-11-18T00:44:11.916Z" tests="6" failures="0" errors="0" time="0.008">
+    <testcase name="HTTP status is one of: 200" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.008" classname="KindergartenApiFullValidation"/>
+    <testcase name="EXPENSE history is present" time="0.008" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="21. Entity Version History / List schedule history" id="dd9a859f-694c-4fb7-98f6-a810bdfdf026" timestamp="2026-11-18T00:44:11.916Z" tests="7" failures="0" errors="0" time="0.013">
+    <testcase name="HTTP status is one of: 200" time="0.013" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response time is below 5 seconds" time="0.013" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response is JSON" time="0.013" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response has a data or error envelope" time="0.013" classname="KindergartenApiFullValidation"/>
+    <testcase name="Response does not expose stored secrets" time="0.013" classname="KindergartenApiFullValidation"/>
+    <testcase name="SCHEDULE history is present" time="0.013" classname="KindergartenApiFullValidation"/>
+    <testcase name="Schedule snapshot matches the demonstrated week" time="0.013" classname="KindergartenApiFullValidation"/>
+  </testsuite>
+  <testsuite name="21. Entity Version History / PARENT cannot read entity history" id="fee7d894-54a3-476f-bda6-a7bd5289051b" timestamp="2026-11-18T00:44:11.916Z" tests="5" failures="0" errors="0" time="0.007">
     <testcase name="HTTP status is one of: 403" time="0.007" classname="KindergartenApiFullValidation"/>
     <testcase name="Response time is below 5 seconds" time="0.007" classname="KindergartenApiFullValidation"/>
     <testcase name="Response is JSON" time="0.007" classname="KindergartenApiFullValidation"/>

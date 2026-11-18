@@ -10,7 +10,8 @@
 - Issue #110 / REQ-DVH-001 закрито як Completed після звірки acceptance criteria,
   merged PR #111, незалежного approval і green CI; Project item переведено у `Done`.
 - Відкриті Issues: #6 TASK-001, #15 TASK-010, #62 TASK-040.
-- Відкритих PR після merge #109/#111 немає.
+- Відкритий PR #112 готує acceptance/history-responsibility/release package; він має
+  отримати незалежний approval і green CI на фінальному head.
 - TASK-001 очікує реального погодження контрактів тімлідом і командою.
 - TASK-010 очікує незалежної арифметичної перевірки S7.
 - TASK-040 має технічний demo package, але спільну демонстрацію S1–S8 ще не проведено.
@@ -23,10 +24,11 @@
 | --- | --- |
 | GitHub CI PR #109 | 4/4 SUCCESS: Code, MongoDB, Postman, macOS |
 | GitHub CI `develop` `c4759f2` | 4/4 SUCCESS, run `44194028615` |
-| `npm run check` | 212 tests: 184 pass, 28 Mongo-skipped, 0 fail |
-| `npm run test:mongodb` | 27/27 PASS на MongoDB replica set `rs0` |
+| GitHub CI PR #112 | required на фінальному head; merge без approval заборонений |
+| `npm run check` | 213 tests: 184 pass, 29 Mongo-skipped, 0 fail |
+| `npm run test:mongodb` | 28/28 PASS на MongoDB replica set `rs0` |
 | `npm run test:panel-browser` | PASS: 40 read-only API requests + real ADMIN/API mode |
-| `npm run test:postman` | 112 requests, 638 assertions, 0 failures |
+| `npm run test:postman` | 120 requests, 687 assertions, 0 failures |
 | `npm run test:all` | PASS після штатного `infra:up` та ініціалізації `rs0` |
 | OpenAPI/Swagger/history | 68 operations; ADMIN-only history list/version/compare перевірено HTTP/Postman |
 
@@ -48,6 +50,7 @@ commits без унікальної зміни дерева; CI/people foundatio
 ## Матеріали для завершення
 
 - [TASK-001 acceptance session](../team/TASK-001_ACCEPTANCE_SESSION.md)
+- [S1–S8 data-history responsibility matrix](../team/DATA_HISTORY_TEAM_RESPONSIBILITIES.md)
 - [TASK-010 S7 review package](../finance/TASK-010_S7_REVIEW_PACKAGE.md)
 - [TASK-040 full demo runbook](TASK-040_DEMO_RUNBOOK.md)
 - [Release checklist `develop` → `main`](../release/DEVELOP_TO_MAIN_RELEASE_CHECKLIST.md)

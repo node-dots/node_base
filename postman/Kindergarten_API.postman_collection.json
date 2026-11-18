@@ -663,7 +663,8 @@
                   "let responseJson; try { responseJson = pm.response.json(); } catch (error) { responseJson = null; }",
                   "pm.test(\"Response has a data or error envelope\", function () { pm.expect(responseJson).to.be.an(\"object\"); pm.expect(responseJson).to.satisfy(function (value) { return Object.prototype.hasOwnProperty.call(value, \"data\") || Object.prototype.hasOwnProperty.call(value, \"error\"); }); });",
                   "pm.test(\"Response does not expose stored secrets\", function () { const raw = pm.response.text(); pm.expect(raw).not.to.match(/passwordHash|JWT_SECRET|currentPassword|newPassword/i); });",
-                  "pm.test(\"Catalog version was created\", function () { pm.expect(responseJson.data.code).to.eql(pm.environment.get(\"testSubjectCode\")); });"
+                  "pm.test(\"Catalog version was created\", function () { pm.expect(responseJson.data.code).to.eql(pm.environment.get(\"testSubjectCode\")); });",
+                  "pm.environment.set(\"catalogVersionId\", responseJson.data.id);"
                 ]
               }
             }
@@ -3802,7 +3803,8 @@
                   "let responseJson; try { responseJson = pm.response.json(); } catch (error) { responseJson = null; }",
                   "pm.test(\"Response has a data or error envelope\", function () { pm.expect(responseJson).to.be.an(\"object\"); pm.expect(responseJson).to.satisfy(function (value) { return Object.prototype.hasOwnProperty.call(value, \"data\") || Object.prototype.hasOwnProperty.call(value, \"error\"); }); });",
                   "pm.test(\"Response does not expose stored secrets\", function () { const raw = pm.response.text(); pm.expect(raw).not.to.match(/passwordHash|JWT_SECRET|currentPassword|newPassword/i); });",
-                  "pm.test(\"Refund is confirmed\", function () { pm.expect(responseJson.data.status).to.eql(\"CONFIRMED\"); });"
+                  "pm.test(\"Refund is confirmed\", function () { pm.expect(responseJson.data.status).to.eql(\"CONFIRMED\"); });",
+                  "pm.environment.set(\"e2eRefundId\", responseJson.data.id);"
                 ]
               }
             }
@@ -3969,6 +3971,263 @@
                   "pm.test(\"Response has a data or error envelope\", function () { pm.expect(responseJson).to.be.an(\"object\"); pm.expect(responseJson).to.satisfy(function (value) { return Object.prototype.hasOwnProperty.call(value, \"data\") || Object.prototype.hasOwnProperty.call(value, \"error\"); }); });",
                   "pm.test(\"Response does not expose stored secrets\", function () { const raw = pm.response.text(); pm.expect(raw).not.to.match(/passwordHash|JWT_SECRET|currentPassword|newPassword/i); });",
                   "pm.test(\"Two-step capacity change is explicit\", function () { pm.expect(responseJson.data.fromState.capacity).to.eql(18); pm.expect(responseJson.data.toState.capacity).to.eql(16); pm.expect(responseJson.data.changedFields).to.include(\"capacity\"); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List people and auth history",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/history?entityType=PERSON&entityId={{employeeId}}&page=1&pageSize=50",
+            "description": "Фактичний запит GET /api/v1/history?entityType=PERSON&entityId={{employeeId}}&page=1&pageSize=50. Очікувані статуси: 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is one of: 200\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });",
+                  "pm.test(\"Response time is below 5 seconds\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.have.header(\"Content-Type\"); pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"); });",
+                  "let responseJson; try { responseJson = pm.response.json(); } catch (error) { responseJson = null; }",
+                  "pm.test(\"Response has a data or error envelope\", function () { pm.expect(responseJson).to.be.an(\"object\"); pm.expect(responseJson).to.satisfy(function (value) { return Object.prototype.hasOwnProperty.call(value, \"data\") || Object.prototype.hasOwnProperty.call(value, \"error\"); }); });",
+                  "pm.test(\"PERSON history is present\", function () { pm.expect(responseJson.data.versions).to.be.an(\"array\").that.is.not.empty; pm.expect(responseJson.data.versions.every(function (entry) { return entry.entityType === \"PERSON\"; })).to.eql(true); });",
+                  "pm.test(\"Person secrets are redacted\", function () { responseJson.data.versions.forEach(function (entry) { [entry.before, entry.after].filter(Boolean).forEach(function (snapshot) { if (snapshot.account && Object.prototype.hasOwnProperty.call(snapshot.account, \"passwordHash\")) pm.expect(snapshot.account.passwordHash).to.eql(\"[REDACTED]\"); }); }); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List catalog history",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/history?entityType=CATALOG&entityId={{catalogVersionId}}&page=1&pageSize=50",
+            "description": "Фактичний запит GET /api/v1/history?entityType=CATALOG&entityId={{catalogVersionId}}&page=1&pageSize=50. Очікувані статуси: 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is one of: 200\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });",
+                  "pm.test(\"Response time is below 5 seconds\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.have.header(\"Content-Type\"); pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"); });",
+                  "let responseJson; try { responseJson = pm.response.json(); } catch (error) { responseJson = null; }",
+                  "pm.test(\"Response has a data or error envelope\", function () { pm.expect(responseJson).to.be.an(\"object\"); pm.expect(responseJson).to.satisfy(function (value) { return Object.prototype.hasOwnProperty.call(value, \"data\") || Object.prototype.hasOwnProperty.call(value, \"error\"); }); });",
+                  "pm.test(\"Response does not expose stored secrets\", function () { const raw = pm.response.text(); pm.expect(raw).not.to.match(/passwordHash|JWT_SECRET|currentPassword|newPassword/i); });",
+                  "pm.test(\"CATALOG history is present\", function () { pm.expect(responseJson.data.versions).to.be.an(\"array\").that.is.not.empty; pm.expect(responseJson.data.versions.every(function (entry) { return entry.entityType === \"CATALOG\"; })).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List child and membership history",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/history?entityType=CHILD&entityId={{e2eChildId}}&page=1&pageSize=50",
+            "description": "Фактичний запит GET /api/v1/history?entityType=CHILD&entityId={{e2eChildId}}&page=1&pageSize=50. Очікувані статуси: 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is one of: 200\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });",
+                  "pm.test(\"Response time is below 5 seconds\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.have.header(\"Content-Type\"); pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"); });",
+                  "let responseJson; try { responseJson = pm.response.json(); } catch (error) { responseJson = null; }",
+                  "pm.test(\"Response has a data or error envelope\", function () { pm.expect(responseJson).to.be.an(\"object\"); pm.expect(responseJson).to.satisfy(function (value) { return Object.prototype.hasOwnProperty.call(value, \"data\") || Object.prototype.hasOwnProperty.call(value, \"error\"); }); });",
+                  "pm.test(\"Response does not expose stored secrets\", function () { const raw = pm.response.text(); pm.expect(raw).not.to.match(/passwordHash|JWT_SECRET|currentPassword|newPassword/i); });",
+                  "pm.test(\"CHILD history is present\", function () { pm.expect(responseJson.data.versions).to.be.an(\"array\").that.is.not.empty; pm.expect(responseJson.data.versions.every(function (entry) { return entry.entityType === \"CHILD\"; })).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List invoice history",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/history?entityType=INVOICE&entityId={{e2eInvoiceId}}&page=1&pageSize=50",
+            "description": "Фактичний запит GET /api/v1/history?entityType=INVOICE&entityId={{e2eInvoiceId}}&page=1&pageSize=50. Очікувані статуси: 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is one of: 200\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });",
+                  "pm.test(\"Response time is below 5 seconds\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.have.header(\"Content-Type\"); pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"); });",
+                  "let responseJson; try { responseJson = pm.response.json(); } catch (error) { responseJson = null; }",
+                  "pm.test(\"Response has a data or error envelope\", function () { pm.expect(responseJson).to.be.an(\"object\"); pm.expect(responseJson).to.satisfy(function (value) { return Object.prototype.hasOwnProperty.call(value, \"data\") || Object.prototype.hasOwnProperty.call(value, \"error\"); }); });",
+                  "pm.test(\"Response does not expose stored secrets\", function () { const raw = pm.response.text(); pm.expect(raw).not.to.match(/passwordHash|JWT_SECRET|currentPassword|newPassword/i); });",
+                  "pm.test(\"INVOICE history is present\", function () { pm.expect(responseJson.data.versions).to.be.an(\"array\").that.is.not.empty; pm.expect(responseJson.data.versions.every(function (entry) { return entry.entityType === \"INVOICE\"; })).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List payment history",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/history?entityType=PAYMENT&entityId={{e2ePaymentId}}&page=1&pageSize=50",
+            "description": "Фактичний запит GET /api/v1/history?entityType=PAYMENT&entityId={{e2ePaymentId}}&page=1&pageSize=50. Очікувані статуси: 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is one of: 200\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });",
+                  "pm.test(\"Response time is below 5 seconds\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.have.header(\"Content-Type\"); pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"); });",
+                  "let responseJson; try { responseJson = pm.response.json(); } catch (error) { responseJson = null; }",
+                  "pm.test(\"Response has a data or error envelope\", function () { pm.expect(responseJson).to.be.an(\"object\"); pm.expect(responseJson).to.satisfy(function (value) { return Object.prototype.hasOwnProperty.call(value, \"data\") || Object.prototype.hasOwnProperty.call(value, \"error\"); }); });",
+                  "pm.test(\"Response does not expose stored secrets\", function () { const raw = pm.response.text(); pm.expect(raw).not.to.match(/passwordHash|JWT_SECRET|currentPassword|newPassword/i); });",
+                  "pm.test(\"PAYMENT history is present\", function () { pm.expect(responseJson.data.versions).to.be.an(\"array\").that.is.not.empty; pm.expect(responseJson.data.versions.every(function (entry) { return entry.entityType === \"PAYMENT\"; })).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List refund history",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/history?entityType=REFUND&entityId={{e2eRefundId}}&page=1&pageSize=50",
+            "description": "Фактичний запит GET /api/v1/history?entityType=REFUND&entityId={{e2eRefundId}}&page=1&pageSize=50. Очікувані статуси: 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is one of: 200\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });",
+                  "pm.test(\"Response time is below 5 seconds\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.have.header(\"Content-Type\"); pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"); });",
+                  "let responseJson; try { responseJson = pm.response.json(); } catch (error) { responseJson = null; }",
+                  "pm.test(\"Response has a data or error envelope\", function () { pm.expect(responseJson).to.be.an(\"object\"); pm.expect(responseJson).to.satisfy(function (value) { return Object.prototype.hasOwnProperty.call(value, \"data\") || Object.prototype.hasOwnProperty.call(value, \"error\"); }); });",
+                  "pm.test(\"Response does not expose stored secrets\", function () { const raw = pm.response.text(); pm.expect(raw).not.to.match(/passwordHash|JWT_SECRET|currentPassword|newPassword/i); });",
+                  "pm.test(\"REFUND history is present\", function () { pm.expect(responseJson.data.versions).to.be.an(\"array\").that.is.not.empty; pm.expect(responseJson.data.versions.every(function (entry) { return entry.entityType === \"REFUND\"; })).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List expense history",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/history?entityType=EXPENSE&entityId={{expenseId}}&page=1&pageSize=50",
+            "description": "Фактичний запит GET /api/v1/history?entityType=EXPENSE&entityId={{expenseId}}&page=1&pageSize=50. Очікувані статуси: 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is one of: 200\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });",
+                  "pm.test(\"Response time is below 5 seconds\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.have.header(\"Content-Type\"); pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"); });",
+                  "let responseJson; try { responseJson = pm.response.json(); } catch (error) { responseJson = null; }",
+                  "pm.test(\"Response has a data or error envelope\", function () { pm.expect(responseJson).to.be.an(\"object\"); pm.expect(responseJson).to.satisfy(function (value) { return Object.prototype.hasOwnProperty.call(value, \"data\") || Object.prototype.hasOwnProperty.call(value, \"error\"); }); });",
+                  "pm.test(\"Response does not expose stored secrets\", function () { const raw = pm.response.text(); pm.expect(raw).not.to.match(/passwordHash|JWT_SECRET|currentPassword|newPassword/i); });",
+                  "pm.test(\"EXPENSE history is present\", function () { pm.expect(responseJson.data.versions).to.be.an(\"array\").that.is.not.empty; pm.expect(responseJson.data.versions.every(function (entry) { return entry.entityType === \"EXPENSE\"; })).to.eql(true); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List schedule history",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": "{{baseUrl}}/api/v1/history?entityType=SCHEDULE&page=1&pageSize=50",
+            "description": "Фактичний запит GET /api/v1/history?entityType=SCHEDULE&page=1&pageSize=50. Очікувані статуси: 200."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"HTTP status is one of: 200\", function () { pm.expect(pm.response.code).to.be.oneOf([200]); });",
+                  "pm.test(\"Response time is below 5 seconds\", function () { pm.expect(pm.response.responseTime).to.be.below(5000); });",
+                  "pm.test(\"Response is JSON\", function () { pm.response.to.have.header(\"Content-Type\"); pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\"); });",
+                  "let responseJson; try { responseJson = pm.response.json(); } catch (error) { responseJson = null; }",
+                  "pm.test(\"Response has a data or error envelope\", function () { pm.expect(responseJson).to.be.an(\"object\"); pm.expect(responseJson).to.satisfy(function (value) { return Object.prototype.hasOwnProperty.call(value, \"data\") || Object.prototype.hasOwnProperty.call(value, \"error\"); }); });",
+                  "pm.test(\"Response does not expose stored secrets\", function () { const raw = pm.response.text(); pm.expect(raw).not.to.match(/passwordHash|JWT_SECRET|currentPassword|newPassword/i); });",
+                  "pm.test(\"SCHEDULE history is present\", function () { pm.expect(responseJson.data.versions).to.be.an(\"array\").that.is.not.empty; pm.expect(responseJson.data.versions.every(function (entry) { return entry.entityType === \"SCHEDULE\"; })).to.eql(true); });",
+                  "pm.test(\"Schedule snapshot matches the demonstrated week\", function () { pm.expect(responseJson.data.versions.some(function (entry) { return entry.after && entry.after.weekStart === pm.environment.get(\"draftWeek\"); })).to.eql(true); });"
                 ]
               }
             }

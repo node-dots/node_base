@@ -46,6 +46,10 @@ Full snapshots обрано через простоту й надійність 
 
 ## Покриття
 
+Організаційні owners/reviewers S1–S8 і захисні Postman-кроки наведені в
+[`DATA_HISTORY_TEAM_RESPONSIBILITIES.md`](../team/DATA_HISTORY_TEAM_RESPONSIBILITIES.md).
+Механізм спільний: жодна команда не створює власну history collection або plugin.
+
 Mongoose plugin підключено до постійних бізнес-колекцій:
 
 | `entityType` | Колекція | Вкладені бізнес-дані |
