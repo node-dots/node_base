@@ -6,6 +6,8 @@ const DEFAULT_BUDGET = Object.freeze({
   milliseconds: 5000,
   yieldEvery: 1,
 });
+const MAX_GROUP_CAPACITY = 20;
+const DEFAULT_TEACHER_SALARY_MINOR = 4_000_000;
 const stable = (left, right) => left.localeCompare(right);
 
 function candidateCounts(
@@ -75,6 +77,15 @@ function buildResources(input, candidate) {
       1,
       Math.ceil(range.children / Math.max(1, count)),
     );
+    if (capacity > MAX_GROUP_CAPACITY)
+      return {
+        reason: "GROUP_CAPACITY_EXCEEDED",
+        details: {
+          ageCode: range.ageCode,
+          requiredCapacity: capacity,
+          maxCapacity: MAX_GROUP_CAPACITY,
+        },
+      };
     for (let i = 0; i < count; i += 1)
       groups.push({
         id: `scenario-age-${range.ageCode}-group-${String(i + 1).padStart(2, "0")}`,
@@ -135,6 +146,16 @@ function buildResources(input, candidate) {
         positionCode: "FIXED_STAFF",
         salaryMinor: member.salaryMinor,
         scenarioId: member.id,
+      });
+  }
+  for (const teacher of candidate.variant.teachers) {
+    const group = groups[0];
+    if (group)
+      staff.push({
+        groupId: group.id,
+        positionCode: "FIXED_STAFF",
+        salaryMinor: teacher.salaryMinor ?? DEFAULT_TEACHER_SALARY_MINOR,
+        scenarioId: teacher.id,
       });
   }
   return {
@@ -244,6 +265,11 @@ export async function searchConfigurations(
           groupKey: candidate.counts.join(","),
           resultMinor: financial.resultMinor,
           resultBeforeFoodMinor: financial.resultBeforeFoodMinor,
+          revenueMinor: financial.revenueMinor,
+          payrollMinor: financial.payrollMinor,
+          rentMinor: financial.rentMinor,
+          otherCostsMinor: financial.otherCostsMinor,
+          foodCostMinor: financial.foodCostMinor,
           financialComplete: financial.complete,
           childrenByGroup: Object.fromEntries(resources.childrenByGroup),
           schedule: {
@@ -265,6 +291,11 @@ export async function searchConfigurations(
             groupKey: result.groupKey,
             resultMinor: result.resultMinor,
             resultBeforeFoodMinor: result.resultBeforeFoodMinor,
+            revenueMinor: result.revenueMinor,
+            payrollMinor: result.payrollMinor,
+            rentMinor: result.rentMinor,
+            otherCostsMinor: result.otherCostsMinor,
+            foodCostMinor: result.foodCostMinor,
             financialComplete: result.financialComplete,
             childrenByGroup: result.childrenByGroup,
             scheduleComplete: true,
@@ -299,6 +330,11 @@ export async function searchConfigurations(
             groupKey: result.groupKey,
             resultMinor: result.resultMinor,
             resultBeforeFoodMinor: result.resultBeforeFoodMinor,
+            revenueMinor: result.revenueMinor,
+            payrollMinor: result.payrollMinor,
+            rentMinor: result.rentMinor,
+            otherCostsMinor: result.otherCostsMinor,
+            foodCostMinor: result.foodCostMinor,
             financialComplete: result.financialComplete,
             unscheduled: {
               count: schedule.unscheduled.length,
