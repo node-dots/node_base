@@ -13,6 +13,7 @@ const availability = zod
     }),
   )
   .max(40);
+const DEFAULT_TEACHER_SALARY_MINOR = 4_000_000;
 
 const baseConfigurationSearchSchema = zod.strictObject({
   weekStart: zod.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -50,7 +51,17 @@ const baseConfigurationSearchSchema = zod.strictObject({
         id: objectId,
         teachers: zod
           .array(
-            zod.strictObject({ id: objectId, subjectCode: code, availability }),
+            zod.strictObject({
+              id: objectId,
+              subjectCode: code,
+              availability,
+              salaryMinor: zod
+                .number()
+                .int()
+                .safe()
+                .nonnegative()
+                .default(DEFAULT_TEACHER_SALARY_MINOR),
+            }),
           )
           .max(100),
       }),

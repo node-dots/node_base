@@ -76,6 +76,7 @@
 ### Фінансові контракти — `finance/`
 
 - [Контракт фінансових показників і контрольна арифметика](finance/financial-metrics-contract.md).
+- [Економічно найвигідніший розмір групи](finance/MOST_PROFITABLE_GROUP_SIZE.md).
 
 ## Правила підтримки
 

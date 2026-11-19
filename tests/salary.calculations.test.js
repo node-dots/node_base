@@ -55,3 +55,25 @@ test("salary formulas cover empty groups and enrollment boundaries", () => {
     RangeError,
   );
 });
+
+test("educator and assistant pair follows the project formula for control sizes", () => {
+  const expectedPairSalaryMinor = new Map([
+    [10, 6_000_000],
+    [12, 6_000_000],
+    [13, 6_800_000],
+    [15, 8_400_000],
+    [18, 10_800_000],
+    [20, 12_400_000],
+  ]);
+  for (const [occupiedSeats, expected] of expectedPairSalaryMinor) {
+    const educator = calculateMonthlySalaryCents({
+      positionCode: POSITION_CODE.EDUCATOR,
+      occupiedSeats,
+    });
+    const assistant = calculateMonthlySalaryCents({
+      positionCode: POSITION_CODE.ASSISTANT,
+      occupiedSeats,
+    });
+    assert.equal(educator + assistant, expected, `${occupiedSeats} children`);
+  }
+});

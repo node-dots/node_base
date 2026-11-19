@@ -8,7 +8,7 @@ export const scenarioSchema = zod.strictObject({
       zod.strictObject({
         id: zod.string().min(1).max(80),
         age: zod.number().int().min(2).max(5),
-        capacity: zod.number().int().min(1).max(100),
+        capacity: zod.number().int().min(1).max(20),
       }),
     )
     .min(1)

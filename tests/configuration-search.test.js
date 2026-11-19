@@ -36,6 +36,107 @@ function scenario() {
   };
 }
 
+function fixedDemandScenario(children = 20) {
+  const availability = [{ weekday: 1, startTime: "09:00", endTime: "17:00" }];
+  return {
+    weekStart: "2026-11-02",
+    schoolYear: "2026-2027",
+    groupRanges: [
+      { ageCode: "AGE_3", age: 3, children, minGroups: 1, maxGroups: 2 },
+    ],
+    rooms: [
+      { id: "room-1", active: true, roomType: "GROUP", capacity: 20 },
+      { id: "room-2", active: true, roomType: "GROUP", capacity: 20 },
+    ],
+    teacherVariants: [
+      {
+        id: "one-teacher",
+        teachers: [
+          {
+            id: "teacher-1",
+            subjectCode: "MATH",
+            availability,
+            salaryMinor: 4_000_000,
+          },
+        ],
+      },
+      {
+        id: "two-teachers",
+        teachers: [
+          {
+            id: "teacher-2",
+            subjectCode: "MATH",
+            availability,
+            salaryMinor: 3_000_000,
+          },
+          {
+            id: "teacher-3",
+            subjectCode: "MATH",
+            availability,
+            salaryMinor: 3_000_000,
+          },
+        ],
+      },
+    ],
+    program: [{ subjectCode: "MATH", sessionsPerWeek: 1, durationMinutes: 30 }],
+    fixedStaff: [],
+    financial: {
+      ages: [
+        { code: "AGE_3", age: 3, demand: children, tariffMinor: 1_500_000 },
+      ],
+      discountMix: [{ basisPoints: 0, shareBasisPoints: 10_000 }],
+      rentMinor: 5_000_000,
+      otherCosts: [],
+      foodCostMinor: 0,
+    },
+  };
+}
+
+function exhaustiveFinancialOracle(input) {
+  const revenueMinor =
+    input.groupRanges[0].children * input.financial.ages[0].tariffMinor;
+  const candidates = [];
+  for (
+    let groups = input.groupRanges[0].minGroups;
+    groups <= input.groupRanges[0].maxGroups;
+    groups += 1
+  ) {
+    const base = Math.floor(input.groupRanges[0].children / groups);
+    const extra = input.groupRanges[0].children % groups;
+    const sizes = Array.from(
+      { length: groups },
+      (_, index) => base + (index < extra ? 1 : 0),
+    );
+    if (sizes.some((size) => size > 20)) continue;
+    const pairPayrollMinor = sizes.reduce(
+      (sum, size) => sum + 6_000_000 + 800_000 * Math.max(0, size - 12),
+      0,
+    );
+    for (const variant of input.teacherVariants) {
+      const teacherPayrollMinor = variant.teachers.reduce(
+        (sum, teacher) => sum + teacher.salaryMinor,
+        0,
+      );
+      candidates.push({
+        groups,
+        teacherVariantId: variant.id,
+        payrollMinor: pairPayrollMinor + teacherPayrollMinor,
+        resultMinor:
+          revenueMinor -
+          pairPayrollMinor -
+          teacherPayrollMinor -
+          input.financial.rentMinor,
+      });
+    }
+  }
+  return candidates.sort(
+    (left, right) =>
+      right.resultMinor - left.resultMinor ||
+      left.groups - right.groups ||
+      left.teacherVariantId.localeCompare(right.teacherVariantId),
+  )[0];
+}
+
 test("search confirms schedules and uses stable tie-breaks without dropping demand", async () => {
   const result = await searchConfigurations(scenario());
   assert.equal(result.bestFound.groups, 1);
@@ -84,6 +185,33 @@ test("configuration search service is ADMIN-only", async () => {
   await assert.rejects(
     service.compare(scenario(), { id: "manager", roles: ["MANAGER"] }),
     { status: 403 },
+  );
+});
+
+test("small exhaustive oracle agrees on fixed-demand optimum and teacher payroll", async () => {
+  const input = fixedDemandScenario();
+  const oracle = exhaustiveFinancialOracle(input);
+  const result = await searchConfigurations(input);
+  assert.equal(result.budget.exhausted, false);
+  assert.equal(result.bestFound.groups, oracle.groups);
+  assert.equal(result.bestFound.teacherVariantId, oracle.teacherVariantId);
+  assert.equal(result.bestFound.payrollMinor, oracle.payrollMinor);
+  assert.equal(result.bestFound.resultMinor, oracle.resultMinor);
+  assert.equal(result.bestFound.groups, 2);
+  assert.equal(result.bestFound.payrollMinor, 16_000_000);
+});
+
+test("configuration search rejects demand requiring more than 20 children per group", async () => {
+  const input = fixedDemandScenario(21);
+  input.groupRanges[0].maxGroups = 1;
+  const result = await searchConfigurations(input);
+  assert.equal(result.bestFound, null);
+  assert.equal(result.rejected.length, input.teacherVariants.length);
+  assert.equal(
+    result.rejected.every(
+      (candidate) => candidate.reason === "GROUP_CAPACITY_EXCEEDED",
+    ),
+    true,
   );
 });
 

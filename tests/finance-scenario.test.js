@@ -85,6 +85,35 @@ test("invalid discount mix, duplicate groups and unsafe bounds reject", () => {
   );
 });
 
+test("forecast rejects group capacity above 20", () => {
+  const scenario = controlScenario(21, 0);
+  scenario.groups = [{ id: "oversized", age: 3, capacity: 21 }];
+  scenario.staff = [
+    { groupId: "oversized", positionCode: "EDUCATOR", salaryMinor: 0 },
+    { groupId: "oversized", positionCode: "ASSISTANT", salaryMinor: 0 },
+  ];
+  assert.throws(() => calculateFinancialForecast(scenario), /capacity of 1-20/);
+});
+
+test("forecast reports an uneven-capacity placement that exceeds one group", () => {
+  const scenario = controlScenario(10, 0);
+  scenario.groups = [
+    { id: "a-small", age: 3, capacity: 1 },
+    { id: "b-large", age: 3, capacity: 9 },
+  ];
+  scenario.staff = scenario.groups.flatMap((group) => [
+    { groupId: group.id, positionCode: "EDUCATOR", salaryMinor: 0 },
+    { groupId: group.id, positionCode: "ASSISTANT", salaryMinor: 0 },
+  ]);
+  const result = calculateFinancialForecast(scenario);
+  assert.equal(result.placement[0].seats, 10);
+  assert.equal(result.placement[0].overCapacity, true);
+  assert.deepEqual(
+    result.placement[0].placements.map((row) => row.count),
+    [5, 5],
+  );
+});
+
 test("finance scenario service allows ADMIN and denies MANAGER", () => {
   const service = new FinancialScenarioService({ authorizer });
   assert.equal(
