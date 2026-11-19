@@ -1,7 +1,10 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { PersonService } from "../src/modules/people/person.service.js";
-import { toPersonDto } from "../src/modules/people/person.dto.js";
+import {
+  toEmployeePersonDto,
+  toPersonDto,
+} from "../src/modules/people/person.dto.js";
 import { createPersonSchema } from "../src/modules/people/person.schema.js";
 import {
   PERSON_STATUS,
@@ -146,7 +149,7 @@ test("Людина створюється без контактів та обл�
 });
 
 test("DTO людини не розкриває облікові та зарплатні дані", () => {
-  const dto = toPersonDto({
+  const person = {
     id: "000000000000000000000001",
     firstName: "Олена",
     lastName: "Коваль",
@@ -157,9 +160,13 @@ test("DTO людини не розкриває облікові та зарпл�
       roles: ["ADMIN"],
     },
     employee: {
+      positionCode: "MANAGER",
+      status: "ACTIVE",
       salaryMinor: 4000000,
     },
-  });
+  };
+
+  const dto = toPersonDto(person);
 
   assert.deepEqual(dto, {
     id: "000000000000000000000001",
@@ -169,6 +176,16 @@ test("DTO людини не розкриває облікові та зарпл�
     phone: undefined,
     status: PERSON_STATUS.ACTIVE,
   });
+
+  assert.deepEqual(toEmployeePersonDto(person), {
+    ...dto,
+    employee: {
+      positionCode: "MANAGER",
+      status: "ACTIVE",
+    },
+  });
+  assert.equal("account" in toEmployeePersonDto(person), false);
+  assert.equal("salaryMinor" in toEmployeePersonDto(person).employee, false);
 });
 
 test("Схема створення людини нормалізує поля та дозволяє пропустити контакти", () => {

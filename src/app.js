@@ -12,12 +12,14 @@ import { errorHandler } from "./middleware/errorHandler.js";
 import { readSecurityConfig } from "./config/security.js";
 import { createSecurityMiddleware } from "./middleware/security.js";
 import { makeApiDocumentationRoutes } from "./middleware/apiDocumentation.js";
+import { createDeveloperPanelCors } from "./middleware/developerPanelCors.js";
 
 // Фабрика застосунку: збирає маршрути, але не відкриває мережевий порт.
 export function createApp({
   apiRouter,
   securityConfig = readSecurityConfig(),
   isStorageReady = async () => false,
+  developerPanelCorsEnabled = process.env.NODE_ENV === "development",
 }) {
   const app = express();
   const security = createSecurityMiddleware(securityConfig);
@@ -27,10 +29,17 @@ export function createApp({
   app.use(requestContext);
   app.use(traceHttpRequests);
   app.use(security.headers);
+  app.use(createDeveloperPanelCors({ enabled: developerPanelCorsEnabled }));
   app.use(security.apiRateLimiter); // Усі адреси, включно з невідомими та health.
   app.use("/api/v1", security.limitWrites);
   // Ліміти стоять перед парсером: заблоковане тіло не потрібно розбирати.
-  app.use(express.json({ limit: securityConfig.JSON_BODY_LIMIT_BYTES }));
+  const standardJsonParser = express.json({
+    limit: securityConfig.JSON_BODY_LIMIT_BYTES,
+  });
+  app.use((request, response, next) => {
+    if (/^\/api\/v1\/schedules(?:\/|$)/.test(request.path)) return next();
+    return standardJsonParser(request, response, next);
+  });
 
   app.get("/health/live", (req, res) => {
     res.json({

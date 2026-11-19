@@ -1,0 +1,163 @@
+import { Router } from "express";
+import { z as zod } from "../../openapi/zod.js";
+import { validateParams } from "../../middleware/validateParams.js";
+import { validateQuery } from "../../middleware/validateQuery.js";
+import { createAuthenticationMiddleware } from "../auth/auth.middleware.js";
+import { createRequirePermission } from "../../middleware/requirePermission.js";
+import { authorizer } from "../people/access/authorizer.js";
+import { PERMISSIONS } from "../../utils/access/permissions.js";
+import { AppError } from "../../utils/errors.js";
+
+const childIdParams = zod.strictObject({
+  childId: zod.string().regex(/^[a-f\d]{24}$/i),
+});
+const annualBody = zod.strictObject({
+  firstMonth: zod.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/),
+});
+const listQuery = zod.strictObject({
+  month: zod.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/),
+  page: zod.coerce.number().int().min(1).default(1),
+  pageSize: zod.coerce.number().int().min(1).max(100).default(50),
+});
+
+export function createInvoiceRoutes({ service, authService }) {
+  if (!authService)
+    throw new TypeError("authService is required for invoice routes");
+  const router = Router();
+  const authenticate = createAuthenticationMiddleware({ authService });
+  router.get(
+    "/",
+    authenticate,
+    createRequirePermission({
+      authorizer,
+      permission: PERMISSIONS.REPORTS_FINANCE_READ,
+    }),
+    validateQuery(listQuery),
+    async (request, response, next) => {
+      try {
+        response.json({
+          data: await service.listForMonth(
+            request.validatedQuery,
+            request.actor,
+          ),
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+  router.get(
+    "/current-balances",
+    authenticate,
+    createRequirePermission({
+      authorizer,
+      permission: PERMISSIONS.INVOICES_READ,
+    }),
+    async (request, response, next) => {
+      try {
+        response.json({
+          data: await service.getCurrentBalances(request.actor),
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+  router.post(
+    "/children/:childId/annual-tuition",
+    authenticate,
+    createRequirePermission({
+      authorizer,
+      permission: PERMISSIONS.INVOICES_CREATE,
+    }),
+    validateParams(childIdParams),
+    async (request, response, next) => {
+      try {
+        const parsed = annualBody.safeParse(request.body);
+        if (!parsed.success)
+          throw new AppError(
+            400,
+            "INVALID_ANNUAL_INVOICE",
+            "Annual invoice request is invalid",
+            parsed.error.issues,
+          );
+        response.status(201).json({
+          data: await service.createAnnualTuition(
+            request.validatedParams.childId,
+            parsed.data.firstMonth,
+            request.actor,
+            request.requestId,
+          ),
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+  router.post(
+    "/children/:childId/fallback-expired-annual",
+    authenticate,
+    createRequirePermission({
+      authorizer,
+      permission: PERMISSIONS.INVOICES_CREATE,
+    }),
+    validateParams(childIdParams),
+    async (request, response, next) => {
+      try {
+        response.json({
+          data: await service.fallbackExpiredAnnual(
+            request.validatedParams.childId,
+            request.actor,
+            request.requestId,
+          ),
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+  router.post(
+    "/children/:childId/generate-current-month",
+    authenticate,
+    createRequirePermission({
+      authorizer,
+      permission: PERMISSIONS.INVOICES_CREATE,
+    }),
+    validateParams(childIdParams),
+    async (request, response, next) => {
+      try {
+        response.json({
+          data: await service.generateForCurrentMonth(
+            request.validatedParams.childId,
+            request.actor,
+            request.requestId,
+          ),
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+  router.get(
+    "/children/:childId",
+    authenticate,
+    createRequirePermission({
+      authorizer,
+      permission: PERMISSIONS.INVOICES_READ,
+    }),
+    validateParams(childIdParams),
+    async (request, response, next) => {
+      try {
+        response.json({
+          data: await service.listForChild(
+            request.validatedParams.childId,
+            request.actor,
+          ),
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+  return router;
+}

@@ -1,0 +1,75 @@
+import { ROLES } from "../../../utils/access/roles.js";
+import { PERMISSIONS as P } from "../../../utils/access/permissions.js";
+
+const definitions = {
+  [ROLES.ADMIN]: Object.values(P),
+  [ROLES.MANAGER]: [
+    P.PEOPLE_READ,
+    P.PEOPLE_CREATE,
+    P.PEOPLE_UPDATE,
+    P.CHILDREN_READ,
+    P.CHILDREN_CREATE,
+    P.CHILDREN_UPDATE,
+    P.CHILDREN_ENROLL,
+    P.CHILDREN_TRANSFER,
+    P.CHILDREN_WITHDRAW,
+    P.CHILDREN_BENEFIT_ASSIGN,
+    P.NUTRITION_READ,
+    P.NUTRITION_UPDATE,
+    P.GROUPS_READ,
+    P.GROUPS_CREATE,
+    P.GROUPS_UPDATE,
+    P.EMPLOYEE_AVAILABILITY_UPDATE,
+    P.CATALOG_READ,
+    P.SCHEDULES_READ,
+    P.SCHEDULES_GENERATE,
+    P.SCHEDULES_UPDATE,
+    P.SCHEDULES_PUBLISH,
+    P.INVOICES_READ,
+    P.INVOICES_CREATE,
+    P.PAYMENTS_READ,
+    P.PAYMENTS_CREATE,
+    P.PAYMENTS_CONFIRM,
+    P.PAYMENTS_REJECT,
+    P.REPORTS_OPERATIONS_READ,
+  ],
+  [ROLES.PARENT]: [
+    P.CHILDREN_READ,
+    P.NUTRITION_READ,
+    P.NUTRITION_UPDATE,
+    P.GROUPS_READ,
+    P.SCHEDULES_READ,
+    P.INVOICES_READ,
+    P.PAYMENTS_READ,
+    P.PAYMENTS_CREATE,
+  ],
+  [ROLES.TEACHER]: [
+    P.GROUPS_READ,
+    P.SCHEDULES_READ,
+    P.SCHEDULES_UPDATE,
+    P.EMPLOYEE_AVAILABILITY_UPDATE,
+  ],
+  [ROLES.EDUCATOR]: [
+    P.CHILDREN_READ,
+    P.NUTRITION_READ,
+    P.GROUPS_READ,
+    P.SCHEDULES_READ,
+    P.EMPLOYEE_AVAILABILITY_UPDATE,
+  ],
+  [ROLES.ASSISTANT]: [
+    P.CHILDREN_READ,
+    P.NUTRITION_READ,
+    P.GROUPS_READ,
+    P.SCHEDULES_READ,
+    P.EMPLOYEE_AVAILABILITY_UPDATE,
+  ],
+};
+
+export const rolePermissions = Object.freeze(
+  Object.fromEntries(
+    Object.entries(definitions).map(([role, grants]) => [
+      role,
+      Object.freeze(grants),
+    ]),
+  ),
+);

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import { GROUP_STATUS, GROUP_LIMITS } from "./group.constants.js";
+import { entityHistoryPlugin } from "../history/history.plugin.js";
 
 const groupSchema = new mongoose.Schema(
   {
@@ -35,6 +36,18 @@ const groupSchema = new mongoose.Schema(
       required: true,
       enum: Object.values(GROUP_STATUS),
     },
+    schoolYear: { type: String, match: /^\d{4}-\d{4}$/ },
+    ageCategoryId: { type: mongoose.Schema.Types.ObjectId, ref: "Catalog" },
+    roomId: { type: mongoose.Schema.Types.ObjectId, ref: "Catalog" },
+    educatorId: { type: mongoose.Schema.Types.ObjectId, ref: "Person" },
+    assistantId: { type: mongoose.Schema.Types.ObjectId, ref: "Person" },
+    occupiedSeats: {
+      type: Number,
+      min: 0,
+      max: GROUP_LIMITS.MAX_CAPACITY,
+      validate: Number.isInteger,
+      default: 0,
+    },
   },
   {
     collection: "groups",
@@ -42,4 +55,24 @@ const groupSchema = new mongoose.Schema(
     bufferCommands: false,
   },
 );
+groupSchema.pre("validate", function validateResources() {
+  if (
+    this.educatorId &&
+    this.assistantId &&
+    this.educatorId.equals(this.assistantId)
+  ) {
+    this.invalidate(
+      "assistantId",
+      "Educator and assistant must be different people",
+    );
+  }
+  if (this.occupiedSeats > this.capacity) {
+    this.invalidate("occupiedSeats", "Occupied seats cannot exceed capacity");
+  }
+});
+
+groupSchema.index({ schoolYear: 1, roomId: 1, status: 1 });
+groupSchema.index({ schoolYear: 1, educatorId: 1, status: 1 });
+groupSchema.index({ schoolYear: 1, assistantId: 1, status: 1 });
+groupSchema.plugin(entityHistoryPlugin, { entityType: "GROUP" });
 export const GroupModel = mongoose.model("Group", groupSchema);

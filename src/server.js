@@ -4,8 +4,11 @@ import { createApiRouter } from "./modules/index.js";
 import { readServerConfig } from "./config/server.js";
 import { readTelemetryConfig } from "./config/telemetry.js";
 import { readSecurityConfig } from "./config/security.js";
-import { createHttpServer } from "./utils/createHttpServer.js";
 import { SECURITY_DEFAULTS } from "./config/securityDefaults.js";
+import { createHttpServer } from "./utils/createHttpServer.js";
+import { readAuthenticationConfig } from "./config/authentication.js";
+import { createAuthModule } from "./modules/auth/auth.module.js";
+import { createSecurityMiddleware } from "./middleware/security.js";
 
 import {
   connectMongo,
@@ -16,6 +19,9 @@ import {
 
 const { PORT: port, HOST: host } = readServerConfig();
 const securityConfig = readSecurityConfig();
+const authenticationConfig = readAuthenticationConfig();
+const loginRateLimiter =
+  createSecurityMiddleware(securityConfig).loginRateLimiter;
 
 const databaseConfig = readDatabaseConfig();
 const telemetryConfig = readTelemetryConfig();
@@ -24,7 +30,11 @@ console.log("Підключено до MongoDB");
 
 const telemetry = startTelemetry({ config: telemetryConfig });
 
-const apiRouter = createApiRouter();
+const authModule = createAuthModule({
+  config: authenticationConfig,
+  loginRateLimiter,
+});
+const apiRouter = createApiRouter({ authModule });
 const app = createApp({
   apiRouter,
   securityConfig,

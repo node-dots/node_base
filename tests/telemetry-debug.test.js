@@ -8,6 +8,7 @@ import {
   recordTraceDebugData,
 } from "../src/telemetry/traceDebugData.js";
 import { createTestApp as createApp } from "./helpers/app.js";
+import { testAuthHeaders } from "./helpers/app.js";
 
 test("Dev-трейс показує дані, маскує секрети й вимикає дані в production", async () => {
   const config = readTelemetryConfig({
@@ -26,7 +27,7 @@ test("Dev-трейс показує дані, маскує секрети й в�
   const post = (body) =>
     fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { ...testAuthHeaders(), "Content-Type": "application/json" },
       body: JSON.stringify(body),
     });
   try {

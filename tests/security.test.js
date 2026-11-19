@@ -6,14 +6,23 @@ import { InMemoryGroupRepository } from "./helpers/groupRepository.js";
 import { readSecurityConfig } from "../src/config/security.js";
 import { readServerConfig } from "../src/config/server.js";
 import { HTTP_STATUS, HTTP_ERROR_CODES } from "../src/utils/httpConstants.js";
+import { testAuthHeaders } from "./helpers/app.js";
 
 // Кожен тест отримує окремий застосунок і сховище, без спільних лічильників.
 async function withServer(
-  { settings = {}, repository = new InMemoryGroupRepository() },
+  {
+    settings = {},
+    repository = new InMemoryGroupRepository(),
+    developerPanelCorsEnabled = false,
+  },
   run,
 ) {
   const securityConfig = readSecurityConfig(settings);
-  const app = createApp({ groupRepository: repository, securityConfig });
+  const app = createApp({
+    groupRepository: repository,
+    securityConfig,
+    developerPanelCorsEnabled,
+  });
   const server = createHttpServer({ app, securityConfig });
   server.listen(0, "127.0.0.1");
   await new Promise((resolve, reject) => {
@@ -32,6 +41,57 @@ async function withServer(
   }
 }
 
+test("developer panel CORS allows only read preflight from its exact development origin", async () => {
+  await withServer({ developerPanelCorsEnabled: true }, async ({ baseUrl }) => {
+    const preflight = await fetch(`${baseUrl}/api/v1/groups`, {
+      method: "OPTIONS",
+      headers: {
+        Origin: "http://127.0.0.1:8088",
+        "Access-Control-Request-Method": "GET",
+        "Access-Control-Request-Headers": "authorization,accept",
+      },
+    });
+    assert.equal(preflight.status, 204);
+    assert.equal(
+      preflight.headers.get("access-control-allow-origin"),
+      "http://127.0.0.1:8088",
+    );
+    assert.equal(
+      preflight.headers.get("access-control-allow-methods"),
+      "GET, OPTIONS",
+    );
+
+    const unauthenticatedRead = await fetch(`${baseUrl}/api/v1/groups`, {
+      headers: { Origin: "http://127.0.0.1:8088" },
+    });
+    assert.equal(unauthenticatedRead.status, HTTP_STATUS.UNAUTHORIZED);
+    assert.equal(
+      unauthenticatedRead.headers.get("access-control-allow-origin"),
+      "http://127.0.0.1:8088",
+    );
+
+    const foreign = await fetch(`${baseUrl}/api/v1/groups`, {
+      method: "OPTIONS",
+      headers: {
+        Origin: "http://localhost:8088",
+        "Access-Control-Request-Method": "GET",
+        "Access-Control-Request-Headers": "authorization",
+      },
+    });
+    assert.equal(foreign.headers.get("access-control-allow-origin"), null);
+
+    const write = await fetch(`${baseUrl}/api/v1/groups`, {
+      method: "OPTIONS",
+      headers: {
+        Origin: "http://127.0.0.1:8088",
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "authorization,content-type",
+      },
+    });
+    assert.equal(write.status, 403);
+  });
+});
+
 test("Загальний ліміт повертає 429, requestId і час повторної спроби", async () => {
   await withServer(
     { settings: { RATE_LIMIT_REQUESTS: 2 } },
@@ -41,10 +101,16 @@ test("Загальний ліміт повертає 429, requestId і час п
         HTTP_STATUS.OK,
       );
       assert.equal(
-        (await fetch(`${baseUrl}/api/v1/groups`)).status,
+        (
+          await fetch(`${baseUrl}/api/v1/groups`, {
+            headers: testAuthHeaders(),
+          })
+        ).status,
         HTTP_STATUS.OK,
       );
-      const response = await fetch(`${baseUrl}/api/v1/groups`);
+      const response = await fetch(`${baseUrl}/api/v1/groups`, {
+        headers: testAuthHeaders(),
+      });
       const result = await response.json();
       assert.equal(response.status, HTTP_STATUS.TOO_MANY_REQUESTS);
       assert.equal(result.error.code, HTTP_ERROR_CODES.RATE_LIMIT_EXCEEDED);
@@ -64,7 +130,7 @@ test("Ліміт запису не створює зайву групу та н�
     async ({ baseUrl, repository }) => {
       const options = {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { ...testAuthHeaders(), "Content-Type": "application/json" },
         body: JSON.stringify({ name: "Сонечка", ageCategory: 2, capacity: 20 }),
       };
       assert.equal(
@@ -84,7 +150,11 @@ test("Ліміт запису не створює зайву групу та н�
 
       assert.equal(result.total, 1);
       assert.equal(
-        (await fetch(`${baseUrl}/api/v1/groups`)).status,
+        (
+          await fetch(`${baseUrl}/api/v1/groups`, {
+            headers: testAuthHeaders(),
+          })
+        ).status,
         HTTP_STATUS.OK,
       );
     },
@@ -118,7 +188,7 @@ test("Rate limit працює до JSON-парсера; Helmet встановл�
       assert.equal(first.headers.get("strict-transport-security"), null);
       const blocked = await fetch(`${baseUrl}/api/v1/groups`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { ...testAuthHeaders(), "Content-Type": "application/json" },
         body: "{",
       });
       assert.equal(blocked.status, HTTP_STATUS.TOO_MANY_REQUESTS);

@@ -25,6 +25,14 @@ const securityEnvironmentSchema = zod
       SECURITY_DEFAULTS.WRITE_RATE_LIMIT_REQUESTS,
       100_000,
     ),
+    LOGIN_RATE_LIMIT_WINDOW_MS: positiveInteger(
+      SECURITY_DEFAULTS.LOGIN_RATE_LIMIT_WINDOW_MS,
+      2_147_483_647,
+    ),
+    LOGIN_RATE_LIMIT_REQUESTS: positiveInteger(
+      SECURITY_DEFAULTS.LOGIN_RATE_LIMIT_REQUESTS,
+      100_000,
+    ),
     JSON_BODY_LIMIT_BYTES: positiveInteger(
       SECURITY_DEFAULTS.JSON_BODY_LIMIT_BYTES,
       1024 * 1024,

@@ -1,0 +1,14 @@
+{
+  "generatedAt": "2026-11-19T17:13:54.590Z",
+  "runner": "postman/newman:6-alpine",
+  "collectionSchema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+  "folders": 21,
+  "staticRequests": 114,
+  "requestsExecuted": 120,
+  "assertions": 688,
+  "failed": 0,
+  "skipped": 0,
+  "result": "PASSED",
+  "databaseIsolation": "random kindergarten_test_<uuid> database; dropped after run",
+  "junit": "postman/results/postman.junit.xml"
+}

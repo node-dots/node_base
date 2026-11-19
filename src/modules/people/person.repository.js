@@ -1,8 +1,47 @@
 import mongoose from "mongoose";
 
-// Явно визначаємо поля, які повертає репозиторій.
-function toPerson(document) {
+function toAccount(account) {
+  if (!account) {
+    return undefined;
+  }
+
   return {
+    email: account.email,
+    passwordHash: account.passwordHash,
+    roles: [...account.roles],
+    enabled: account.enabled,
+    tokenVersion: account.tokenVersion,
+  };
+}
+
+function toEmployee(employee) {
+  if (!employee) {
+    return undefined;
+  }
+
+  const result = {
+    positionCode: employee.positionCode,
+    status: employee.status,
+    salaryMinor: employee.salaryMinor,
+  };
+  if (employee.subjectCode !== undefined)
+    result.subjectCode = employee.subjectCode;
+  if (employee.startedAt !== undefined) result.startedAt = employee.startedAt;
+  if (employee.endedAt !== undefined) result.endedAt = employee.endedAt;
+  result.availability = Array.from(
+    employee.availability ?? [],
+    ({ weekday, startTime, endTime }) => ({
+      weekday,
+      startTime,
+      endTime,
+    }),
+  );
+  return result;
+}
+
+// Явно визначаємо внутрішні поля, які повертає репозиторій.
+function toPerson(document) {
+  const person = {
     id: document._id.toString(),
     firstName: document.firstName,
     lastName: document.lastName,
@@ -10,6 +49,16 @@ function toPerson(document) {
     phone: document.phone,
     status: document.status,
   };
+
+  if (document.account) {
+    person.account = toAccount(document.account);
+  }
+
+  if (document.employee) {
+    person.employee = toEmployee(document.employee);
+  }
+
+  return person;
 }
 
 export class PersonRepository {
@@ -17,8 +66,10 @@ export class PersonRepository {
     this.personModel = personModel;
   }
 
-  async insert(person) {
-    const document = await this.personModel.create(person);
+  async insert(person, { session } = {}) {
+    const document = session
+      ? (await this.personModel.create([person], { session }))[0]
+      : await this.personModel.create(person);
 
     return toPerson(document);
   }
@@ -30,6 +81,121 @@ export class PersonRepository {
 
     const document = await this.personModel.findById(personId).lean();
 
+    return document ? toPerson(document) : null;
+  }
+
+  async findActiveEmployees({ session } = {}) {
+    let query = this.personModel
+      .find({ "employee.status": "ACTIVE" })
+      .sort({ _id: 1 });
+    if (session) query = query.session(session);
+    return (await query.lean()).map(toPerson);
+  }
+
+  async findEmployeePage({ page, pageSize }) {
+    const filter = { employee: { $exists: true } };
+    const [documents, total] = await Promise.all([
+      this.personModel
+        .find(filter)
+        .sort({ lastName: 1, firstName: 1, _id: 1 })
+        .skip((page - 1) * pageSize)
+        .limit(pageSize)
+        .lean(),
+      this.personModel.countDocuments(filter),
+    ]);
+    return { employees: documents.map(toPerson), total };
+  }
+
+  async updateEmployee(personId, employee, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(personId)) return null;
+    const document = await this.personModel
+      .findByIdAndUpdate(
+        personId,
+        { $set: { employee } },
+        { returnDocument: "after", runValidators: true, session },
+      )
+      .lean();
+    return document ? toPerson(document) : null;
+  }
+
+  async findAccountByEmail(email, { session } = {}) {
+    let query = this.personModel.findOne({ "account.email": email });
+    if (session) query = query.session(session);
+    const document = await query.lean();
+    return document ? toPerson(document) : null;
+  }
+
+  async findAccountById(personId, { session } = {}) {
+    if (!mongoose.isObjectIdOrHexString(personId)) return null;
+
+    let query = this.personModel.findOne({
+      _id: personId,
+      "account.email": { $type: "string" },
+    });
+    if (session) query = query.session(session);
+    const document = await query.lean();
+    return document ? toPerson(document) : null;
+  }
+
+  async findFirstEnabledAdmin({ session } = {}) {
+    let query = this.personModel.findOne({
+      "account.roles": "ADMIN",
+      "account.enabled": true,
+    });
+    if (session) query = query.session(session);
+    const document = await query.lean();
+    return document ? toPerson(document) : null;
+  }
+
+  async countEnabledAdmins({ session } = {}) {
+    let query = this.personModel.countDocuments({
+      "account.roles": "ADMIN",
+      "account.enabled": true,
+    });
+    if (session) query = query.session(session);
+    return query;
+  }
+
+  async updateAccountRoles(
+    { personId, roles, expectedTokenVersion },
+    { session } = {},
+  ) {
+    const document = await this.personModel
+      .findOneAndUpdate(
+        {
+          _id: personId,
+          "account.email": { $type: "string" },
+          "account.tokenVersion": expectedTokenVersion,
+        },
+        {
+          $set: { "account.roles": roles },
+          $inc: { "account.tokenVersion": 1 },
+        },
+        { returnDocument: "after", runValidators: true, session },
+      )
+      .lean();
+    return document ? toPerson(document) : null;
+  }
+
+  async advanceAccountTokenVersion(
+    { personId, expectedTokenVersion, passwordHash },
+    { session } = {},
+  ) {
+    let query = this.personModel.findOneAndUpdate(
+      {
+        _id: personId,
+        "account.enabled": true,
+        "account.tokenVersion": expectedTokenVersion,
+      },
+      {
+        $inc: { "account.tokenVersion": 1 },
+        ...(passwordHash
+          ? { $set: { "account.passwordHash": passwordHash } }
+          : {}),
+      },
+      { returnDocument: "after", runValidators: true, session },
+    );
+    const document = await query.lean();
     return document ? toPerson(document) : null;
   }
 }

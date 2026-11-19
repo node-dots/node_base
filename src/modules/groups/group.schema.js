@@ -59,6 +59,18 @@ export const groupSchema = createGroupSchema
       .enum(Object.values(GROUP_STATUS))
       .meta({ description: "Чернетка; активацію ще не реалізовано." }),
   })
+  .meta({ id: "Group" })
+  .extend({
+    schoolYear: zod.string().optional(),
+    ageCategoryId: zod.string().optional(),
+    roomId: zod.string().optional(),
+    educatorId: zod.string().optional(),
+    assistantId: zod.string().optional(),
+    occupiedSeats: zod.number().int().min(0),
+    currentOccupied: zod.number().int().min(0).optional(),
+    freePlaces: zod.number().int().min(0).optional(),
+    occupancyMismatch: zod.boolean().optional(),
+  })
   .meta({ id: "Group" });
 
 export const groupResponseSchema = zod
@@ -84,6 +96,10 @@ export const ageSummarySchema = zod
     ageCategory: createGroupSchema.shape.ageCategory,
     groupsCount: zod.number().int().min(0),
     totalCapacity: zod.number().int().min(0),
+    currentOccupied: zod.number().int().min(0).optional(),
+    storedOccupied: zod.number().int().min(0).optional(),
+    freePlaces: zod.number().int().min(0).optional(),
+    mismatchGroups: zod.number().int().min(0).optional(),
   })
   .meta({ id: "AgeSummary" });
 export const ageSummaryResponseSchema = zod
@@ -125,4 +141,10 @@ export const groupListQuerySchema = zod.strictObject({
       default: GROUP_PAGINATION.DEFAULT_PAGE_SIZE,
       description: "Максимальна кількість груп на сторінці.",
     }),
+  schoolYear: zod
+    .string()
+    .regex(/^\d{4}-\d{4}$/)
+    .optional(),
+  status: zod.enum(Object.values(GROUP_STATUS)).optional(),
+  ageCategory: positiveIntegerQuerySchema.pipe(zod.number().max(18)).optional(),
 });

@@ -36,7 +36,11 @@ test("OpenAPI та Swagger UI описують і обслуговують по�
     );
     const contract = await contractResponse.json();
     assert.equal(contract.openapi, "3.1.0");
-    assert.equal(contract.components.securitySchemes, undefined);
+    assert.deepEqual(contract.components.securitySchemes.BearerAuth, {
+      type: "http",
+      scheme: "bearer",
+      bearerFormat: "JWT",
+    });
     assert.equal(
       contract.components.schemas.CreateGroupInput.additionalProperties,
       false,
@@ -44,8 +48,11 @@ test("OpenAPI та Swagger UI описують і обслуговують по�
     const parameters = contract.paths["/api/v1/groups"].get.parameters;
 
     assert.deepEqual(parameters.map((parameter) => parameter.name).sort(), [
+      "ageCategory",
       "page",
       "pageSize",
+      "schoolYear",
+      "status",
     ]);
     const info = (await (await fetch(`${baseUrl}/api/v1`)).json()).data;
     assert.equal(info.version, packageInfo.version);
@@ -56,7 +63,10 @@ test("OpenAPI та Swagger UI описують і обслуговують по�
 
     const created = await fetch(`${baseUrl}/api/v1/groups`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        Authorization: "Bearer test-admin",
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         name: "Мандрівники",
         ageCategory: 4,
@@ -76,11 +86,18 @@ test("OpenAPI та Swagger UI описують і обслуговують по�
       ),
     );
 
-    const list = await fetch(`${baseUrl}/api/v1/groups`);
+    const authHeaders = { Authorization: "Bearer test-admin" };
+    const list = await fetch(`${baseUrl}/api/v1/groups`, {
+      headers: authHeaders,
+    });
     groupListResponseSchema.parse(await list.json());
-    const summary = await fetch(`${baseUrl}/api/v1/groups/summary`);
+    const summary = await fetch(`${baseUrl}/api/v1/groups/summary`, {
+      headers: authHeaders,
+    });
     ageSummaryResponseSchema.parse(await summary.json());
-    const missing = await fetch(`${baseUrl}/api/v1/groups/missing`);
+    const missing = await fetch(`${baseUrl}/api/v1/groups/missing`, {
+      headers: authHeaders,
+    });
     assert.equal(missing.status, HTTP_STATUS.NOT_FOUND);
     errorResponseSchema.parse(await missing.json());
 
@@ -139,13 +156,72 @@ test("OpenAPI бере обмеження входу зі схем Zod і збе
     [
       "GET /api-docs/",
       "GET /api/v1",
+      "GET /api/v1/auth/me",
+      "GET /api/v1/people/employees",
+      "GET /api/v1/people/{id}/employee",
+      "GET /api/v1/children",
+      "GET /api/v1/children/{id}",
+      "GET /api/v1/catalog/versions/{kind}/{code}",
+      "GET /api/v1/expenses",
+      "GET /api/v1/expenses/totals",
       "GET /api/v1/groups",
       "GET /api/v1/groups/summary",
       "GET /api/v1/groups/{id}",
+      "GET /api/v1/history",
+      "GET /api/v1/history/{entityType}/{entityId}/compare",
+      "GET /api/v1/history/{entityType}/{entityId}/versions/{version}",
+      "GET /api/v1/invoices",
+      "GET /api/v1/invoices/children/{childId}",
+      "GET /api/v1/invoices/current-balances",
+      "PATCH /api/v1/groups/{id}/capacity",
       "GET /api/v1/openapi.json",
       "GET /health/live",
       "GET /health/ready",
+      "PATCH /api/v1/children/{id}",
+      "POST /api/v1/auth/login",
+      "POST /api/v1/auth/logout-all",
+      "POST /api/v1/auth/password",
+      "POST /api/v1/children",
+      "POST /api/v1/children/{id}/enroll",
+      "POST /api/v1/children/{id}/resume",
+      "POST /api/v1/children/{id}/suspend",
+      "POST /api/v1/children/{id}/transfer",
+      "POST /api/v1/children/{id}/withdraw",
+      "POST /api/v1/children/{id}/benefits",
+      "POST /api/v1/expenses",
+      "POST /api/v1/expenses/open-current-month",
+      "POST /api/v1/finance/scenarios/forecast",
+      "POST /api/v1/finance/scenarios/breakeven",
+      "POST /api/v1/finance/scenarios/compare-configurations",
+      "POST /api/v1/expenses/{expenseId}/approve",
+      "POST /api/v1/expenses/{expenseId}/cancel",
+      "POST /api/v1/expenses/{expenseId}/corrections",
+      "POST /api/v1/expenses/{expenseId}/pay",
+      "POST /api/v1/catalog/versions",
       "POST /api/v1/groups",
+      "POST /api/v1/groups/{id}/deactivate",
+      "POST /api/v1/groups/{id}/transfer-next-year",
+      "GET /api/v1/schedules/{weekStart}/draft",
+      "PUT /api/v1/schedules/{weekStart}/draft",
+      "POST /api/v1/schedules/{weekStart}/publish",
+      "POST /api/v1/schedules/{weekStart}/generate",
+      "GET /api/v1/schedules/{weekStart}/published",
+      "POST /api/v1/invoices/children/{childId}/annual-tuition",
+      "POST /api/v1/invoices/children/{childId}/fallback-expired-annual",
+      "POST /api/v1/invoices/children/{childId}/generate-current-month",
+      "POST /api/v1/payments",
+      "POST /api/v1/payments/{paymentId}/confirm",
+      "POST /api/v1/payments/{paymentId}/refund",
+      "POST /api/v1/payments/{paymentId}/reject",
+      "GET /api/v1/payments",
+      "GET /api/v1/payments/{paymentId}/refunds",
+      "GET /api/v1/reports/finance/monthly",
+      "GET /api/v1/reports/operations/benefits",
+      "GET /api/v1/reports/operations/teacher-load",
+      "GET /api/v1/reports/finance/expense-categories",
+      "PUT /api/v1/groups/{id}/resources",
+      "PUT /api/v1/people/{id}/employee",
+      "PUT /api/v1/people/{id}/account/roles",
     ].sort(),
   );
 });
