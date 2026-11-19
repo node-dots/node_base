@@ -1,53 +1,56 @@
 # Фактичний фінальний статус
 
-Стан повторно перевірено 16 листопада 2026 року на Windows, Node.js 24.19.0, npm 11.17.0, Docker 29.7.2 і MongoDB 8 replica set `rs0`.
+Стан перевірено 19 листопада 2026 року. Базовий інтеграційний SHA `develop`,
+на якому виконано фінальну технічну перевірку перед цим документаційним PR:
+`60c80b4d2388ee36459393e2bbfbbcf2e046ce7c`.
 
 ## GitHub і задачі
 
-- Project містить 40 items.
-- Після закриття перевіреної TASK-037: 37 Done, 3 In Review.
+- GitHub Project `NodeJS_Dots` містить **41 item: 38 Done, 3 In Review**.
+- Issue #110 / REQ-DVH-001 закрито як Completed після звірки acceptance criteria,
+  merged PR #111, незалежного approval і green CI; Project item переведено у `Done`.
 - Відкриті Issues: #6 TASK-001, #15 TASK-010, #62 TASK-040.
-- TASK-037 / #59 закрито лише після merged PR #106 і повторного browser/API acceptance evidence.
-- `main` не змінено.
-- PR [#108 · TASK-040: add complete Postman validation and defense package](https://github.com/node-dots/node_base/pull/108) отримав незалежний approval `ulianasubacheva24-web` і штатно merged у `develop` 16 листопада 2026 року (`7ce8b49`).
-- Усі чотири CI jobs merged PR #108 успішні: Code checks, MongoDB integration, Postman API end-to-end і macOS checks/MongoDB integration.
-- Відкритий follow-up PR [#109 · Docs: refresh final validation evidence](https://github.com/node-dots/node_base/pull/109) містить лише повторно згенеровані докази й уточнення acceptance-документації; він також має пройти звичайні checks і review.
+- Відкритий PR #112 готує acceptance/history-responsibility/release package; незалежний
+  approval отримано на попередньому head, а синхронізований фінальний head має повторно пройти green CI/review gates.
+- TASK-001 очікує реального погодження контрактів тімлідом і командою.
+- TASK-010 очікує незалежної арифметичної перевірки S7.
+- TASK-040 має технічний demo package, але спільну демонстрацію S1–S8 ще не проведено.
 
-TASK-001 потребує фактичного погодження контрактів тімлідом і командою. TASK-010 має результати формул і тестові числа, але потребує незалежного S7 review. TASK-040 має технічний пакет і відтворюваний E2E, але спільна демонстрація S1–S8 ще не проведена, тому Done не заявляється.
+Жоден із трьох останніх пунктів не підмінено авторським або автоматизованим approval.
 
-## Готові модулі
+## Перевірений технічний стан
 
-Auth/JWT, account roles/token revocation, people/employees, catalog/versioning, groups/resources/capacity, children/guardian/membership, benefits, invoices, payments/idempotency/refunds, expenses/payroll, schedules, financial/operational aggregation reports, forecast/configuration search, audit writer, OpenAPI/Swagger, security middleware/tracing, seed і developer panel.
+| Перевірка | Фактичний результат |
+| --- | --- |
+| GitHub CI PR #113 | 4/4 SUCCESS: Code, MongoDB, Postman, macOS |
+| GitHub CI `develop` `60c80b4` | 4/4 SUCCESS, run `44541067173` |
+| GitHub CI PR #112 | required на фінальному head; merge без approval заборонений |
+| `npm run check` | 218 tests: 189 pass, 29 Mongo-skipped, 0 fail |
+| `npm run test:mongodb` | 28/28 PASS на MongoDB replica set `rs0` |
+| `npm run test:panel-browser` | PASS: 40 read-only API requests + real ADMIN/API mode |
+| `npm run test:postman` | 120 requests, 688 assertions, 0 failures |
+| `npm run test:all` | PASS на ізольованому тимчасовому Compose replica set `rs0` |
+| OpenAPI/Swagger/history | 68 operations; ADMIN-only history list/version/compare перевірено HTTP/Postman |
 
-Поточний OpenAPI містить 65 операцій. Collection має всі ці операції плюс negative/security/E2E повтори.
+Готові auth/JWT, people/employees, catalog, groups/resources, children/membership, invoices,
+payments/refunds, expenses/reports, schedules, forecast/search, audit, transactional entity
+history, OpenAPI/Swagger, seed, Postman і developer panel.
 
-## Перевірений стан
+## `main` і release readiness
 
-| Перевірка | Результат |
-|---|---|
-| `npm audit` | 0 vulnerabilities |
-| `npm run check` | PASS, 207 tests: 180 pass, 27 Mongo-skipped, 0 fail |
-| `npm run test:mongodb` | PASS, 26/26; rs0 PRIMARY |
-| `npm run test:panel-browser` | PASS: mock/error states + real ADMIN/API/MongoDB mode |
-| `npm run test:postman` | PASS: 107 requests, 608 assertions, 0 failed/skipped |
-| `npm run test:all` | PASS: усі перелічені code, MongoDB, browser і Postman перевірки одним послідовним запуском |
-| Swagger/OpenAPI/health | PASS against started backend |
+`main` і `develop` мають topology divergence `2/321`. Два `main`-only SHA — старі merge
+commits без унікальної зміни дерева; CI/people foundations уже є предками `develop`.
+Трьохсторонній merge аналіз не виявив конфліктів, а результат дорівнює дереву `develop`.
+Деталі: [`DEVELOP_TO_MAIN_RELEASE_CHECKLIST.md`](../release/DEVELOP_TO_MAIN_RELEASE_CHECKLIST.md).
 
-Локальні browser screenshots: [`task-037-panel-browser.png`](../evidence/task-037-panel-browser.png) і [`task-037-panel-real-api.png`](../evidence/task-037-panel-real-api.png).
+Технічно проєкт готовий до командного acceptance і захисту. Release у `main` **не готовий
+до оголошення**, доки TASK-001/010/040 не отримають реальні підтвердження, release PR не
+пройде required review/CI, а post-merge `main` не буде перевірено.
 
-## Відомі обмеження
+## Матеріали для завершення
 
-- Audit events не мають публічного read endpoint; вони перевіряються через service/repository integration.
-- Person identity створюється seed/bootstrap механізмами; окремого public create-person API немає.
-- Postman Desktop GUI-run не підтверджений; Newman-run підтверджений реально.
-- Перевірка Windows виконана локально. macOS перевіряється GitHub Actions, але фінальний PR має дочекатися всіх checks.
-- Незалежні TASK-001/TASK-010 approvals і командна TASK-040 demo залишаються людськими acceptance criteria.
-
-## Що потрібно до `main`
-
-1. Зелений CI і required review follow-up PR #109.
-2. Merge PR #109 у `develop` без обходу branch protection.
-3. Проведення й документування TASK-001, незалежного S7 review TASK-010 і спільної TASK-040 demo.
-4. Окремий погоджений release PR `develop` → `main`; direct push або self-merge не використовувати.
-
-Технічно проєкт готовий до захисту. Організаційно він не є «100% завершеним», доки три відкриті задачі не отримають необхідні людські підтвердження.
+- [TASK-001 acceptance session](../team/TASK-001_ACCEPTANCE_SESSION.md)
+- [S1–S8 data-history responsibility matrix](../team/DATA_HISTORY_TEAM_RESPONSIBILITIES.md)
+- [TASK-010 S7 review package](../finance/TASK-010_S7_REVIEW_PACKAGE.md)
+- [TASK-040 full demo runbook](TASK-040_DEMO_RUNBOOK.md)
+- [Release checklist `develop` → `main`](../release/DEVELOP_TO_MAIN_RELEASE_CHECKLIST.md)

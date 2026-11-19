@@ -48,6 +48,8 @@
 - [Знайомство з проєктом](team/08_Team_Introduction.md).
 - [Git-процес команди](team/GIT_WORKFLOW.md).
 - [Початкові командні контракти — Proposed / Needs approval](team/14_Initial_Team_Contracts.md).
+- [Сесія фактичного погодження TASK-001](team/TASK-001_ACCEPTANCE_SESSION.md).
+- [Спільна відповідальність S1–S8 за історію даних](team/DATA_HISTORY_TEAM_RESPONSIBILITIES.md).
 
 ### Плани, задачі та строки — `planning/`
 
@@ -76,7 +78,14 @@
 ### Фінансові контракти — `finance/`
 
 - [Контракт фінансових показників і контрольна арифметика](finance/financial-metrics-contract.md).
+- [Пакет незалежної перевірки TASK-010 для S7](finance/TASK-010_S7_REVIEW_PACKAGE.md).
 - [Економічно найвигідніший розмір групи](finance/MOST_PROFITABLE_GROUP_SIZE.md).
+
+### Завершення, демонстрація і release
+
+- [Повний runbook командної демонстрації TASK-040](testing/TASK-040_DEMO_RUNBOOK.md).
+- [Фактичний фінальний статус](testing/FINAL_PROJECT_STATUS.md).
+- [Release checklist `develop` → `main`](release/DEVELOP_TO_MAIN_RELEASE_CHECKLIST.md).
 
 ## Правила підтримки
 

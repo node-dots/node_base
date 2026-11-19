@@ -4,6 +4,13 @@ import { randomUUID } from "node:crypto";
 import mongoose from "mongoose";
 import { GroupModel } from "../../src/modules/groups/group.model.js";
 import { PersonModel } from "../../src/modules/people/person.model.js";
+import { ChildModel } from "../../src/modules/children/child.model.js";
+import { CatalogModel } from "../../src/modules/catalog/catalog.model.js";
+import { InvoiceModel } from "../../src/modules/invoices/invoice.model.js";
+import { PaymentModel } from "../../src/modules/payments/payment.model.js";
+import { RefundModel } from "../../src/modules/payments/refund.model.js";
+import { ExpenseModel } from "../../src/modules/expenses/expense.model.js";
+import { ScheduleModel } from "../../src/modules/schedules/schedule.model.js";
 import { withHistoryContext } from "../../src/modules/history/history.context.js";
 
 test(
@@ -381,6 +388,267 @@ test(
         versions.map((entry) => entry.version),
         Array.from({ length: versions.length }, (_, index) => index + 1),
       );
+    } finally {
+      await connection.dropDatabase();
+      await connection.close();
+    }
+  },
+);
+
+test(
+  "MongoDB: every persistent business model records its normal writes",
+  { skip: process.env.RUN_MONGO_TESTS !== "true" },
+  async () => {
+    const databaseName = `kindergarten_history_coverage_${randomUUID().replaceAll("-", "")}`;
+    const connection = await mongoose
+      .createConnection(
+        "mongodb://127.0.0.1:27017/?replicaSet=rs0&directConnection=true",
+        { dbName: databaseName, serverSelectionTimeoutMS: 5000 },
+      )
+      .asPromise();
+    const models = {
+      GROUP: connection.model("Group", GroupModel.schema),
+      CHILD: connection.model("Child", ChildModel.schema),
+      PERSON: connection.model("Person", PersonModel.schema),
+      CATALOG: connection.model("Catalog", CatalogModel.schema),
+      INVOICE: connection.model("Invoice", InvoiceModel.schema),
+      PAYMENT: connection.model("Payment", PaymentModel.schema),
+      REFUND: connection.model("Refund", RefundModel.schema),
+      EXPENSE: connection.model("Expense", ExpenseModel.schema),
+      SCHEDULE: connection.model("Schedule", ScheduleModel.schema),
+    };
+    const ids = Object.fromEntries(
+      Object.keys(models).map((entityType) => [
+        entityType,
+        new mongoose.Types.ObjectId(),
+      ]),
+    );
+    const references = {
+      child: new mongoose.Types.ObjectId(),
+      invoice: new mongoose.Types.ObjectId(),
+      payment: new mongoose.Types.ObjectId(),
+      person: new mongoose.Types.ObjectId(),
+    };
+
+    try {
+      await withHistoryContext(
+        { source: "SERVICE", requestId: "all-models-create" },
+        async () => {
+          await models.GROUP.create([
+            {
+              _id: ids.GROUP,
+              name: "Coverage Group",
+              ageCategory: 3,
+              capacity: 10,
+              status: "DRAFT",
+            },
+          ]);
+          await models.CHILD.create([
+            {
+              _id: ids.CHILD,
+              firstName: "History",
+              lastName: "Child",
+              dateOfBirth: "2022-05-20",
+              status: "APPLICANT",
+              food: { preferences: [], exclusions: [], allergyNotes: [] },
+            },
+          ]);
+          await models.PERSON.create([
+            {
+              _id: ids.PERSON,
+              firstName: "History",
+              lastName: "Owner",
+              status: "ACTIVE",
+            },
+          ]);
+          await models.CATALOG.create([
+            {
+              _id: ids.CATALOG,
+              kind: "AGE_CATEGORY",
+              code: "HISTORY_AGE_3",
+              name: "History age three",
+              active: true,
+              age: 3,
+            },
+          ]);
+          await models.INVOICE.create([
+            {
+              _id: ids.INVOICE,
+              childId: references.child,
+              service: "TUITION",
+              serviceMonth: "2026-11",
+              billingType: "MONTHLY",
+              status: "OPEN",
+              origAmountCents: 100_000,
+              remainingAmountCents: 100_000,
+              tariffSnapshot: {
+                code: "TUITION",
+                effectiveFrom: "2026-09-01",
+                amountCents: 100_000,
+              },
+              formula: "100000",
+              dueAt: new Date("2026-11-10T21:00:00.000Z"),
+              parts: [
+                {
+                  month: "2026-11",
+                  amountCents: 100_000,
+                  remainingCents: 100_000,
+                },
+              ],
+            },
+          ]);
+          await models.PAYMENT.create([
+            {
+              _id: ids.PAYMENT,
+              invoiceId: references.invoice,
+              amountCents: 50_000,
+              method: "BANK_TRANSFER",
+              status: "PENDING",
+              payerPersonId: references.person,
+              actorId: references.person,
+              idempotencyKey: "history-payment",
+              payloadHash: "a".repeat(64),
+              reportedAt: new Date("2026-11-05T09:00:00.000Z"),
+            },
+          ]);
+          await models.REFUND.create([
+            {
+              _id: ids.REFUND,
+              paymentId: references.payment,
+              invoiceId: references.invoice,
+              childId: references.child,
+              actorId: references.person,
+              amountCents: 10_000,
+              reason: "History coverage",
+              idempotencyKey: "history-refund",
+              payloadHash: "b".repeat(64),
+              status: "CONFIRMED",
+              recordedAt: new Date("2026-11-06T09:00:00.000Z"),
+            },
+          ]);
+          await models.EXPENSE.create([
+            {
+              _id: ids.EXPENSE,
+              category: "OTHER",
+              amountCents: 25_000,
+              serviceMonth: "2026-11",
+              reason: "History coverage",
+              status: "DRAFT",
+            },
+          ]);
+          await models.SCHEDULE.create([
+            {
+              _id: ids.SCHEDULE,
+              weekStart: "2026-11-16",
+              revision: 1,
+              slots: [],
+              updatedById: references.person,
+            },
+          ]);
+        },
+      );
+
+      await withHistoryContext(
+        { source: "SERVICE", requestId: "all-models-update" },
+        async () => {
+          const options = { returnDocument: "after", runValidators: true };
+          await models.GROUP.findByIdAndUpdate(
+            ids.GROUP,
+            { $set: { capacity: 11 } },
+            options,
+          );
+          await models.CHILD.findByIdAndUpdate(
+            ids.CHILD,
+            { $set: { "food.preferences": ["NO_SUGAR"] } },
+            options,
+          );
+          await models.PERSON.findByIdAndUpdate(
+            ids.PERSON,
+            { $set: { phone: "+380000000000" } },
+            options,
+          );
+          await models.CATALOG.findByIdAndUpdate(
+            ids.CATALOG,
+            { $set: { name: "Updated history age three" } },
+            options,
+          );
+          await models.INVOICE.findByIdAndUpdate(
+            ids.INVOICE,
+            {
+              $set: {
+                status: "PARTIAL",
+                remainingAmountCents: 50_000,
+                "parts.0.remainingCents": 50_000,
+              },
+            },
+            options,
+          );
+          await models.PAYMENT.findByIdAndUpdate(
+            ids.PAYMENT,
+            {
+              $set: {
+                status: "CONFIRMED",
+                occurredAt: new Date("2026-11-05T10:00:00.000Z"),
+                confirmedAt: new Date("2026-11-05T10:00:00.000Z"),
+              },
+            },
+            options,
+          );
+          await models.EXPENSE.findByIdAndUpdate(
+            ids.EXPENSE,
+            {
+              $set: {
+                status: "APPROVED",
+                snapshot: { approvedAmountCents: 25_000 },
+              },
+            },
+            options,
+          );
+          await models.SCHEDULE.findByIdAndUpdate(
+            ids.SCHEDULE,
+            { $set: { revision: 2, slots: [] } },
+            options,
+          );
+        },
+      );
+
+      const History = connection.model("EntityVersion");
+      const expectedCounts = {
+        GROUP: 2,
+        CHILD: 2,
+        PERSON: 2,
+        CATALOG: 2,
+        INVOICE: 2,
+        PAYMENT: 2,
+        REFUND: 1,
+        EXPENSE: 2,
+        SCHEDULE: 2,
+      };
+      for (const [entityType, expectedCount] of Object.entries(
+        expectedCounts,
+      )) {
+        const versions = await History.find({
+          entityType,
+          entityId: ids[entityType].toString(),
+        })
+          .sort({ version: 1 })
+          .lean();
+        assert.equal(versions.length, expectedCount, entityType);
+        assert.deepEqual(
+          versions.map((entry) => entry.version),
+          Array.from({ length: expectedCount }, (_, index) => index + 1),
+          entityType,
+        );
+        assert.equal(versions[0].action, "CREATE", entityType);
+        if (expectedCount === 2) {
+          assert.equal(versions[1].action, "UPDATE", entityType);
+          assert.notDeepEqual(
+            versions[1].before,
+            versions[1].after,
+            entityType,
+          );
+        }
+      }
     } finally {
       await connection.dropDatabase();
       await connection.close();
