@@ -10,9 +10,9 @@
 - Actor формується сервером; roles, record scope і field policy перевіряються окремо; невідомі ролі та permissions fail closed.
 - MongoDB-команди, що змінюють кілька документів, використовують одну session/transaction; rollback і audit перевірені integration tests.
 - Усі дев'ять persistent business models використовують один `entityHistoryPlugin`; відповідальність за history розподілена між S1–S8 за власними модулями, а не віддана S6.
-- `npm run test:all` 18 листопада 2026 року пройшов повністю: 213 Node tests
-  (184 pass, 29 Mongo-skipped), MongoDB 28/28, browser/API panel і Newman
-  120 requests / 687 assertions / 0 failures.
+- `npm run test:all` 19 листопада 2026 року пройшов повністю: 218 Node tests
+  (189 pass, 29 Mongo-skipped), MongoDB 28/28, browser/API panel і Newman
+  120 requests / 688 assertions / 0 failures.
 
 Детальний контракт: [14_Initial_Team_Contracts.md](14_Initial_Team_Contracts.md).
 

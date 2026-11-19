@@ -2,6 +2,7 @@ import { applyDiscount, assertMoneyMinor } from "../../utils/money.js";
 import { calculateMonthlySalaryCents } from "../expenses/salary.calculations.js";
 
 const MAX_GROUPS = 15;
+const MAX_GROUP_CAPACITY = 20;
 const MAX_DEMAND = 10_000;
 const assertSignedMinor = (value) => {
   if (!Number.isSafeInteger(value))
@@ -29,10 +30,11 @@ function assertScenario(input) {
       groupIds.has(group.id) ||
       !Number.isSafeInteger(group.capacity) ||
       group.capacity < 1 ||
+      group.capacity > MAX_GROUP_CAPACITY ||
       !Number.isSafeInteger(group.age)
     )
       throw new RangeError(
-        "Each group needs a unique id, age, and positive capacity",
+        `Each group needs a unique id, age, and capacity of 1-${MAX_GROUP_CAPACITY}`,
       );
     groupIds.add(group.id);
   }
@@ -106,12 +108,18 @@ function allocation(input, demandByCode) {
     const seats = groups.reduce((sum, group) => sum + group.capacity, 0);
     if (!groups.length && demand)
       throw new RangeError(`No groups configured for age ${age.code}`);
+    const placements = groups.length ? distribute(demand, groups) : [];
+    const capacityByGroup = new Map(
+      groups.map((group) => [group.id, group.capacity]),
+    );
     result.push({
       ageCode: age.code,
       demand,
       seats,
-      overCapacity: demand > seats,
-      placements: groups.length ? distribute(demand, groups) : [],
+      overCapacity:
+        demand > seats ||
+        placements.some((row) => row.count > capacityByGroup.get(row.groupId)),
+      placements,
     });
   }
   return result;
@@ -238,7 +246,7 @@ export function findFinancialBreakeven(
       children: total,
       resultBeforeFoodMinor: forecast.resultBeforeFoodMinor,
       feasibleWithinCapacity: forecast.placement.every(
-        (row) => row.demand <= row.seats,
+        (row) => !row.overCapacity,
       ),
     };
     if (

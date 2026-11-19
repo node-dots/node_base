@@ -55,7 +55,7 @@ npm start
 npm run test:postman
 ```
 
-Поясніть: 21 папка, 114 статичних requests, 120 фактичних викликів, 687 assertions,
+Поясніть: 21 папка, 114 статичних requests, 120 фактичних викликів, 688 assertions,
 0 failures. Folder 21 окремо перевіряє history усіх дев'яти persisted entity types.
 Випадкова test database видаляється після run, development data не чіпаються.
 

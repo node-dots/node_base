@@ -79,6 +79,7 @@
 
 - [Контракт фінансових показників і контрольна арифметика](finance/financial-metrics-contract.md).
 - [Пакет незалежної перевірки TASK-010 для S7](finance/TASK-010_S7_REVIEW_PACKAGE.md).
+- [Економічно найвигідніший розмір групи](finance/MOST_PROFITABLE_GROUP_SIZE.md).
 
 ### Завершення, демонстрація і release
 

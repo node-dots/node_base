@@ -814,6 +814,7 @@ add(F, {
           {
             id: "teacher-a",
             subjectCode: "MATH",
+            salaryMinor: 4000000,
             availability: [
               { weekday: 1, startTime: "09:00", endTime: "17:00" },
             ],
@@ -833,6 +834,7 @@ add(F, {
   },
   tests: [
     'pm.test("Configuration search checked candidates", function () { pm.expect(responseJson.data.budget.candidatesChecked).to.be.a("number"); });',
+    'pm.test("Teacher salary is included in candidate payroll", function () { pm.expect(responseJson.data.bestFound.payrollMinor).to.eql(10000000); });',
   ],
 });
 

@@ -1,6 +1,6 @@
 # TASK-040: інтеграційний checklist
 
-Оновлено 18 листопада 2026 року для baseline `develop` `c4759f2` і feature head PR #112.
+Оновлено 19 листопада 2026 року для baseline `develop` `60c80b4` і синхронізованого feature head PR #112.
 Тут записані технічно підтверджені факти. Командна демонстрація ще не проводилася.
 
 ## Поточні докази
@@ -8,12 +8,12 @@
 | Перевірка | Фактичний результат |
 | --- | --- |
 | Dependency install/audit | `npm ci` PASS; 0 vulnerabilities |
-| Unit/HTTP/security | 213 tests: 184 pass, 29 Mongo-skipped, 0 fail |
+| Unit/HTTP/security | 218 tests: 189 pass, 29 Mongo-skipped, 0 fail |
 | MongoDB replica-set integration | 28/28 PASS |
 | Browser panel | PASS: 40 read-only requests і real ADMIN/API mode |
-| Postman/Newman | 120 requests, 687 assertions, 0 failures |
-| GitHub CI PR #109 | 4/4 SUCCESS |
-| GitHub CI merged `develop` | 4/4 SUCCESS, run `44194028615` |
+| Postman/Newman | 120 requests, 688 assertions, 0 failures |
+| GitHub CI PR #113 | 4/4 SUCCESS |
+| GitHub CI merged `develop` | 4/4 SUCCESS, run `44541067173` |
 | Swagger/OpenAPI | OpenAPI 3.1, 68 operations, `/api-docs/` і JSON endpoint |
 | Entity history | 9/9 persistent models, transactional snapshots, ADMIN API, 12 requests folder 21 |
 

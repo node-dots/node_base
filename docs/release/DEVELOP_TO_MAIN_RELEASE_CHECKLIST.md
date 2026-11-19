@@ -6,9 +6,9 @@
 
 На момент аналізу:
 
-- `develop`: `c4759f2230f9d142872a038f58af3bd342f9d897`;
+- `develop`: `60c80b4d2388ee36459393e2bbfbbcf2e046ce7c`;
 - `main`: `e53e8fd9b138985657c3ebc8b388746cf84cc130`;
-- `git rev-list --left-right --count origin/main...origin/develop`: `2 321`;
+- `git rev-list --left-right --count origin/main...origin/develop`: `2 323`;
 - merge-base: `ee2ad97722d02674fdae28af01f79cea53b80e13`.
 
 Два `main`-only commits:

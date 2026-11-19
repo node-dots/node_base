@@ -54,9 +54,9 @@ docker compose exec -T mongodb mongosh --quiet --eval "rs.status().myState"
 npm run test:all
 ```
 
-Контрольний результат актуального технічного baseline: 213 Node tests (184 pass,
+Контрольний результат актуального технічного baseline: 218 Node tests (189 pass,
 29 Mongo-skipped, 0 fail), MongoDB integration 28/28, browser panel PASS, Newman
-120 requests / 687 assertions / 0 failures.
+120 requests / 688 assertions / 0 failures.
 Показати також 4/4 green jobs exact SHA у GitHub Actions. Якщо числа змінилися через
 reviewed розширення collection/tests, записати нові фактичні значення, а не копіювати baseline.
 

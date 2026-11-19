@@ -1,8 +1,8 @@
 # Фактичний фінальний статус
 
-Стан перевірено 18 листопада 2026 року. Базовий інтеграційний SHA `develop`,
+Стан перевірено 19 листопада 2026 року. Базовий інтеграційний SHA `develop`,
 на якому виконано фінальну технічну перевірку перед цим документаційним PR:
-`c4759f2230f9d142872a038f58af3bd342f9d897`.
+`60c80b4d2388ee36459393e2bbfbbcf2e046ce7c`.
 
 ## GitHub і задачі
 
@@ -10,8 +10,8 @@
 - Issue #110 / REQ-DVH-001 закрито як Completed після звірки acceptance criteria,
   merged PR #111, незалежного approval і green CI; Project item переведено у `Done`.
 - Відкриті Issues: #6 TASK-001, #15 TASK-010, #62 TASK-040.
-- Відкритий PR #112 готує acceptance/history-responsibility/release package; він має
-  отримати незалежний approval і green CI на фінальному head.
+- Відкритий PR #112 готує acceptance/history-responsibility/release package; незалежний
+  approval отримано на попередньому head, а синхронізований фінальний head має повторно пройти green CI/review gates.
 - TASK-001 очікує реального погодження контрактів тімлідом і командою.
 - TASK-010 очікує незалежної арифметичної перевірки S7.
 - TASK-040 має технічний demo package, але спільну демонстрацію S1–S8 ще не проведено.
@@ -22,14 +22,14 @@
 
 | Перевірка | Фактичний результат |
 | --- | --- |
-| GitHub CI PR #109 | 4/4 SUCCESS: Code, MongoDB, Postman, macOS |
-| GitHub CI `develop` `c4759f2` | 4/4 SUCCESS, run `44194028615` |
+| GitHub CI PR #113 | 4/4 SUCCESS: Code, MongoDB, Postman, macOS |
+| GitHub CI `develop` `60c80b4` | 4/4 SUCCESS, run `44541067173` |
 | GitHub CI PR #112 | required на фінальному head; merge без approval заборонений |
-| `npm run check` | 213 tests: 184 pass, 29 Mongo-skipped, 0 fail |
+| `npm run check` | 218 tests: 189 pass, 29 Mongo-skipped, 0 fail |
 | `npm run test:mongodb` | 28/28 PASS на MongoDB replica set `rs0` |
 | `npm run test:panel-browser` | PASS: 40 read-only API requests + real ADMIN/API mode |
-| `npm run test:postman` | 120 requests, 687 assertions, 0 failures |
-| `npm run test:all` | PASS після штатного `infra:up` та ініціалізації `rs0` |
+| `npm run test:postman` | 120 requests, 688 assertions, 0 failures |
+| `npm run test:all` | PASS на ізольованому тимчасовому Compose replica set `rs0` |
 | OpenAPI/Swagger/history | 68 operations; ADMIN-only history list/version/compare перевірено HTTP/Postman |
 
 Готові auth/JWT, people/employees, catalog, groups/resources, children/membership, invoices,
